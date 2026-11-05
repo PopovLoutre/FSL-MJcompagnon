@@ -1,0 +1,2758 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#17151a">
+<title>Recueil des PNJ</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: dark;
+    --ink: #17151a;
+    --ink-panel: #211e26;
+    --ink-card: #2a2530;
+    --parchment: #e9dcc0;
+    --parchment-dim: #a89d84;
+    --brass: #b08d4f;
+    --brass-bright: #d4ac6e;
+    --wax: #9c3b3f;
+    --wax-bright: #c14c4f;
+    --line: #3c3644;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; }
+
+  /* Neutralise le rendu natif (flèches, fond clair forcé) que certains navigateurs mobiles
+     imposent aux <input type="number">, malgré color-scheme + appearance: none ci-dessus. */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  body {
+    margin: 0;
+    background: var(--ink);
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(176,141,79,0.07), transparent 45%),
+      radial-gradient(circle at 90% 30%, rgba(156,59,63,0.06), transparent 50%);
+    color: var(--parchment);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .app {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 20px 16px 100px;
+  }
+
+  .screen.hidden { display: none !important; }
+
+  .bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-width: 560px;
+    margin: 0 auto;
+    display: flex;
+    background: var(--ink-panel);
+    border-top: 1px solid var(--line);
+    padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
+    z-index: 10;
+  }
+
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    color: var(--parchment-dim);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    padding: 8px 4px 6px;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+
+  .nav-btn .nav-icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .nav-btn.active {
+    color: var(--brass-bright);
+  }
+
+  header {
+    text-align: center;
+    padding: 12px 0 22px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 22px;
+  }
+
+  header .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 6px;
+  }
+
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: 0.04em;
+    margin: 0;
+    color: var(--parchment);
+  }
+
+  .panel {
+    background: var(--ink-panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+
+  .panel h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--brass-bright);
+    margin: 0 0 14px;
+  }
+
+  .panel-text {
+    font-size: 13px;
+    color: var(--parchment-dim);
+    line-height: 1.5;
+    margin: 0 0 12px;
+  }
+
+  input[type="file"] {
+    width: 100%;
+    color: var(--parchment-dim);
+    font-size: 13px;
+    background: var(--ink);
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+  .field {
+    margin-bottom: 14px;
+  }
+
+  .field:last-child { margin-bottom: 0; }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    color: var(--parchment-dim);
+    margin-bottom: 6px;
+  }
+
+  select, input[type="number"] {
+    width: 100%;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    color: var(--parchment);
+    border-radius: 8px;
+    padding: 11px 12px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  select:focus, input:focus, button:focus-visible {
+    outline: 2px solid var(--brass-bright);
+    outline-offset: 1px;
+  }
+
+  select {
+    background-image: linear-gradient(45deg, transparent 50%, var(--brass) 50%),
+                       linear-gradient(135deg, var(--brass) 50%, transparent 50%);
+    background-position: calc(100% - 18px) center, calc(100% - 13px) center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+  }
+
+  /* Le fond des <option> ignore souvent la couleur du <select> et retombe sur le blanc
+     du navigateur : on le force explicitement pour rester lisible en thème sombre. */
+  select option {
+    background-color: var(--ink-panel);
+    color: var(--parchment);
+  }
+
+  .row2 {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: end;
+  }
+
+  .row2 .field { margin-bottom: 0; }
+  .row2 input[type="number"] { width: 80px; text-align: center; }
+
+  .subfield {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+  }
+
+  .hidden { display: none !important; }
+
+  .checklist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .checklist.scrollable {
+    max-height: 220px;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px;
+    background: var(--ink);
+  }
+
+  .checklist .era-group {
+    width: 100%;
+  }
+
+  .checklist .era-title {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin: 8px 0 4px;
+  }
+
+  .checklist .era-title:first-child { margin-top: 0; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--ink-card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .checklist.scrollable .chip {
+    display: flex;
+    width: 100%;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    border: none;
+    background: transparent;
+    padding: 5px 4px;
+  }
+
+  .chip input { accent-color: var(--wax-bright); }
+
+  .chip.checked {
+    border-color: var(--brass-bright);
+    color: var(--brass-bright);
+  }
+
+  button.generate {
+    width: 100%;
+    margin-top: 18px;
+    background: linear-gradient(180deg, var(--wax-bright), var(--wax));
+    color: #f4e9dc;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(156,59,63,0.35);
+  }
+
+  button.generate:active { transform: translateY(1px); }
+
+  #results { display: flex; flex-direction: column; gap: 14px; }
+
+  .empty-state {
+    text-align: center;
+    color: var(--parchment-dim);
+    font-size: 14px;
+    padding: 30px 10px;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+  }
+
+  .card {
+    background: var(--ink-card);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--brass);
+    border-radius: var(--radius);
+    padding: 16px;
+    animation: reveal 0.35s ease;
+  }
+
+  @keyframes reveal {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+    gap: 10px;
+  }
+
+  .card-top-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .dossier-tag {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brass);
+  }
+
+  .card-top h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    margin: 2px 0 0;
+    color: var(--parchment);
+  }
+
+  .race-line {
+    font-size: 13px;
+    color: var(--parchment-dim);
+    margin-bottom: 12px;
+  }
+
+  .race-line-input {
+    display: block;
+    width: 100%;
+    font-size: 13px;
+    color: var(--parchment-dim);
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--line);
+    padding: 2px 0;
+    margin-bottom: 12px;
+    font-family: 'Inter', sans-serif;
+      appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+  }
+
+  .race-line-input:focus { outline: none; border-bottom-color: var(--brass-bright); }
+
+  .race-line .era {
+    color: var(--brass-bright);
+  }
+
+  .seal {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--wax-bright), var(--wax) 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #f4e9dc;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+  }
+
+  .traits-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 10px 0;
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .trait {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 2px;
+    text-align: center;
+  }
+
+  .sauv-col {
+    border-left: 1px dashed var(--line);
+  }
+
+  .trait .k {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--parchment-dim);
+    margin-bottom: 2px;
+  }
+
+  .trait .v {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .trait .v.pos { color: #8fbf8a; }
+  .trait .v.neg { color: #c17a7a; }
+
+  .trait .race-tag {
+    font-size: 9px;
+    color: var(--parchment-dim);
+    margin-top: 2px;
+  }
+
+  .sauv-input {
+    color: var(--brass-bright);
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 14px;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  .meta-grid .k {
+    color: var(--parchment-dim);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 1px;
+  }
+
+  .racial-special {
+    font-size: 12px;
+    color: var(--brass-bright);
+    font-style: italic;
+    margin-top: -4px;
+    margin-bottom: 10px;
+  }
+
+  .particularite {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    font-style: italic;
+    color: var(--parchment-dim);
+  }
+
+  /* --- Champs éditables sur les fiches --- */
+  .name-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--line);
+    color: var(--parchment);
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    padding: 2px 0;
+    width: 100%;
+      appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+  }
+
+  .name-input:focus { outline: none; border-bottom-color: var(--brass-bright); }
+
+  .v-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--line);
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--parchment);
+    padding: 0 0 2px;
+      appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+  }
+
+  .v-input.pos { color: #8fbf8a; }
+  .v-input.neg { color: #c17a7a; }
+  .v-input:focus { outline: none; border-bottom-color: var(--brass-bright); }
+
+  .mini-select, .mini-number, .mini-text {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--line);
+    color: var(--parchment);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 2px 0;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .mini-select:focus, .mini-number:focus, .mini-text:focus {
+    outline: none;
+    border-bottom-color: var(--brass-bright);
+  }
+
+  .unit-field {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+
+  .mini-number-sm {
+    width: 40px;
+    max-width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--line);
+    color: var(--parchment);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 2px 0;
+      appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+  }
+
+  .mini-number-sm:focus { outline: none; border-bottom-color: var(--brass-bright); }
+
+  .unit {
+    font-size: 11px;
+    color: var(--parchment-dim);
+  }
+
+  .mini-number.current, .mini-number-sm.current {
+    color: var(--brass-bright);
+    font-weight: 600;
+    border-bottom-color: var(--brass);
+  }
+
+  .mini-number-sm.ps-max {
+    color: #8fbf8a;
+    font-weight: 600;
+  }
+
+  .mini-number-sm.pm-max {
+    color: #b19cd9;
+    font-weight: 600;
+  }
+
+  .comp-row .score-input {
+    width: 56px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--line);
+    text-align: right;
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--parchment);
+      appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+  }
+
+  .comp-row .score-input:focus { outline: none; border-bottom-color: var(--brass-bright); }
+
+  .mark-check { accent-color: var(--brass-bright); margin-right: 2px; }
+
+  .field-inline {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+  }
+
+  .field-inline label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--parchment-dim);
+    margin-bottom: 4px;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .btn-save, .btn-delete {
+    flex: 1;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .btn-save {
+    background: linear-gradient(180deg, var(--wax-bright), var(--wax));
+    color: #f4e9dc;
+  }
+
+  .btn-delete {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--parchment-dim);
+  }
+
+  .competences {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+  }
+
+  .competences .k {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--parchment-dim);
+    margin-bottom: 6px;
+  }
+
+  .comp-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    padding: 3px 0;
+  }
+
+  .comp-name-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--line);
+    color: var(--parchment);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 2px 0;
+      appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+  }
+
+  .comp-name-input:focus { outline: none; border-bottom-color: var(--brass-bright); }
+
+  .equip-item {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--line);
+  }
+
+  .equip-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .equip-line1, .equip-line2 {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 2px 0;
+    font-family: 'Inter', sans-serif;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .equip-line1 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--parchment);
+  }
+
+  .equip-line2 {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--parchment-dim);
+  }
+
+  .equip-line1:focus, .equip-line2:focus { outline: none; color: var(--brass-bright); }
+
+  .equip-empty {
+    font-size: 13px;
+    color: var(--parchment-dim);
+    font-style: italic;
+  }
+
+  .comp-row .mark {
+    color: var(--brass-bright);
+    font-size: 10px;
+  }
+
+  .comp-row .trait-tag {
+    color: var(--parchment-dim);
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .comp-trait-select {
+    flex-shrink: 0;
+    width: 54px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--line);
+    color: var(--parchment-dim);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    padding: 2px 0;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .comp-trait-select:focus { outline: none; border-bottom-color: var(--brass-bright); }
+
+  .comp-row .score {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    color: var(--parchment);
+  }
+
+  .note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--parchment-dim);
+    margin-top: 24px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="eyebrow">Outil de maître du jeu</div>
+    <h1 id="screenTitle">Recueil des PNJ</h1>
+  </header>
+
+  <!-- Écran : Créer -->
+  <section class="screen" id="screen-creer">
+    <div class="panel">
+      <h2>Tirage</h2>
+
+      <div class="field">
+        <label for="raceMode">Race</label>
+        <select id="raceMode">
+          <option value="pondere">Aléatoire (pondéré par époque)</option>
+          <option value="epoque">Aléatoire dans une époque précise</option>
+          <option value="race">Race précise</option>
+        </select>
+      </div>
+
+      <div class="field subfield hidden" id="wrapEpoque">
+        <label>Époque(s) — aucune coche = toutes</label>
+        <div class="checklist" id="epoqueChecks"></div>
+      </div>
+
+      <div class="field subfield hidden" id="wrapRace">
+        <label>Race(s) — aucune coche = toutes</label>
+        <div class="checklist scrollable" id="raceChecks"></div>
+      </div>
+
+      <div class="field">
+        <label>Niveau(x) — aucune coche = tous</label>
+        <div class="checklist" id="niveauChecks"></div>
+      </div>
+
+      <div class="field">
+        <label for="metier">Métier</label>
+        <select id="metier">
+          <option value="alea">Aléatoire</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="trait">Trait particulier</label>
+        <select id="trait">
+          <option value="alea">Aléatoire (2 traits)</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="nb">Nombre de PNJ</label>
+          <input type="number" id="nb" value="1" min="1" max="8">
+        </div>
+      </div>
+      <button class="generate" id="btnGenerate">Générer</button>
+    </div>
+
+    <div class="panel">
+      <h2>Résultats</h2>
+      <div id="results">
+        <div class="empty-state">Aucun PNJ généré pour l'instant.<br>Choisis tes options et lance le tirage.</div>
+      </div>
+    </div>
+
+    <div class="note">
+      Prototype — les résultats de cette session ne sont pas encore sauvegardés.<br>
+      La persistance et l'édition avant sauvegarde arrivent à l'étape suivante.
+    </div>
+  </section>
+
+  <!-- Écran : Mes PNJ (recherche / consultation / modification) -->
+  <section class="screen hidden" id="screen-mespnj">
+    <div class="panel">
+      <div class="field">
+        <label for="searchPnj">Rechercher (nom, race, métier, groupe/tag)</label>
+        <input type="text" id="searchPnj" placeholder="ex. Voleur, Terrien, Taverne du Cerf...">
+      </div>
+    </div>
+    <div id="mespnjResults"></div>
+  </section>
+
+  <!-- Écran : Sauvegarde (export / import) -->
+  <section class="screen hidden" id="screen-sauvegarde">
+    <div class="panel">
+      <h2>Exporter</h2>
+      <p class="panel-text">Télécharge un fichier contenant tous tes PNJ et objets enregistrés — pratique pour passer d'un appareil à l'autre, ou comme sauvegarde de sécurité.</p>
+      <p class="panel-text" id="exportCount"></p>
+      <button class="generate" id="btnExport">Exporter mes PNJ et objets (.json)</button>
+    </div>
+
+    <div class="panel">
+      <h2>Importer</h2>
+      <p class="panel-text">Recharge un fichier précédemment exporté. Si un PNJ ou un objet importé porte le même identifiant qu'une fiche déjà enregistrée sur cet appareil, elle sera <strong>écrasée</strong> par la version importée — un message t'indiquera combien de fiches ont été écrasées.</p>
+      <input type="file" id="importFile" accept="application/json,.json">
+      <button class="generate" id="btnImport" style="margin-top:10px;">Importer ce fichier</button>
+      <p class="panel-text" id="importStatus"></p>
+    </div>
+  </section>
+
+  <!-- Écran : Objets magiques -->
+  <section class="screen hidden" id="screen-objets">
+    <div class="panel">
+      <h2>Tirage</h2>
+      <div class="field">
+        <label for="objCategorie">Catégorie</label>
+        <select id="objCategorie">
+          <option value="alea">Aléatoire</option>
+          <option value="ArmeMêlée">Arme de mêlée</option>
+          <option value="ArmeJetLancer">Arme de jet/lancer</option>
+          <option value="Armure">Armure</option>
+          <option value="Bijou">Bijou</option>
+          <option value="Vêtement">Vêtement</option>
+          <option value="Utilitaire">Utilitaire</option>
+          <option value="Instrument">Instrument</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Rareté(s) — aucune coche = toutes</label>
+        <div class="checklist" id="raretesChecks"></div>
+      </div>
+      <div class="field">
+        <label for="objMetier">Métier (optionnel)</label>
+        <select id="objMetier">
+          <option value="alea">Aléatoire</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="nbObj">Nombre d'objets</label>
+          <input type="number" id="nbObj" value="1" min="1" max="8">
+        </div>
+      </div>
+      <button class="generate" id="btnGenerateObj">Générer</button>
+    </div>
+
+    <div class="panel">
+      <h2>Résultats</h2>
+      <div id="objResults">
+        <div class="empty-state">Aucun objet généré pour l'instant.<br>Choisis tes options et lance le tirage.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Écran : Mes Objets (recherche / consultation / modification) -->
+  <section class="screen hidden" id="screen-mesobjets">
+    <div class="panel">
+      <div class="field">
+        <label for="searchObj">Rechercher (nom, type, catégorie, rareté, groupe/tag)</label>
+        <input type="text" id="searchObj" placeholder="ex. Épée, Précieux, Butin donjon...">
+      </div>
+    </div>
+    <div id="mesobjetsResults"></div>
+  </section>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-screen="creer">
+    <span class="nav-icon">♟</span>
+    <span>PNJ</span>
+  </button>
+  <button class="nav-btn" data-screen="mespnj">
+    <span class="nav-icon">☰</span>
+    <span>Mes PNJ</span>
+  </button>
+  <button class="nav-btn" data-screen="objets">
+    <span class="nav-icon">✦</span>
+    <span>Objets</span>
+  </button>
+  <button class="nav-btn" data-screen="mesobjets">
+    <span class="nav-icon">▤</span>
+    <span>Mes Objets</span>
+  </button>
+  <button class="nav-btn" data-screen="sauvegarde">
+    <span class="nav-icon">⇅</span>
+    <span>Sauvegarde</span>
+  </button>
+</nav>
+
+<script>
+  // Table des races extraite du document "Evolution des races du Tri-Obole".
+  // Chaque race porte ses modificateurs raciaux aux 6 Traits (valeur de base = 0).
+  const RACES = [{"name": "Sindars (Ht-Elfe)", "era": "Originelles", "FOR": -1, "AGI": 3, "INT": 0, "PER": 2, "MAI": -1, "CHA": 3, "special": "Jets magie & Mana +3"}, {"name": "Khuzdûl", "era": "Originelles", "FOR": 3, "AGI": 0, "INT": 1, "PER": -1, "MAI": 3, "CHA": 0, "special": "Rés.magique 50%"}, {"name": "Hobbits", "era": "Originelles", "FOR": 0, "AGI": 0, "INT": 3, "PER": 3, "MAI": 1, "CHA": 0, "special": "Perception de la magie"}, {"name": "Eldars (purs)", "era": "Antédiluviennes", "FOR": -1, "AGI": 2, "INT": 0, "PER": 1, "MAI": -1, "CHA": 3, "special": "Mana +2 / niveau"}, {"name": "Sirlings (exilés)", "era": "Antédiluviennes", "FOR": -1, "AGI": 3, "INT": 2, "PER": 0, "MAI": 0, "CHA": 0, "special": "Jets magie +2"}, {"name": "Gobelach (arboric)", "era": "Vénérables", "FOR": 0, "AGI": 2, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": "Queue préhensile"}, {"name": "Ishtar (maléf.)", "era": "Antédiluviennes", "FOR": -1, "AGI": 3, "INT": 0, "PER": 2, "MAI": -1, "CHA": 1, "special": "Mana +2 / niveau"}, {"name": "Rasha (tigres)", "era": "Antédiluviennes", "FOR": 0, "AGI": 2, "INT": 0, "PER": 2, "MAI": 0, "CHA": 1, "special": "Griffes rétractiles"}, {"name": "Khuzun (monta.)", "era": "Antédiluviennes", "FOR": 3, "AGI": 0, "INT": 1, "PER": -1, "MAI": 2, "CHA": 0, "special": "Rés. magique 30%"}, {"name": "Troll", "era": "Antédiluviennes", "FOR": 3, "AGI": -1, "INT": -1, "PER": 1, "MAI": 1, "CHA": 0, "special": "Armure 2 naturelle"}, {"name": "Khuzdâal", "era": "Antédiluviennes", "FOR": 2, "AGI": -1, "INT": 1, "PER": 0, "MAI": 3, "CHA": 0, "special": "Rés. Magique 30%"}, {"name": "Gnome (villes)", "era": "Antédiluviennes", "FOR": -1, "AGI": 1, "INT": 3, "PER": 2, "MAI": -1, "CHA": 0, "special": "Jets enchantement +2"}, {"name": "Pied-velu (comté)", "era": "Antédiluviennes", "FOR": 0, "AGI": 0, "INT": 0, "PER": 3, "MAI": 2, "CHA": -1, "special": "Perception de la magie"}, {"name": "Halfling (marchand)", "era": "Anciennes", "FOR": 1, "AGI": 0, "INT": 0, "PER": 1, "MAI": 1, "CHA": -1, "special": ""}, {"name": "Ogre", "era": "Antédiluviennes", "FOR": 3, "AGI": 0, "INT": 1, "PER": 0, "MAI": 1, "CHA": -1, "special": "Rés. magique 20%"}, {"name": "Fyloadaele (eau)", "era": "Vénérables", "FOR": -1, "AGI": 2, "INT": 1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Amphibien"}, {"name": "Sylvaele (forêts)", "era": "Vénérables", "FOR": -1, "AGI": 2, "INT": 0, "PER": 1, "MAI": -1, "CHA": 1, "special": "Mana +1/niveau"}, {"name": "Illithid", "era": "Antédiluviennes", "FOR": -1, "AGI": 1, "INT": 3, "PER": 0, "MAI": 0, "CHA": 0, "special": "Contrôle mental"}, {"name": "Méduses (eau)", "era": "Anciennes", "FOR": -1, "AGI": 0, "INT": 2, "PER": -1, "MAI": 0, "CHA": 1, "special": "Regard paralysant"}, {"name": "Varegh (vikings)", "era": "Anciennes", "FOR": 0, "AGI": 2, "INT": -1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Amphibiens"}, {"name": "Sirènes (eau)", "era": "Semi-humaines", "FOR": -1, "AGI": 0, "INT": 1, "PER": -1, "MAI": 0, "CHA": 2, "special": "Amphibien"}, {"name": "Elfaele (bois)", "era": "Anciennes", "FOR": -1, "AGI": 2, "INT": 0, "PER": 0, "MAI": 0, "CHA": 1, "special": ""}, {"name": "Elf gris (voyageurs)", "era": "Anciennes", "FOR": -1, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 2, "special": "Vision nocturne"}, {"name": "Elfant (commun)", "era": "Anciennes", "FOR": 0, "AGI": 1, "INT": 0, "PER": 0, "MAI": 0, "CHA": 1, "special": "Mana +1/niveau"}, {"name": "Grob (nomades)", "era": "Anciennes", "FOR": 0, "AGI": 2, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "1 mois sans boire"}, {"name": "Gobelin (pillards)", "era": "Semi-humaines", "FOR": -1, "AGI": 1, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "Résist. poison&maladie"}, {"name": "Khuzdin (monta.)", "era": "Vénérables", "FOR": 2, "AGI": 0, "INT": 1, "PER": -1, "MAI": 1, "CHA": 0, "special": "Rés. magique 20%"}, {"name": "Nain gris (cités)", "era": "Anciennes", "FOR": 2, "AGI": 0, "INT": 0, "PER": -1, "MAI": 1, "CHA": 0, "special": "Rés. magique 10%"}, {"name": "Minathros", "era": "Vénérables", "FOR": 2, "AGI": -1, "INT": 0, "PER": 1, "MAI": 1, "CHA": 0, "special": "Cornes"}, {"name": "Varach (dominat.)", "era": "Vénérables", "FOR": 1, "AGI": 1, "INT": -1, "PER": 2, "MAI": 0, "CHA": 0, "special": "Rés. Chaud/froid"}, {"name": "Tsrang (voyages)", "era": "Anciennes", "FOR": 1, "AGI": 1, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "Rés. Chaud/froid"}, {"name": "H.-lézard (désert)", "era": "Semi-humaines", "FOR": 1, "AGI": 0, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "Rés. Chaud/froid"}, {"name": "Gnomer (grottes)", "era": "Vénérables", "FOR": 0, "AGI": -1, "INT": 2, "PER": 0, "MAI": 1, "CHA": 0, "special": "Infravision"}, {"name": "Minautore (merc.)", "era": "Anciennes", "FOR": 2, "AGI": -1, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": "Cornes"}, {"name": "Dotrak", "era": "Humaines", "FOR": 1, "AGI": 0, "INT": -1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Nomades du désert"}, {"name": "Alorien", "era": "Humaines", "FOR": -1, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 1, "special": "Commun des cités"}, {"name": "Cheresque", "era": "Humaines", "FOR": 0, "AGI": 1, "INT": -1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Marins"}, {"name": "Ergegh (orc marais)", "era": "Vénérables", "FOR": 1, "AGI": 0, "INT": 1, "PER": -1, "MAI": 2, "CHA": 0, "special": "Rés. maladies"}, {"name": "Sharkar (maléf.)", "era": "Vénérables", "FOR": 2, "AGI": 0, "INT": 1, "PER": -1, "MAI": 1, "CHA": -1, "special": "Rés. maladies"}, {"name": "Urkur (esclavage)", "era": "Anciennes", "FOR": 2, "AGI": 0, "INT": 1, "PER": 0, "MAI": 0, "CHA": -1, "special": ""}, {"name": "Noriog", "era": "Humaines", "FOR": 1, "AGI": 0, "INT": 1, "PER": 0, "MAI": -1, "CHA": -1, "special": "Dominateurs, guerriers"}, {"name": "Keldrun (bâtisseur)", "era": "Semi-humaines", "FOR": 1, "AGI": 0, "INT": 0, "PER": -1, "MAI": 1, "CHA": 0, "special": "Petits, costauds"}, {"name": "Orc commun", "era": "Anciennes", "FOR": 2, "AGI": 0, "INT": -1, "PER": -1, "MAI": 1, "CHA": 0, "special": "Vision nocturne"}, {"name": "Homme-chat", "era": "Anciennes", "FOR": -1, "AGI": 2, "INT": 0, "PER": 1, "MAI": -1, "CHA": 0, "special": "Vision nocturne, griffes"}, {"name": "Felas (voleurs)", "era": "Semi-humaines", "FOR": -1, "AGI": 1, "INT": 0, "PER": 1, "MAI": -1, "CHA": 0, "special": "Vision nocturne"}, {"name": "Souatar", "era": "Semi-humaines", "FOR": 0, "AGI": -1, "INT": 1, "PER": 0, "MAI": 1, "CHA": 0, "special": "Aveugles, sonar"}, {"name": "Gnolain (Paysan)", "era": "Vénérables", "FOR": 1, "AGI": 0, "INT": 0, "PER": 1, "MAI": 2, "CHA": -1, "special": ""}, {"name": "Gehanga", "era": "Anciennes", "FOR": -1, "AGI": -1, "INT": 2, "PER": 1, "MAI": 0, "CHA": 0, "special": "Télé-empathie"}, {"name": "Kobold (cupide)", "era": "Vénérables", "FOR": -1, "AGI": 1, "INT": 2, "PER": 1, "MAI": -1, "CHA": 0, "special": "Télépathie animale"}, {"name": "Lutin (farceurs)", "era": "Anciennes", "FOR": -1, "AGI": 1, "INT": 2, "PER": 0, "MAI": -1, "CHA": 0, "special": "Lancer de sorts +1"}, {"name": "Arcanes (march.)", "era": "Vénérables", "FOR": 0, "AGI": -1, "INT": 2, "PER": 1, "MAI": 0, "CHA": 0, "special": "Télé-empathie"}, {"name": "Drasniens", "era": "Humaines", "FOR": -1, "AGI": 0, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": "Petits, menus, voleurs"}, {"name": "Sendar", "era": "Humaines", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 1, "CHA": -1, "special": "Pacifistes, plutôt petits"}, {"name": "Terrien", "era": "Humaines", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 0, "special": ""}];
+
+  // Probabilités de croisement par époque à l'époque actuelle du jeu.
+  // "Originelles" est éteinte : absente du tirage pondéré, mais reste sélectionnable en tirage manuel.
+  const ERA_WEIGHTS = {
+    "Humaines": 60,
+    "Semi-humaines": 20,
+    "Anciennes": 15,
+    "Vénérables": 4.99,
+    "Antédiluviennes": 0.01
+  };
+
+  const ALL_ERAS = ["Humaines", "Semi-humaines", "Anciennes", "Vénérables", "Antédiluviennes", "Originelles"];
+
+  // Niveaux d'expérience : chaque niveau donne un bonus total de points à répartir sur les 6 Traits,
+  // sans jamais dépasser (valeur raciale + 2) sur un même Trait. Détermine aussi le nombre de
+  // Compétences maîtrisées / secondaires du personnage.
+  const LEVELS = [
+    { name: "Apprenti", points: 1, maitrisees: 1, secondaires: 0 },
+    { name: "Novice", points: 2, maitrisees: 1, secondaires: 1 },
+    { name: "Pro", points: 3, maitrisees: 2, secondaires: 1 },
+    { name: "Expert", points: 4, maitrisees: 2, secondaires: 2 },
+    { name: "Compagnon", points: 5, maitrisees: 2, secondaires: 2 },
+    { name: "Maître", points: 6, maitrisees: 3, secondaires: 2 },
+    { name: "Divin", points: 7, maitrisees: 3, secondaires: 2 }
+  ];
+  // Compétences par Trait (voir competences.md). Chaque Haute Magie a MAI comme Trait
+  // secondaire en plus de son Trait principal (non exploité dans le score pour l'instant).
+  const SKILLS_BY_TRAIT = {
+    FOR: ["Athlétisme", "Escalade", "Natation", "Boxe/Lutte", "Armes de mêlée à 2 mains", "Forge", "Haute Magie Élémentaire"],
+    AGI: ["Acrobatie", "Escamotage/Pickpocket", "Crochetage", "Équitation", "Arts Martiaux", "Armes de Lancer", "Artisanat", "Haute Magie Kinésique", "Navigation éthérée", "Armurerie", "Bricolage", "Navigation maritime"],
+    INT: ["Savoirs théoriques", "Investigation", "Persuasion", "Négoce (entre pros)", "Haute Magie d'Arcanes", "Théologie", "Stratégie militaire", "Tactique militaire", "Orientation éthérée", "Jeu", "Herboristerie", "Génie/Fortifications"],
+    PER: ["Chasse/Pistage", "Discrétion", "Observation", "Orientation", "Armes de jet", "Haute Magie d'Illusions", "Pilotage éthéré", "Survie"],
+    MAI: ["Intimidation", "Médecine", "Bluff", "Armes de Mêlée à une main", "Magie Cyber", "Systèmes éthérés", "Artillerie éthérée"],
+    CHA: ["Étiquette", "Radio couloir", "Théâtre", "Chant", "Musique", "Danse", "Soins Vétérinaires", "Cuisine", "Baratin", "Haute Magie de Vie", "Commandement", "Séduction", "Dressage"]
+  };
+
+  // Compétences sans Trait lié : leur score ne compte que la composante de Niveau.
+  const NO_TRAIT_SKILLS = ["Foi"];
+
+  // Compétences à éligibilité restreinte : nom -> fonction(race) -> booléen.
+  const SKILL_RESTRICTIONS = {
+    "Magie Cyber": (race) => race.name === "Terrien"
+  };
+
+  function isSkillEligible(name, race) {
+    const rule = SKILL_RESTRICTIONS[name];
+    return rule ? rule(race) : true;
+  }
+
+  const ALL_SKILLS = [
+    ...Object.entries(SKILLS_BY_TRAIT).flatMap(([trait, names]) =>
+      names.map(name => ({ name, trait }))
+    ),
+    ...NO_TRAIT_SKILLS.map(name => ({ name, trait: null }))
+  ];
+
+  function skillTrait(name) {
+    return ALL_SKILLS.find(s => s.name === name).trait;
+  }
+
+  // Compétences "candidates" à la maîtrise pour chaque Métier — doit rester en rapport avec le Métier.
+  const METIER_SKILLS = {
+    "Forgeron": ["Forge", "Armes de mêlée à 2 mains", "Armes de Mêlée à une main", "Artisanat", "Armurerie"],
+    "Marchand": ["Négoce (entre pros)", "Persuasion", "Étiquette", "Savoirs théoriques"],
+    "Officier": ["Commandement", "Armes de Mêlée à une main", "Étiquette", "Stratégie militaire"],
+    "Sous-Officier": ["Armes de Mêlée à une main", "Armes de mêlée à 2 mains", "Commandement", "Intimidation", "Tactique militaire"],
+    "Soldat de ligne": ["Armes de Mêlée à une main", "Armes de mêlée à 2 mains", "Armurerie", "Boxe/Lutte"],
+    "Soldat de tir": ["Armes de jet", "Armes de Mêlée à une main", "Armes de Lancer", "Armurerie"],
+    "Garde du corps": ["Armes de Mêlée à une main", "Armes de mêlée à 2 mains", "Intimidation", "Armurerie", "Boxe/Lutte"],
+    "Voleur": ["Escamotage/Pickpocket", "Crochetage", "Discrétion", "Acrobatie", "Observation"],
+    "Aubergiste": ["Cuisine", "Baratin", "Étiquette", "Radio couloir", "Bluff", "Négoce (entre pros)"],
+    "Serveur": ["Radio couloir", "Cuisine", "Baratin", "Séduction"],
+    "Ménestrel": ["Chant", "Musique", "Radio couloir", "Séduction", "Théâtre"],
+    "Danseur": ["Danse", "Chant", "Baratin", "Séduction"],
+    "Mendiant": ["Observation", "Discrétion", "Radio couloir", "Bluff"],
+    "Haut Mage": ["Haute Magie Élémentaire", "Haute Magie Kinésique", "Haute Magie d'Arcanes", "Haute Magie d'Illusions", "Haute Magie de Vie"],
+    "Prêtre": ["Foi", "Théologie", "Baratin", "Étiquette", "Savoirs théoriques"],
+    "Médecin": ["Médecine", "Soins Vétérinaires", "Baratin", "Observation", "Savoirs théoriques"],
+    "Artisan": ["Artisanat", "Savoirs théoriques", "Négoce (entre pros)", "Étiquette", "Persuasion"],
+    "Soldat terrien": ["Magie Cyber", "Armes de jet", "Armes de Mêlée à une main", "Observation", "Armurerie"],
+    "Capitaine éthéré": ["Pilotage éthéré", "Orientation éthérée", "Négoce (entre pros)", "Observation", "Commandement"],
+    "Ingénieur éthéré": ["Systèmes éthérés", "Observation", "Persuasion", "Bricolage", "Commandement"],
+    "Marin éthéré": ["Navigation éthérée", "Escalade", "Armes de jet", "Baratin", "Jeu", "Artillerie éthérée"],
+    "Canonnier éthéré": ["Artillerie éthérée", "Observation", "Systèmes éthérés", "Intimidation", "Navigation éthérée"],
+    "Herboriste": ["Herboristerie", "Savoirs théoriques", "Investigation", "Médecine", "Négoce (entre pros)"],
+    "Eclaireur": ["Chasse/Pistage", "Discrétion", "Orientation", "Survie", "Armes de jet"],
+    "Palefrenier": ["Équitation", "Dressage", "Soins Vétérinaires", "Observation", "Baratin"],
+    "Ingénieur militaire": ["Génie/Fortifications", "Bricolage", "Artisanat", "Stratégie militaire", "Observation"],
+    "Marin": ["Navigation maritime", "Natation", "Armes de jet", "Orientation", "Baratin"],
+    "Assassin": ["Discrétion", "Herboristerie", "Crochetage", "Armes de jet", "Bluff"],
+    "Politicien": ["Étiquette", "Baratin", "Bluff", "Discrétion", "Radio couloir"]
+  };
+
+  // Compétences de combat comptant dans le calcul des Points de Santé.
+  const COMBAT_SKILLS = ["Armes de Mêlée à une main", "Armes de mêlée à 2 mains", "Armes de jet", "Armes de Lancer", "Arts Martiaux"];
+
+  const TABLES = {
+    metier: ['Artisan', 'Assassin', 'Aubergiste', 'Canonnier éthéré', 'Capitaine éthéré', 'Danseur', 'Eclaireur', 'Forgeron', 'Garde du corps', 'Haut Mage',
+	'Herboriste', 'Ingénieur militaire', 'Ingénieur éthéré', 'Marchand', 'Marin', 'Marin éthéré', 'Mendiant', 'Médecin', 'Ménestrel', 'Officier', 'Palefrenier',
+	'Politicien', 'Prêtre', 'Serveur', 'Soldat de ligne', 'Soldat de tir', 'Soldat terrien', 'Sous-Officier', 'Voleur'],
+    trait: ['Aucun', 'Bavard incorrigible', 'Boiteux', 'Borgne', 'Brûlures anciennes', 'Bègue', 'Calculateur froid', 'Cicatrice au visage',
+	'Collectionneur compulsif', "Craint l'autorité", 'Crâne rasé', 'Dents en or', "Direct jusqu'à la brutalité", 'Doigts manquants', "Econome à l'excès",
+	"Empathique à l'excès", 'Fataliste', 'Flatteur', 'Fume la pipe sans arrêt', "Généreux à l'excès", 'Hyperactif', 'Impulsif', 'Insomniaque',
+	'Jure constamment', 'Kleptomane', 'Mains calleuses', 'Menteur compulsif', 'Mâchouille quelque chose en permanence', 'Mémoire eidétique',
+	'Nostalgique du passé', 'Obsédé du détail', 'Paranoïaque', 'Parle tout seul', 'Peau tachetée', 'Perfectionniste', "Peur de l'eau",
+	'Peur des hauteurs', 'Piercings multiples', 'Provocateur', 'Rit nerveusement', 'Rituel superstitieux (sel, portes...)', 'Rêveur distrait',
+	'Superstitieux', 'Taciturne', 'Tatouages tribaux', 'Toujours en retard', 'Toujours ivre', 'Très grand pour sa race', 'Très petit pour sa race',
+	'Voix rauque', 'Yeux vairons'],
+    disposition: ['Agressif', 'Amical', 'Autoritaire', 'Bavard', 'Chaleureux', 'Condescendant', 'Craintif', 'Curieux', 'Distant', 'Enjoué',
+	'Flatteur', 'Froid', 'Hostile', 'Indifférent', 'Manipulateur', 'Méfiant', 'Mélancolique', 'Nerveux', 'Neutre', 'Réservé', 'Serviable']
+  };
+  // --- Génération de noms par famille de sonorités ---
+  // Chaque race est rattachée à une famille phonétique (regroupement thématique, pas lié à
+  // l'Époque). Toute race non listée retombe sur "Commune" par sécurité (ex. nouvelles races).
+  const NAME_FAMILIES = {
+    // Elfique
+    "Sindars (Ht-Elfe)": "Elfique", "Eldars (purs)": "Elfique", "Elfaele (bois)": "Elfique",
+    "Elfant (commun)": "Elfique", "Elf gris (voyageurs)": "Elfique", "Sylvaele (forêts)": "Elfique",
+    "Ishtar (maléf.)": "Elfique",
+    // Naine
+    "Khuzdûl": "Naine", "Khuzun (monta.)": "Naine", "Khuzdâal": "Naine", "Khuzdin (monta.)": "Naine",
+    "Nain gris (cités)": "Naine", "Keldrun (bâtisseur)": "Naine",
+    // Orque / Bestiale (brutes, guerriers frustes)
+    "Troll": "Orque", "Minathros": "Orque", "Minautore (merc.)": "Orque", "Ogre": "Orque",
+	"Sharkar (maléf.)": "Orque", "Urkur (esclavage)": "Orque", "Ergegh (orc marais)": "Orque", "Orc commun": "Orque",
+    // Gobeline / Sylvestre (petites créatures rusées)
+    "Gobelach (arboric)": "Gobeline", "Grob (nomades)": "Gobeline", "Gobelin (pillards)": "Gobeline",
+    "Kobold (cupide)": "Gobeline", "Lutin (farceurs)": "Gobeline",
+    // Maritime
+    "Sirènes (eau)": "Maritime", "Méduses (eau)": "Maritime", "Fyloadaele (eau)": "Maritime",
+    // Nordique
+	"Cheresque": "Nordique", "Noriog": "Nordique", "Varegh (vikings)": "Nordique",
+	// Petit Peuple (halfelins, gnomes, hobbits)
+    "Drasniens": "PetitPeuple", "Halfling (marchand)": "PetitPeuple", "Pied-velu (comté)": "PetitPeuple",
+    "Gnolain (Paysan)": "PetitPeuple", "Gnome (villes)": "PetitPeuple",
+    "Hobbits": "PetitPeuple",
+    // Savante / Arcanique
+    "Illithid": "Arcanique", "Sirlings (exilés)": "Arcanique", "Gehanga": "Arcanique",
+    "Arcanes (march.)": "Arcanique",
+    // Féline / Bestiale
+    "Rasha (tigres)": "Feline", "Homme-chat": "Feline",
+    // Reptilienne
+    "H.-lézard (désert)": "Reptilienne", "Varach (dominat.)": "Reptilienne", "Tsrang (voyages)": "Reptilienne",
+    // Chtonienne (créatures souterraines)
+    "Souatar": "Chtonienne", "Gnomer (grottes)": "Chtonienne",
+    // Terrienne (technologique)
+    "Terrien": "Terrienne",
+    // Commune (humains et apparentés au parler familier)
+    "Sendar": "Commune", "Dotrak": "Commune", "Alorien": "Commune", "Felas (voleurs)": "Commune"
+  };
+
+  const FAMILY_SYLLABLES = {
+    Elfique: { starts: ["Ael", "Fae", "Sil", "Thal", "Elo", "Ny", "Cael", "Lor"], middles: ["an", "il", "ar", "en", "ia", "orn", "ael", "ith"], ends: ["wen", "ndil", "iel", "rion", "ithil", "ael", "wyn", "eth"] },
+    Naine: { starts: ["Thor", "Grim", "Dur", "Bal", "Ur", "Kor", "Brok", "Thra"], middles: ["un", "ar", "ok", "im", "ad", "or", "ub", "an"], ends: ["gar", "in", "ok", "nir", "dun", "grim", "vald", "grun"] },
+    Orque: { starts: ["Grosh", "Mog", "Uzg", "Karn", "Drak", "Vor", "Gul", "Rok"], middles: ["ar", "uk", "ag", "or", "ub", "az", "um", "ok"], ends: ["ash", "uk", "gor", "nak", "thûl", "gash", "urz", "mog"] },
+    Gobeline: { starts: ["Snik", "Grib", "Fen", "Pik", "Wick", "Zog", "Nib", "Rik"], middles: ["i", "a", "u", "ek", "ol", "ip", "un", "et"], ends: ["it", "le", "nak", "o", "us", "ig", "ub", "az"] },
+    Maritime: { starts: ["Mar", "Cor", "Nael", "Thal", "Sel", "Vand", "Isol", "Or"], middles: ["in", "an", "el", "ia", "or", "en", "al", "is"], ends: ["ys", "wyn", "ora", "ien", "mer", "ea", "line", "wen"] },
+    Nordique: { starts: ["Bjor", "Rag", "Sig", "Ing", "Gun", "Ulf", "Thor", "Sten"], middles: ["val", "mund", "fri", "bor", "ast", "var", "gard", "hild"], ends: ["n", "nar", "rik", "ar", "vald", "ulf", "grim", "stein", "rid", "veig"] },
+    PetitPeuple: { starts: ["Bram", "Tobi", "Mira", "Rosie", "Wil", "Dodi", "Perrin", "Nan"], middles: ["o", "a", "e", "in", "ol", "an", "ie", "un"], ends: ["ble", "son", "let", "dock", "gold", "erin", "y", "ick"] },
+    Arcanique: { starts: ["Zar", "Vex", "Quor", "Nyx", "Ith", "Cael", "Mor", "Xan"], middles: ["an", "or", "ex", "yl", "ath", "in", "ax", "ur"], ends: ["ion", "eth", "ux", "aal", "yss", "um", "ath", "iel"] },
+    Feline: { starts: ["Kesh", "Ra", "Sil", "Mia", "Zash", "Thae", "Nyra", "Kael"], middles: ["a", "i", "an", "ash", "el", "ir", "un", "ay"], ends: ["ara", "iss", "eth", "kai", "rr", "una", "esh", "iah"] },
+    Reptilienne: { starts: ["Sss", "Kaa", "Zir", "Vosh", "Xish", "Aar", "Ssen", "Vrix"], middles: ["a", "i", "ss", "ak", "ix", "or", "esh", "ath"], ends: ["akk", "iss", "othl", "ess", "aka", "ith", "kir", "asss"] },
+    Chtonienne: { starts: ["Um", "Gor", "Vash", "Krel", "Ondu", "Meph", "Dol", "Nix"], middles: ["an", "ur", "ol", "eth", "ash", "un", "or", "ib"], ends: ["ok", "ith", "aal", "um", "or", "esh", "gul", "en"] },
+    Terrienne: { starts: ["Jon", "Mar", "Der", "Kev", "Bran", "Nat", "Adr", "Gunt", "Er", "Dex"], middles: ["ath", "cus", "an", "ek", "on", "ian", "in", "ar"], ends: ["an", "k", "don", "han", "ek", "us", "en", "her", "s", "ter", "ard", "son", "ic", "ik"] },
+    Commune: { starts: ["Al", "Ber", "Ros", "Jan", "Tho", "Mar", "Hen", "Ed"], middles: ["an", "in", "or", "el", "ar", "en", "ard", "ol"], ends: ["ric", "ta", "lin", "ald", "wen", "ick", "ry", "mond"] }
+  };
+
+  const FAMILY_SURNAMES = {
+    Elfique: ["de la Rosée", "Filsdesbois", "de l'Aube", "Feuilloré", "des Brumes", "Lunargent"],
+    Naine: ["Barbenoire", "Forgefer", "Poing-de-roc", "Marteaulourd", "Clandesfer", "Barbedegranit"],
+    Orque: ["Brise-crâne", "Dents-rouges", "Peaudures", "Griffenoire", "Poing-sanglant", "Brisecrocs"],
+    Gobeline: ["Doigts-agiles", "Trois-Nez", "Petit-Vol", "Racine-tordue", "Sac-à-butin", "Filoux"],
+    Maritime: ["des Vagues", "Écume", "Filsdelamer", "des Profondeurs", "Marée-basse", "Sel-et-Vent"],
+    Nordique: ["Peau-de-loup", "Barbe-glacée", "Fils des Fjords", "Poing-de-givre", "l'Intrépide", "Sang-de-fer"],
+    PetitPeuple: ["Bonpain", "Piedléger", "Chaudron", "Bouled'Or", "Terrier", "Vieuxtonneau"],
+    Arcanique: ["l'Érudit", "des Arcanes", "Œil-de-savoir", "Grimoire", "des Sceaux", "Prisme"],
+    Feline: ["Griffe-douce", "Œil-de-chat", "Patte-agile", "Moustache", "Ombre-féline", "Ronron"],
+    Reptilienne: ["Écaille-dure", "Langue-fourchue", "Dent-de-pierre", "du Sable", "Peau-sèche"],
+    Chtonienne: ["des Ombres", "Sans-lumière", "Écho-profond", "du Gouffre", "Roche-noire"],
+    Terrienne: ["Circuit", "Voltage", "Néon", "Pixel", "Cortex", "Silicium"],
+    Commune: ["Lefèvre", "Dubois", "Leroy", "Petit", "Lambert", "Girard", "Marchand", "Fontaine"]
+  };
+
+  // Surnoms optionnels liés au Métier (tirés ~40% du temps, ajoutés entre guillemets au nom complet).
+  const METIER_NICKNAMES = {
+    "Forgeron": ["Marteau-de-fer", "Enclume", "Fer-Ardent", "le Forgemaître", "Étincelle", "Bras-de-Fer", "Souffle-de-Forge", "Marteau-Sûr"],
+    "Marchand": ["Bourse-pleine", "Beau-Parleur", "le Négociant", "Balance-Juste", "Bon-Compte", "la Rusée", "Sac-d'Écus", "l'Habile"],
+    "Officier": ["Sabre-d'Or", "Voix-qui-Porte", "le Stratège", "Regard-d'Acier", "Ligne-Droite", "le Commandant", "Épaulette-Fière", "Sang-Froid"],
+    "Sous-Officier": ["Poing-Ferme", "l'Instructeur", "Voix-Rauque", "le Discipliné", "Pas-Cadencé", "l'Endurant", "Sifflet-d'Acier", "le Rigoureux"],
+    "Soldat de ligne": ["Bouclier-Solide", "le Vétéran", "Rang-Tenu", "Pied-Ancré", "l'Increvable", "Mur-Vivant", "Lame-Usée", "le Loyal"],
+    "Soldat de tir": ["Œil-de-Faucon", "la Flèche", "Souffle-Retenu", "Main-Sûre", "le Précis", "Vent-Lu", "Corde-Tendue", "l'Infaillible"],
+    "Garde du corps": ["le Rempart", "Ombre-Fidèle", "Bouclier-Vivant", "l'Inébranlable", "Regard-Constant", "Mur-de-Chair", "le Silencieux", "Garde-Rapproché"],
+    "Voleur": ["Doigts-Légers", "l'Ombre", "Pas-Feutré", "la Furtive", "Crochet-d'Or", "Poche-Vide", "le Fantôme", "Main-Preste"],
+    "Aubergiste": ["Bonne-Chère", "la Tenancière", "Chope-Pleine", "le Hâbleur", "Feu-de-l'Âtre", "la Généreuse", "Bedaine-Ronde", "l'Accueillant"],
+    "Serveur": ["Plateau-Leste", "le Souriant", "Pas-Rapide", "la Discrète", "Chope-Prompte", "l'Attentif", "Tablier-Taché", "la Vive"],
+    "Ménestrel": ["Corde-d'Or", "la Voix-Claire", "Rime-Facile", "le Baladin", "Doigts-Agiles", "la Mélodieuse", "Refrain-Entêtant", "le Conteur"],
+    "Danseur": ["Pas-Léger", "Tourbillon", "Grâce-Vive", "le Souple", "Pied-Ailé", "la Virevoltante", "Rythme-Sûr", "l'Élégant"],
+    "Mendiant": ["Main-Tendue", "le Loqueteux", "Regard-Suppliant", "la Discrète", "Bol-Vide", "l'Oublié", "Manteau-Usé", "le Résigné"],
+    "Haut Mage": ["l'Arcaniste", "Flamme-Savante", "Regard-Perçant", "la Sage", "Grimoire-Vivant", "l'Érudit", "Éclair-de-Savoir", "la Mystique"],
+    "Prêtre": ["le Dévot", "Lumière-Pieuse", "Voix-Bénie", "la Consacrée", "Main-Bienveillante", "l'Humble", "Cœur-Pur", "la Fervente"],
+    "Médecin": ["Mains-Guérisseuses", "la Salvatrice", "le Secoureur", "Onguent-Sûr", "la Patiente", "Regard-Attentif", "le Bienfaiteur", "Pouls-Sûr"],
+    "Artisan": ["Mains-Habiles", "le Méticuleux", "Œil-Précis", "la Minutieuse", "Outil-Fidèle", "le Perfectionniste", "Doigts-Fins", "la Créative"],
+    "Soldat terrien": ["Circuit-Chaud", "l'Augmenté", "Puce-Vive", "le Cybernétique", "Câble-Tendu", "la Blindée", "Réflexe-Rapide", "l'Implanté"],
+    "Capitaine éthéré": ["Vent-Portant", "la Boussole", "Cap-Assuré", "le Navigateur", "Voile-Tenue", "l'Intrépide", "Cieux-Ouverts", "la Vigie"],
+    "Ingénieur éthéré": ["Rouages-Fins", "l'Inventeur", "Vis-Sûre", "la Bricoleuse", "Moteur-Chaud", "le Perfectionniste", "Étincelle-Vive", "la Mécanicienne"],
+    "Marin éthéré": ["Voile-Haute", "l'Ancré", "Vent-de-Poupe", "la Timonière", "Cordage-Sûr", "le Vigilant", "Brise-Portante", "la Naviguée"],
+    "Canonnier éthéré": ["Poudre-Noire", "le Tonnerre", "Mèche-Courte", "la Précise", "Boulet-Sûr", "l'Explosif", "Souffle-Ardent", "la Détonante"],
+    "Herboriste": ["Doigts-Verts", "la Cueilleuse", "Racine-Sûre", "le Guérisseur", "Parfum-des-Bois", "la Connaisseuse", "Feuille-Fine", "l'Attentive"],
+    "Éclaireur": ["Pas-Silencieux", "l'Œil-Vif", "Piste-Sûre", "la Rapide", "Vent-Discret", "le Traqueur", "Sens-Aiguisé", "la Furtive"],
+    "Palefrenier": ["Bride-Douce", "l'Ami-des-Bêtes", "Main-Calme", "la Patiente", "Sabot-Sûr", "le Soigneux", "Crinière-Brossée", "la Douce"],
+    "Ingénieur militaire": ["Pierre-Angulaire", "le Bâtisseur", "Plan-Précis", "la Rigoureuse", "Mur-Solide", "l'Architecte", "Poutre-Sûre", "la Constructrice"],
+    "Marin": ["Sel-aux-Yeux", "le Loup-de-Mer", "Vent-Debout", "la Tempétueuse", "Corde-Rêche", "l'Increvable", "Horizon-Lointain", "la Marinière"],
+    "Assassin": ["Silence-Mortel", "la Lame-Discrète", "Pas-Feutré", "l'Invisible", "Poison-Doux", "la Furtive", "Ombre-Silencieuse", "le Sans-Nom"]
+  };
+
+  // Familles où le nom de famille est un patronyme : un prénom (re-tiré indépendamment) + un
+  // suffixe fixe, plutôt qu'une liste d'épithètes toutes faites.
+  const PATRONYMIC_SUFFIX = {
+    "Nordique": "son",
+    "Orque": "ash",
+    "Gobeline": "agh"
+  };
+
+  function generatePrenomLike(family) {
+    const syl = FAMILY_SYLLABLES[family];
+    const milieu = Math.random() < 0.5 ? pick(syl.middles) : "";
+    return pick(syl.starts) + milieu + pick(syl.ends).toLowerCase();
+  }
+
+  // --- Noms de famille par chaîne de Markov (ordre 3, au niveau des caractères) ---
+  // Le corpus d'entraînement est lui-même une centaine de prénoms générés par la famille
+  // concernée : ça donne des noms de famille qui "sonnent" comme la famille sans avoir besoin
+  // de vrais noms d'emprunt (utile pour des familles inventées comme Elfique ou Naine).
+  const MARKOV_ORDER = 3;
+
+  function buildMarkovModel(words, order) {
+    const model = {};
+    words.forEach(word => {
+      const s = "^".repeat(order) + word.toLowerCase() + "$";
+      for (let i = 0; i <= s.length - order - 1; i++) {
+        const ctx = s.slice(i, i + order);
+        const next = s[i + order];
+        if (!model[ctx]) model[ctx] = [];
+        model[ctx].push(next);
+      }
+    });
+    return model;
+  }
+
+  function generateMarkovWord(model, order, minLen, maxLen) {
+    let best = "";
+    for (let attempt = 0; attempt < 20; attempt++) {
+      let full = "^".repeat(order);
+      for (let i = 0; i < maxLen; i++) {
+        const ctx = full.slice(-order);
+        const options = model[ctx];
+        if (!options) break;
+        const next = pick(options);
+        if (next === "$") break;
+        full += next;
+      }
+      const result = full.slice(order);
+      if (result.length >= minLen) return result;
+      if (result.length > best.length) best = result;
+    }
+    return best || "or";
+  }
+
+  function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  // Modèles de Markov (ordre 3) pré-entraînés sur 100 prénoms générés par famille,
+  // exportés une fois via l'outil temporaire puis figés ici (voir historique du projet).
+  // Une ligne par famille pour rester lisible malgré la taille des données.
+  const MARKOV_SURNAME_MODELS_DATA = {
+    "Elfique": {"^^^":["n","f","n","f","n","f","t","t","t","s","f","l","t","s","c","t","n","n","n","c","n","c","f","c","l","e","t","f","c","f","l","f","s","n","f","e","e","e","f","a","a","n","e","n","a","c","a","n","e","f","n","t","t","n","l","t","n","a","c","l","l","f","s","a","l","f","f","e","a","l","c","e","e","f","l","n","s","t","t","s","t","t","a","n","t","e","t","l","c","a","t","a","s","c","t","t","s","n","n","a"],"^^n":["y","y","y","y","y","y","y","y","y","y","y","y","y","y","y","y","y","y"],"^ny":["i","a","w","e","o","i","r","n","a","n","i","n","i","i","i","n","i","i"],"nyi":["a","a","a","t","a","t","t","e"],"yia":["w","n","w","w"],"iaw":["e","y","e","e"],"awe":["n","n","n"],"wen":["$","$","$","$","$","$","$","$","$","$","$","$","$","$"],"^^f":["a","a","a","a","a","a","a","a","a","a","a","a","a","a","a"],"^fa":["e","e","e","e","e","e","e","e","e","e","e","e","e","e","e"],"fae":["e","a","a","e","i","i","a","n","a","i","e","i","i","a","a"],"aee":["n","n","n"],"een":["n","e","i"],"enn":["d","d","d"],"nnd":["i","i","i","i","i"],"ndi":["l","l","l","l","l","l","l","l","l","l","l","l","l","l","l","l","l","l","l","l","l","l"],"dil":["$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$"],"nya":["n","n"],"yan":["w","i"],"anw":["e","e","e","e","e","e"],"nwe":["n","n","n","n","n","n","n"],"aea":["n","e","e","e","r","r"],"ean":["e"],"ane":["t"],"net":["h","h","h"],"eth":["$","$","$","$","$","$","$","$","$","$","$","$"],"nyw":["e"],"ywe":["n"],"eae":["l","l","l"],"ael":["a","$","r","$","a","e","i","n","$","w","$","i","$","e","a","i","e","$","n","$","a","e","n","a","$","i","e","a","$","r","a","$","i","i","n","a","n"],"ela":["e","e","n","r","n","n","e","r"],"lae":["l","l","l","l"],"^^t":["h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h"],"^th":["a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a"],"tha":["l","l","l","l","l","l","e","l","l","l","l","l","l","l","l","l","l","l","l"],"hal":["r","a","e","i","r","a","r","i","w","e","i","a","n","a","a","e","w","i"],"alr":["i","i","i"],"lri":["o","o","o","o","o","o"],"rio":["n","n","n","n","n","n","n","n","n","n","n"],"ion":["$","$","$","$","$","$","$","$","$","$","$"],"ala":["n","n","n","n","e"],"lan":["n","w","n","w","w","i","w"],"ann":["d","d"],"ale":["n","n","t"],"len":["n","a","a"],"^^s":["i","i","i","i","i","i","i","i"],"^si":["l","l","l","l","l","l","l","l"],"sil":["r","i","i","i","o","i","e","i"],"ilr":["i"],"ene":["t"],"^^l":["o","o","o","o","o","o","o","o","o","o"],"^lo":["r","r","r","r","r","r","r","r","r","r"],"lor":["i","e","i","i","a","a","i","a","a","i","i","n","w"],"ori":["l","t","o","a","o","e"],"ril":["n"],"iln":["d","d"],"lnd":["i","i","i","i","i","i","i","i"],"ali":["t","t","e","a"],"lit":["h","h","h","h","h","h","h","h","h","h","h"],"ith":["w","i","i","i","i","n","i","a","i","i","i","i","i","i","e","i","w","i","i","w","n"],"thw":["e","y","e"],"hwe":["n","n"],"ili":["l","t","t","e","t","l"],"lil":["i","n"],"thi":["l","e","l","l","l","l","l","l","e","l","l","e","l","l"],"hil":["$","$","$","$","$","$","$","$","$","$","$"],"^^c":["a","a","a","a","a","a","a","a","a","a"],"^ca":["e","e","e","e","e","e","e","e","e","e"],"cae":["l","l","l","l","l","l","l","l","l","l"],"elr":["i","i"],"nye":["n"],"yen":["a"],"ena":["e","e","e"],"nae":["l","l","l"],"nyo":["r"],"yor":["n"],"orn":["w","e","i","r"],"rnw":["e"],"ian":["d"],"and":["i"],"ele":["t","t","n","t","t"],"let":["h","h","h","h","h","h"],"nyr":["i"],"yri":["o"],"eli":["t","t","t","t","t","t"],"hie":["l","l","l"],"iel":["$","$","$","$","$","$","$","$","$","$","$","$","$","$"],"aei":["a","e","t","e","a"],"eia":["i","a"],"iai":["t","e","e"],"ait":["h"],"eln":["d","d","d","d","d"],"ore":["t"],"ret":["h","h"],"^^e":["l","l","l","l","l","l","l","l","l","l"],"^el":["o","o","o","o","o","o","o","o","o","o"],"elo":["a","r","i","e","o","a","i","r","i","o"],"loa":["e","e"],"oae":["l","l"],"eie":["l","l"],"elw":["e"],"lwe":["n"],"rit":["h"],"aen":["d"],"end":["i"],"thn":["d","d"],"hnd":["i","i"],"nyn":["d","d","d","d"],"ynd":["i","i","i","i"],"loi":["e","a","t"],"oie":["l"],"loe":["n"],"oen":["n"],"eit":["h"],"hae":["l"],"^^a":["e","e","e","e","e","e","e","e","e","e","e"],"^ae":["l","l","l","l","l","l","l","l","l","l","l"],"ani":["t","t"],"nit":["h","h","h"],"loo":["r","r"],"oor":["n","n"],"rne":["t"],"awy":["n"],"wyn":["$","$","$","$","$","$"],"eni":["t"],"yit":["h","h","h"],"ora":["r","e","n","e"],"rar":["i"],"ari":["e"],"rie":["l","l"],"alw":["y","y"],"lwy":["n","n"],"lar":["n","e"],"arn":["d"],"rnd":["i"],"rae":["l","l"],"ria":["i"],"aie":["l","l"],"lie":["l","l"],"ran":["w"],"iaa":["e"],"aae":["l"],"ear":["r","w"],"arr":["i"],"rri":["o"],"oia":["w"],"oit":["h"],"the":["t"],"het":["h"],"arw":["y"],"rwy":["n","n"],"ilo":["r"],"rni":["e"],"nie":["l"],"hwy":["n"],"aln":["d"],"rnr":["i"],"nri":["o"],"orw":["y"],"ile":["t"],"are":["t"],"lia":["i"],"yie":["l"]},
+    "Naine": {"^^^":["b","u","u","t","b","t","b","d","g","g","k","b","t","b","d","g","d","t","k","d","t","k","k","u","g","t","g","u","b","k","k","d","b","b","t","d","t","t","t","t","b","u","g","t","k","k","b","g","k","b","k","t","g","d","u","t","b","d","g","b","b","u","d","u","t","b","b","b","t","d","d","d","d","u","t","u","k","t","t","u","k","k","d","k","u","k","t","b","b","u","b","t","b","b","u","t","u","d","d","t"],"^^b":["r","r","a","r","a","r","a","r","r","a","r","a","r","r","r","a","r","r","a","r","r","r"],"^br":["o","o","o","o","o","o","o","o","o","o","o","o","o","o","o"],"bro":["k","k","k","k","k","k","k","k","k","k","k","k","k","k","k"],"rok":["g","$","a","d","d","g","a","g","g","v","a","u","i","v","o","o","$","n","o","g","g","i","g","u","g"],"okg":["r","r","a","a","r","r","r","r","r"],"kgr":["i","u","i","i","u","i","u"],"gri":["m","m","m","m","m","m","m","m","m","m","m","m","m","m","m","m","m","m","m","m","m","m","m","m","m"],"rim":["$","$","g","$","u","n","u","$","g","$","n","o","a","n","g","$","$","a","$","g","$","$","$","$","$","$","$","v","$"],"^^u":["r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"],"^ur":["o","g","g","o","o","a","o","g","a","d","d","o","o","o","i"],"uro":["k","k","r","k","r","k","k","k","k"],"urg":["r","a","r","r"],"rgr":["u","i","i","u","u","u","i","i","u","i"],"gru":["n","n","n","n","n","n","n","n","n","n","n"],"run":["$","i","$","$","$","v","$","$","n","$","$","$","i","$","$","i"],"^^t":["h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h"],"^th":["r","r","o","o","o","r","r","o","o","r","r","o","o","r","o","r","r","o","r","r","o","r","r"],"thr":["a","a","a","a","a","a","a","a","a","a","a","a","a"],"hra":["g","d","u","o","a","d","g","n","u","o","u","i","u"],"rag":["r","a"],"agr":["i"],"oka":["r","n","d"],"kar":["v"],"arv":["a"],"rva":["l","l","l","l","l","l"],"val":["d","d","d","d","d","d","d","d","d","d","d","d"],"ald":["$","$","$","$","$","$","$","$","$","$","$","$"],"rad":["u","g","n","u","g","g"],"adu":["n","n"],"dun":["$","$","$","$","$","$","$","$","$","$","$","$","$"],"^ba":["l","l","l","l","l","l","l"],"bal":["a","g","g","a","g","u","a"],"ala":["n","r","r"],"lan":["d"],"and":["u","u","u"],"ndu":["n","n","n"],"^^d":["u","u","u","u","u","u","u","u","u","u","u","u","u","u","u","u"],"^du":["r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"],"dur":["u","o","o","a","i","v","g","a","i","i","a","a","v","d","u","a"],"uru":["n","n"],"uni":["n","n","n"],"nin":["$","$","$","$"],"^^g":["r","r","r","r","r","r","r","r","r"],"^gr":["i","i","i","i","i","i","i","i","i"],"img":["r","r","a","r","r"],"mgr":["i","u","i","i"],"imu":["n","n"],"mun":["o","o"],"uno":["k","k","k"],"nok":["$","$","$","$"],"^^k":["o","o","o","o","o","o","o","o","o","o","o","o","o","o","o"],"^ko":["r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"],"kor":["d","i","a","i","u","g","o","u","a","v","g","v","u","v","g","o"],"ord":["u"],"rdu":["n","n","n","n","n"],"okd":["u","u"],"kdu":["n","n"],"tho":["r","r","r","r","r","r","r","r","r","r"],"hor":["i","g","g","n","a","i","n","g","o","n"],"ori":["m","m","n","n","n"],"imn":["i","i","i"],"mni":["r","r","r"],"nir":["$","$","$","$","$","$","$","$","$","$","$"],"alg":["r","a","r"],"lgr":["u","i"],"ror":["g","g","i"],"org":["a","r","r","r","r","r","a","a"],"rga":["r","r","r","r","r"],"gar":["$","$","$","$","$","$","$","$","$","$","$","$","$"],"ura":["n","n","r","r","r","d","d"],"ran":["d","d","v","i"],"ora":["d","d","n"],"adg":["a","a","r","r"],"dga":["r","r"],"rin":["$","$","$","$","$","$"],"rau":["b","n","n","b"],"aub":["o","d"],"ubo":["k"],"bok":["$"],"imo":["k"],"mok":["$"],"kan":["i"],"ani":["n","r"],"oru":["n","n","n"],"unv":["a","a"],"nva":["l","l","l"],"uri":["n","m","n","m"],"lga":["r"],"kga":["r","r"],"rao":["k","k"],"aok":["i","$"],"oki":["n","m","n"],"kin":["$","$"],"urv":["a","a"],"orn":["i","i","i"],"rni":["r","r","r"],"adn":["i"],"dni":["r"],"raa":["d"],"aad":["i"],"adi":["n"],"din":["$"],"ima":["r","n"],"mar":["i"],"ari":["n"],"oro":["k","r","k"],"okv":["a","a"],"kva":["l","l"],"unn":["i","i"],"nni":["r","r"],"lar":["d","g"],"ard":["u"],"kad":["g"],"orv":["a","a","a"],"mga":["r"],"anv":["a"],"aga":["r"],"rar":["g","o","g"],"arg":["r","a","r"],"man":["o"],"ano":["k"],"oku":["n","n"],"kun":["v","n"],"kim":["g"],"oko":["r","k","k"],"alu":["n"],"lun":["g"],"ung":["r","a"],"ngr":["i"],"kok":["g","$"],"aro":["k"],"dgr":["u","i"],"aun":["o","g"],"urd":["u","u","u"],"okn":["i"],"kni":["r"],"nga":["r"],"rai":["n"],"ain":["$"],"imv":["a"],"mva":["l"],"ubd":["u"],"bdu":["n"]},
+    "Maritime": {"^^^":["n","m","m","o","m","m","s","c","t","v","m","s","t","n","c","n","s","m","m","i","n","s","i","s","s","v","c","n","n","t","o","t","m","c","t","n","i","m","s","t","t","v","i","i","i","c","m","i","m","c","n","v","t","o","v","v","c","o","v","n","c","s","m","n","n","m","o","n","s","n","c","v","c","t","t","i","n","c","c","m","v","i","v","o","o","c","m","o","s","i","i","n","s","o","v","m","m","m","n","m"],"^^n":["a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a"],"^na":["e","e","e","e","e","e","e","e","e","e","e","e","e","e","e","e"],"nae":["l","l","l","l","l","l","l","l","l","l","l","l","l","l","l","l"],"ael":["i","i","w","i","e","w","y","l","i","l","e","w","e","e","i","e"],"eli":["e","e","e","s","e","a"],"lie":["n","n","n","n","n","n","n"],"ien":["$","$","$","$","$","$","$","$","$","$"],"^^m":["a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a"],"^ma":["r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"],"mar":["i","a","i","m","e","e","i","e","i","a","y","e","m","o","m","y","i","a","e"],"ari":["s","n","s","s","n"],"ris":["o","i","y","m","y"],"iso":["r","l","l","l","l","l","l","l","r","l","l","l","l"],"sor":["a","a"],"ora":["$","$","$","$","$","$","$","$","$","$","n","$","$","$","$","l","$","$","n","$","$","$"],"ara":["n","l","n"],"ran":["w","e","o","y"],"anw":["y"],"nwy":["n","n","n"],"wyn":["$","$","$","$","$","$","$","$"],"^^o":["r","r","r","r","r","r","r","r","r"],"^or":["o","i","a","o","i","a","e","o","e"],"oro":["r","r","r","r","r","r"],"ror":["a","a","a","a","a","y","e"],"rin":["w","w"],"inw":["y","e"],"arm":["e","e","e"],"rme":["r","r","r","r"],"mer":["$","$","$","$","$","$","$","$","$","$","$","$"],"^^s":["e","e","e","e","e","e","e","e","e","e","e"],"^se":["l","l","l","l","l","l","l","l","l","l","l"],"sel":["a","m","e","e","e","m","m","w","y","a","i"],"ela":["l","l"],"lal":["y","o"],"aly":["s","s"],"lys":["$","$","$","$","$","$","$"],"^^c":["o","o","o","o","o","o","o","o","o","o","o","o","o"],"^co":["r","r","r","r","r","r","r","r","r","r","r","r","r"],"cor":["o","i","w","o","e","e","e","i","e","a","y","m","l"],"^^t":["h","h","h","h","h","h","h","h","h","h"],"^th":["a","a","a","a","a","a","a","a","a","a"],"tha":["l","l","l","l","l","l","l","l","l","l"],"hal":["e","y","o","e","a","o","i","w","e","i"],"ale":["n","n","a"],"len":["y","o","y","w"],"eny":["s","s","s"],"nys":["$","$","$","$"],"^^v":["a","a","a","a","a","a","a","a","a","a","a"],"^va":["n","n","n","n","n","n","n","n","n","n","n"],"van":["d","d","d","d","d","d","d","d","d","d","d"],"and":["i","m","e","i","m","y","e","m","o","a","e"],"ndi":["s","e"],"dis":["e"],"ise":["a","a"],"sea":["$","$"],"are":["a","n","n","a","l"],"rea":["$","$","$"],"elm":["e","e","e","e"],"lme":["r","r","r","r"],"ori":["e","s","a","s"],"rie":["n"],"elw":["y","e","y","y","y"],"lwy":["n","n","n","n","n"],"ele":["a","a","a","a","n","a","l","l"],"lea":["$","$","$","$","$","$","$","$"],"ren":["y","l","e","o","o","o","w"],"isi":["e"],"sie":["n"],"^^i":["s","s","s","s","s","s","s","s","s","s","s"],"^is":["o","o","o","o","o","o","o","o","o","o","o"],"sol":["o","i","y","i","e","o","i","e","e","i","e"],"olo":["r","r"],"lor":["a","o","a","a","a","a"],"oli":["s","e","e","s"],"lis":["e","o","l"],"ndm":["e","e","e"],"dme":["r","r","r"],"orw":["e"],"rwe":["n"],"wen":["$","$","$","$","$","$"],"lwe":["n","n","n"],"alo":["r","r","r"],"isy":["s","s"],"sys":["$","$"],"eno":["r","r","r","r"],"nor":["a","a","a","a","a"],"enl":["i"],"nli":["n"],"lin":["e","e","e","e","e","e","e"],"ine":["$","$","$","$","$","$","$"],"ala":["n"],"lan":["e"],"ane":["a","a","a"],"nea":["$","$","$","$","$"],"ely":["s","s","s","s"],"oly":["s"],"ism":["e"],"sme":["r"],"ali":["e","a","n"],"nde":["l","a","n"],"del":["y"],"ole":["a","a","n","l"],"ore":["n","n","l","n","n","a","n"],"ene":["a","a"],"ral":["w","w"],"alw":["e","y","e"],"ary":["s","s"],"rys":["$","$","$","$"],"ell":["i","i","i"],"lli":["n","n","n"],"die":["n"],"ndy":["s"],"dys":["$"],"rel":["l","w"],"dea":["$"],"ria":["o"],"iao":["r"],"aor":["a"],"lia":["y","l"],"iay":["s"],"ays":["$"],"lel":["o","y","m"],"elo":["r"],"ory":["s","s"],"orm":["e"],"aro":["r"],"ndo":["r"],"dor":["a"],"enw":["y","e"],"nda":["n"],"dan":["e"],"ano":["r"],"orl":["i"],"rli":["n"],"isl":["i"],"sli":["n"],"ial":["i"],"nwe":["n","n"],"den":["e"],"any":["s"]},
+    "PetitPeuple": {"^^^":["p","r","n","w","m","t","w","w","m","t","t","p","d","r","p","n","w","b","p","r","w","w","p","t","r","m","r","t","r","d","b","b","b","t","r","d","p","m","p","b","m","d","t","m","n","r","m","b","n","b","d","n","w","p","n","d","p","m","d","w","d","n","m","r","r","r","t","m","r","b","d","w","p","r","r","n","t","n","t","m","p","w","d","r","p","w","m","m","p","t","n","d","p","w","b","n","d","w","p","m"],"^^p":["e","e","e","e","e","e","e","e","e","e","e","e","e","e","e"],"^pe":["r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"],"per":["r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"],"err":["i","i","i","i","i","i","i","i","i","i","i","i","i","i","i"],"rri":["n","n","n","n","n","n","n","n","n","n","n","n","n","n","n"],"rin":["a","$","$","i","e","i","a","$","$","$","i","i","$","g","$","u","$","$","$","a","$","$","$","y","g","$","i","o","a","$"],"ina":["n","g","i","g"],"nan":["d","u","b","d","l","u","e","d","b","e","l","i"],"and":["o","o","o"],"ndo":["c","c","c","c"],"doc":["k","k","k","k","k","k","k","k","k","k","k"],"ock":["$","$","$","$","$","$","$","$","$","$","$"],"^^r":["o","o","o","o","o","o","o","o","o","o","o","o","o","o","o"],"^ro":["s","s","s","s","s","s","s","s","s","s","s","s","s","s","s"],"ros":["i","i","i","i","i","i","i","i","i","i","i","i","i","i","i"],"osi":["e","e","e","e","e","e","e","e","e","e","e","e","e","e","e"],"sie":["i","o","o","y","d","i","u","l","o","u","o","a","i","i","b"],"iei":["e","e","c","e"],"eie":["g","e","e"],"ieg":["o","o"],"ego":["l","l","l"],"gol":["d","d","d","d","d","d","d","d","d","d","d","d","d","d","d","d","d"],"old":["$","$","$","$","$","$","o","$","$","$","$","$","$","$","$","$","$","$"],"^^n":["a","a","a","a","a","a","a","a","a","a","a"],"^na":["n","n","n","n","n","n","n","n","n","n","n"],"anu":["n","n"],"nun":["g","g","s"],"ung":["o","o"],"ngo":["l","l","l","l"],"^^w":["i","i","i","i","i","i","i","i","i","i","i","i","i"],"^wi":["l","l","l","l","l","l","l","l","l","l","l","l","l"],"wil":["s","o","b","o","e","l","d","e","i","o","o","i","a"],"ils":["o"],"lso":["n"],"son":["$","$","$","$","$","$","$","$","$","$","$","$","$"],"^^m":["i","i","i","i","i","i","i","i","i","i","i","i","i","i"],"^mi":["r","r","r","r","r","r","r","r","r","r","r","r","r","r"],"mir":["a","a","a","a","a","a","a","a","a","a","a","a","a","a"],"ira":["a","g","e","d","y","g","l","a","s","e","e","i","e","a"],"raa":["s","n","n"],"aas":["o"],"aso":["n","n","n","n"],"^^t":["o","o","o","o","o","o","o","o","o","o","o"],"^to":["b","b","b","b","b","b","b","b","b","b","b"],"tob":["i","i","i","i","i","i","i","i","i","i","i"],"obi":["s","g","e","i","u","a","u","o","e","b","g"],"bis":["o"],"iso":["n"],"ilo":["e","l","s","e"],"loe":["r","r"],"oer":["i","i","i"],"eri":["n","n","n","n","n","n","n","n","n","n","n","n","n","n","n"],"ilb":["l"],"lbl":["e"],"ble":["$","$","$","$","$","$","$","$","$","$","$"],"rag":["o","o"],"ago":["l","l","l","l","l"],"big":["o","o"],"igo":["l","l","l"],"bie":["r","y"],"ier":["i"],"ini":["e","e","c","e","e"],"nie":["s","s","y","d"],"ies":["o","o"],"eso":["n","n"],"^^d":["o","o","o","o","o","o","o","o","o","o","o","o"],"^do":["d","d","d","d","d","d","d","d","d","d","d","d"],"dod":["i","i","i","i","i","i","i","i","i","i","i","i"],"odi":["l","i","i","g","i","a","o","u","o","i","o","y"],"dil":["e"],"ile":["t","i","b"],"let":["$","$","$","$","$","$","$","$","$","$","$"],"ieo":["g","i","b","y"],"eog":["o"],"ogo":["l"],"ine":["b"],"neb":["l"],"ebl":["e","e","e","e"],"anb":["l","l"],"nbl":["e","e","e"],"lol":["g"],"olg":["o"],"lgo":["l"],"^^b":["r","r","r","r","r","r","r","r","r"],"^br":["a","a","a","a","a","a","a","a","a"],"bra":["m","m","m","m","m","m","m","m","m"],"ram":["o","l","a","i","i","e","b","i","s"],"amo":["l"],"mol":["d"],"ldo":["c","c"],"eoi":["c"],"oic":["k","k","k"],"ick":["$","$","$","$","$","$","$","$","$","$","$"],"lei":["c"],"eic":["k","k"],"ill":["e"],"lle":["t"],"nag":["o","o"],"bii":["n"],"iin":["l"],"inl":["e"],"nle":["t","t","t","t"],"iey":["$","$","$","$"],"rae":["r","r","r","g"],"aer":["i","i","i"],"ied":["o","o","o","o"],"edo":["c","c","c","c"],"biu":["n","n"],"iun":["e","d","y"],"une":["r"],"ner":["i","i","i"],"iee":["r","r"],"eer":["i","i","i"],"dii":["c","e","e","e"],"iic":["k"],"aml":["e"],"mle":["t"],"ama":["s"],"mas":["o"],"ami":["e","c","e"],"mie":["d","l"],"bia":["n"],"ian":["l"],"anl":["e","e","e"],"ieu":["n","n"],"eun":["i","b"],"uni":["c"],"nic":["k","k"],"iie":["y","b","g"],"rad":["o"],"ado":["c"],"mic":["k"],"ray":["$"],"dig":["o"],"und":["o"],"iel":["e","e","e"],"ele":["t","t","t"],"ral":["e"],"ale":["t"],"ame":["r"],"mer":["i"],"amb":["l"],"mbl":["e"],"ieb":["l","l"],"ild":["o"],"ing":["o","o"],"ane":["r","e","r"],"dia":["i"],"iai":["c"],"aic":["k","k"],"inu":["n"],"uns":["o"],"nso":["n","n","n"],"aan":["s","e"],"ans":["o"],"dio":["i","l","y"],"ioi":["c"],"leb":["l"],"diu":["n"],"uny":["$"],"ras":["o"],"eob":["l"],"obl":["e"],"unb":["l"],"eoy":["$"],"bio":["e"],"ioe":["r"],"iea":["s"],"eas":["o"],"iol":["e"],"ole":["r"],"ler":["i"],"ili":["e","n"],"lie":["l"],"nai":["c"],"nee":["r"],"bib":["l"],"ibl":["e"],"iny":["$","$"],"los":["o"],"oso":["n"],"rai":["e"],"aie":["d"],"aeg":["o"],"ioy":["$"],"ino":["i"],"noi":["c"],"lin":["s"],"ins":["o"],"ams":["o"],"mso":["n"],"ani":["n"],"nin":["y"],"diy":["$"],"ila":["g"],"lag":["o"]},
+    "Arcanique": {"^^^":["c","i","v","q","x","i","q","x","z","c","v","m","c","c","q","m","q","n","i","i","m","n","x","c","q","z","q","c","q","q","v","i","x","c","x","m","x","n","m","n","v","c","v","z","m","q","c","x","n","c","v","z","c","q","m","q","n","q","v","v","x","x","z","c","z","v","x","n","z","x","v","v","q","q","i","n","z","v","c","x","z","n","x","x","c","q","n","q","c","z","z","v","x","i","c","i","v","i","i","v"],"^^c":["a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a"],"^ca":["e","e","e","e","e","e","e","e","e","e","e","e","e","e","e","e"],"cae":["l","l","l","l","l","l","l","l","l","l","l","l","l","l","l","l"],"ael":["u","i","e","a","a","y","u","y","i","u","i","i","y","a","y","a"],"elu":["x","m","m"],"lux":["$"],"^^i":["t","t","t","t","t","t","t","t","t","t"],"^it":["h","h","h","h","h","h","h","h","h","h"],"ith":["i","i","u","u","i","u","e","a","u","i"],"thi":["e","o","o","o","e","e"],"hie":["l","l","l"],"iel":["$","$","$","$","$","$","$","$","$","$"],"^^v":["e","e","e","e","e","e","e","e","e","e","e","e","e","e","e"],"^ve":["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],"vex":["i","a","u","y","u","i","e","a","o","u","a","y","a","a","a"],"exi":["n","o","o"],"xin":["y","a"],"iny":["s","s"],"nys":["s","s","s","s"],"yss":["$","$","$","$","$","$","$","$","$","$","$","$","$"],"^^q":["u","u","u","u","u","u","u","u","u","u","u","u","u","u","u","u"],"^qu":["o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o"],"quo":["r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"],"uor":["i","a","y","a","a","a","e","u","u","u","y","y","o","i","i","u"],"ori":["e","o","o","o","o","n"],"rie":["l","l","l","l"],"^^x":["a","a","a","a","a","a","a","a","a","a","a","a","a","a","a"],"^xa":["n","n","n","n","n","n","n","n","n","n","n","n","n","n","n"],"xan":["e","i","u","y","i","i","y","a","a","a","u","y","i","e","u","y","i"],"ane":["t","x"],"net":["h","h"],"eth":["$","$","$","$","$","$","$"],"hio":["n","n","n"],"ion":["$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$"],"ora":["x","x","t","x","t","t","x","a"],"rax":["a","u","u","y","u","e","i","u"],"axa":["a","t","t"],"xaa":["l","l"],"aal":["$","$","$","$","$","$","$","$","$","$"],"ani":["o","e","n","n","e"],"nio":["n","n"],"^^z":["a","a","a","a","a","a","a","a","a","a","a"],"^za":["r","r","r","r","r","r","r","r","r","r","r"],"zar":["a","i","i","i","u","a","a","i","a","a","y"],"ara":["x","a","x","x","x"],"axu":["m","x","x","x"],"xum":["$","$","$","$"],"eli":["n","o","o","o"],"lin":["i"],"ini":["o"],"exa":["n","t","t","x","a","x","t"],"anu":["x","x","x"],"nux":["$","$","$"],"^^m":["o","o","o","o","o","o","o"],"^mo":["r","r","r","r","r","r","r"],"mor":["a","i","a","o","e","u","a"],"xux":["$","$","$","$","$"],"ele":["x"],"lex":["e"],"exe":["t","t"],"xet":["h","h","h"],"ela":["a","t","n","t"],"laa":["l","l","l"],"ory":["s","l","s"],"rys":["s","s","s"],"rio":["n","n","n","n","n","n","n"],"rat":["h","h","h","h","h"],"ath":["$","$","$","y","$","$","i","$","$","$","$","$","$","$","$","$","$","i"],"^^n":["y","y","y","y","y","y","y","y","y","y"],"^ny":["x","x","x","x","x","x","x","x","x","x"],"nyx":["e","a","u","a","a","i","y","u","y","a"],"yxe":["x"],"xex":["a"],"xat":["h","h","h","h","h","h","h"],"thu":["r","m","m","r"],"hur":["u","a"],"uru":["x"],"rux":["$","$","$"],"hum":["$","$"],"axy":["s"],"xys":["s","s"],"yxa":["x","t","n","t"],"xax":["a","a","i"],"any":["s","s","l","l"],"lat":["h","h","h"],"thy":["s"],"hys":["s"],"ari":["e","o","o","e"],"ely":["l","s","l","l"],"lyl":["a","y","u"],"yla":["a","t","a"],"ore":["x","x"],"rex":["u","i"],"exu":["m","x","m","m","x"],"oru":["m","r","x","x","m"],"rum":["$","$","$"],"nie":["l","l"],"lum":["$","$","$","$"],"nin":["u","y"],"inu":["m"],"num":["$"],"oro":["r","r"],"ror":["i","a"],"yxu":["r","r"],"xur":["i","a"],"uri":["e","o"],"xio":["n","n","n"],"exy":["s","l"],"lys":["s","s","s"],"rur":["i"],"lio":["n","n","n","n"],"ana":["t","a","t","a"],"nat":["h","h","h"],"naa":["l","l"],"ryl":["y"],"yly":["s","s"],"yxi":["n"],"ina":["t"],"aru":["m"],"raa":["l","l"],"exo":["r"],"xor":["i"],"nyl":["a","u"],"yxy":["l","l"],"xyl":["e","a","i"],"yle":["t"],"let":["h"],"axe":["t"],"ura":["t","t"],"nex":["u"],"axi":["o","e"],"yli":["o"],"ylu":["m","m"],"lan":["a"],"rin":["e"],"ine":["t"],"ary":["s"],"the":["t"],"het":["h"],"tha":["a"],"haa":["l"],"xie":["l"]},
+    "Feline": {"^^^":["n","s","k","n","r","t","n","n","k","z","z","s","n","r","z","s","r","r","n","z","t","z","m","k","k","z","t","k","k","z","t","k","k","n","k","t","m","r","r","r","t","r","z","z","z","k","k","t","m","z","r","t","t","t","r","k","r","m","k","t","z","s","n","t","s","s","r","k","k","s","k","t","m","n","n","m","k","z","z","z","s","t","n","r","z","n","k","n","k","t","m","s","s","k","m","n","k","m","n","z"],"^^n":["y","y","y","y","y","y","y","y","y","y","y","y","y","y","y"],"^ny":["r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"],"nyr":["a","a","a","a","a","a","a","a","a","a","a","a","a","a","a"],"yra":["e","a","i","a","a","a","i","e","u","e","a","e","i","r","a"],"rae":["s","s","t","l","t","l"],"aes":["h","h","h","h"],"esh":["$","a","$","i","$","r","a","a","r","$","$","$","$","$","u","e","e","a","$","i","e","$","a","$"],"^^s":["i","i","i","i","i","i","i","i","i","i"],"^si":["l","l","l","l","l","l","l","l","l","l"],"sil":["u","a","e","i","u","a","u","i","k","e"],"ilu":["n","n","n"],"lun":["a","k","a","a"],"una":["$","$","$","$","r","$","$","$","r","$","$","$"],"^^k":["e","e","e","e","a","a","e","a","e","a","a","a","e","e","e","e","a","a","e","e","e"],"^ke":["s","s","s","s","s","s","s","s","s","s","s","s","s"],"kes":["h","h","h","h","h","h","h","h","h","h","h","h","h"],"sha":["s","n","i","r","a","n","u","k","r","r","y","s","r","n","u"],"has":["h","h"],"ash":["k","i","r","a","i","a","i","a","r","i","i","a","e","e","i","a","i","a","i","a","a","e","e","a","u","a","r","i"],"shk":["a"],"hka":["i"],"kai":["$","$","$","$","$","$","$","$","$","$"],"raa":["s","n","s","y","u","s","s","s","r","s","s","r"],"aas":["h","h","h","h","h","h","h","h","h"],"shi":["s","r","k","s","r","a","r","r","s","a","s"],"his":["s","s","s","s"],"iss":["$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$"],"^^r":["a","a","a","a","a","a","a","a","a","a","a","a","a"],"^ra":["a","a","e","a","i","a","a","i","i","i","e","a","i"],"aan":["r"],"anr":["r","r","r"],"nrr":["$","$","$","$","$"],"^^t":["h","h","h","h","h","h","h","h","h","h","h","h","h","h","h"],"^th":["a","a","a","a","a","a","a","a","a","a","a","a","a","a","a"],"tha":["e","e","e","e","e","e","e","e","e","e","e","e","e","e","e"],"hae":["e","u","a","u","i","e","u","i","i","a","k","i","k","e","i"],"aee":["s","l","t"],"ees":["h"],"rai":["s","a","r","r","a","s","i","a"],"ais":["s","s","s","s"],"shr":["r","r","r","r","r"],"hrr":["$","$","$","$","$"],"hir":["i","u","r","a"],"iri":["s"],"ris":["s"],"^^z":["a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a"],"^za":["s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s"],"zas":["h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h"],"han":["a","r","r"],"ana":["r"],"nar":["a","a","a"],"ara":["$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$"],"hik":["a"],"ika":["i"],"ila":["i","r"],"lai":["a","s"],"aia":["h","h","h","h"],"iah":["$","$","$","$","$","$","$","$","$","$","$"],"aay":["i","i","a"],"ayi":["s","s"],"yis":["s","s"],"aau":["n"],"aun":["a","e","a","r","a","a","e"],"hai":["s"],"ile":["t","l"],"let":["h"],"eth":["$","$","$","$","$","$","$","$","$"],"har":["a","a","a","a"],"aeu":["n","n","n"],"eun":["a","a","e"],"iru":["n"],"run":["a"],"^^m":["i","i","i","i","i","i","i","i","i"],"^mi":["a","a","a","a","a","a","a","a","a"],"mia":["u","e","a","a","u","e","a","a","u"],"iau":["n","n","n"],"une":["t","s","s"],"net":["h"],"haa":["r"],"aar":["a","a","a"],"hia":["h","r"],"aea":["r","e"],"ear":["a"],"^ka":["e","e","e","e","e","e","e","e"],"kae":["l","l","l","l","l","l","l","l"],"ael":["a","i","i","e","a","e","k","a","r","k"],"ela":["y","n","i"],"lay":["r"],"ayr":["r"],"yrr":["$"],"eli":["a","i","a"],"lia":["h","h","h"],"hau":["n","n"],"lii":["s"],"iis":["s","s"],"aei":["s","a","a","a","s"],"eis":["s","s"],"iae":["s","t"],"air":["r","r"],"irr":["$","r","$"],"she":["t","l","t","t","s","l","s"],"het":["h","h","h"],"eel":["i"],"rrr":["$"],"hel":["r","u"],"elr":["r","r"],"lrr":["$","$"],"hak":["a"],"aka":["i"],"ele":["s","s"],"les":["h","h"],"lan":["i"],"ani":["s"],"nis":["s"],"nes":["h","h"],"iaa":["y","s","y","s"],"ira":["r","r"],"rar":["a","a","r"],"eia":["h","h","h"],"eae":["s"],"aet":["h","h","h"],"shu":["n","n"],"hun":["r","a"],"unr":["r","r"],"aek":["a","a"],"eka":["i","i"],"ili":["r","a"],"lir":["a"],"elk":["a","a","a"],"lka":["i","i","i","i"],"unk":["a"],"nka":["i"],"lar":["a"],"hay":["u"],"ayu":["n"],"yun":["a"],"rau":["n"],"hes":["h","h"],"elu":["n"],"eet":["h"],"aii":["s"],"iar":["a"],"aya":["r"],"yar":["a"],"ilk":["a"],"lel":["k"],"arr":["$"]},
+    "Reptilienne": {"^^^":["k","s","s","z","v","v","x","k","v","a","s","v","s","s","v","v","v","v","s","z","s","v","k","v","v","a","x","z","k","s","v","z","v","x","k","z","x","k","k","x","v","z","v","s","x","s","x","s","v","s","k","x","x","x","v","v","z","k","z","x","k","s","s","a","v","v","v","s","k","a","s","a","v","z","x","x","v","v","s","s","v","a","z","z","v","s","k","s","s","v","s","s","z","v","v","v","s","v","x","x"],"^^k":["a","a","a","a","a","a","a","a","a","a","a","a"],"^ka":["a","a","a","a","a","a","a","a","a","a","a","a"],"kaa":["o","k","e","o","a","o","e","o","k","a","s","k"],"aao":["r","t","t","r"],"aor":["a","o"],"ora":["k","k","k","s","s","k"],"rak":["k","a","k","a","a","k"],"akk":["$","$","$","i","$","$","$","$","$"],"^^s":["s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s"],"^ss":["s","e","s","e","s","e","e","e","e","e","e","e","s","e","s","e","s","s","s","s","s","e","e","e"],"sss":["a","$","$","s","s","a","o","$","$","$","$","$","i","$","a","$","$","$","$","$","e","a","$","o","a","o","$"],"ssa":["a","s","k","k","t","s","s","i","t"],"saa":["k"],"aak":["k","i","a","a","i","i"],"sse":["n","n","n","n","n","n","n","n","n","n","n","s","n","n","n"],"sen":["o","a","i","a","e","e","a","e","k","o","s","k","a","a"],"eno":["t","r"],"not":["h"],"oth":["l","l","l","l","l","l","l","l","l","l","l","l","l","l","l","l"],"thl":["$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$"],"^^z":["i","i","i","i","i","i","i","i","i","i","i","i"],"^zi":["r","r","r","r","r","r","r","r","r","r","r","r"],"zir":["i","a","o","a","e","i","a","k","a","i","o","k"],"iri":["s","o","s"],"ris":["s","s"],"iss":["$","$","$","$","$","$","$","$","$","$","$"],"^^v":["r","o","r","r","o","r","o","r","o","r","o","o","r","o","r","o","r","o","r","o","o","o","r","o","o","o","o","r","r","o","o"],"^vr":["i","i","i","i","i","i","i","i","i","i","i","i","i"],"vri":["x","x","x","x","x","x","x","x","x","x","x","x","x"],"rix":["i","a","a","e","a","i","a","a","i","o","e","s","k"],"ixi":["x","t","x","x"],"xix":["i","o","e"],"xit":["h"],"ith":["$","$","$","$","$","$"],"^vo":["s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s"],"vos":["h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h"],"osh":["i","i","i","a","a","o","i","a","i","o","i","a","i","i","a","a","a","i"],"shi":["a","s","s","s","o","e","s","s","x","s","s"],"hia":["s"],"ias":["s"],"ass":["s","s","s","s","s","s","s","s","a","s","s","s","s","s","s","s"],"^^x":["i","i","i","i","i","i","i","i","i","i","i","i","i","i","i"],"^xi":["s","s","s","s","s","s","s","s","s","s","s","s","s","s","s"],"xis":["h","h","h","h","h","h","h","h","h","h","h","h","h","h","h"],"ish":["s","e","i","o","a","e","o","s","o","k","a","e","a","k","e"],"shs":["s","s"],"hss":["a","a"],"sas":["s","s","s"],"aki":["r","r","r","r"],"kir":["$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$"],"ixa":["t","k","t","k","k"],"xat":["h","h"],"ath":["k","a","e","e","i","e"],"thk":["i"],"hki":["r","r","r","r","r"],"^^a":["a","a","a","a","a","a"],"^aa":["r","r","r","r","r","r"],"aar":["i","a","i","o","a","a"],"ari":["a","t"],"ria":["k"],"iak":["a"],"aka":["$","$","$","$","$","$","k","$","$","$","$","$","$","s"],"sak":["k","k"],"xak":["a","a","a"],"ena":["k","a","k","k","i"],"nak":["e","k","i"],"ake":["s","s"],"kes":["s","s"],"ess":["$","$","$","$","$","$","$","$","$","$","$","$","$","$"],"sso":["r","r","t"],"sor":["a","a"],"his":["s","s","s","s","s","s","s"],"ixe":["s","s","s"],"xes":["h","s","s"],"esh":["k","i","k","a","a","a"],"shk":["i","i","i","i"],"tha":["k"],"hak":["a","a","a","e","k","k","a"],"eni":["k"],"nik":["i"],"iki":["r"],"ira":["k","s","s","s"],"kki":["r"],"naa":["k"],"sha":["o","t","k","k","s","a","k","k","s","k","s","o","k"],"hao":["t","t"],"aot":["h","h","h","h"],"aae":["s","s"],"aes":["s","h"],"ixo":["t","t"],"xot":["h","h"],"hat":["h"],"the":["s","s","s"],"hes":["s","s","s","s","h","s","s"],"ara":["i","k","t"],"rai":["s"],"ais":["s"],"she":["s","s","s","s"],"iro":["r","t"],"ror":["k","a"],"ork":["i"],"rki":["r","r","r"],"ene":["s","s","s"],"nes":["h","h","h"],"sho":["t","r","t","t","t"],"hot":["h","h","h","h"],"ras":["s","s","s","s","s"],"hio":["t"],"iot":["h","h"],"aaa":["k","s"],"kak":["a"],"ire":["s"],"res":["s"],"hor":["a"],"hie":["s"],"ies":["s"],"rio":["t"],"has":["s","s","s"],"haa":["s"],"aas":["s","s","s"],"enk":["i","i"],"nki":["r","r"],"oro":["t"],"rot":["h","h"],"irk":["i","i"],"ssi":["t","s"],"sit":["h"],"nor":["a"],"rit":["h"],"sat":["h","h"],"aro":["r"],"ens":["s"],"nss":["a"],"hix":["k"],"ixk":["i","i"],"xki":["r","r"],"ses":["s"],"sai":["t"],"ait":["h","h"],"rat":["h"],"thi":["t"],"hit":["h"],"sot":["h"],"ixs":["s"],"xss":["i"],"sis":["s"],"kas":["s"],"nai":["t"]},
+    "Chtonienne": {"^^^":["m","n","m","n","m","m","m","m","g","o","d","u","u","m","v","u","u","v","u","g","u","d","o","k","v","k","m","g","o","n","o","g","k","n","v","n","n","g","n","v","o","m","m","v","n","d","k","m","u","g","v","v","k","u","n","m","k","g","u","u","g","o","n","k","d","u","k","n","k","g","d","n","n","m","n","v","g","u","g","k","k","u","u","n","n","o","u","k","o","v","v","k","k","m","m","d","v","v","m","n"],"^^m":["e","e","e","e","e","e","e","e","e","e","e","e","e","e","e","e"],"^me":["p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p"],"mep":["h","h","h","h","h","h","h","h","h","h","h","h","h","h","h","h"],"eph":["o","u","e","u","e","i","u","g","u","u","o","e","a","u","i","a"],"pho":["r","l"],"hor":["o","$","$","o","$"],"oro":["k","l","k","k","r","r","r","k"],"rok":["$","$","$","$","$"],"^^n":["i","i","i","i","i","i","i","i","i","i","i","i","i","i","i","i","i"],"^ni":["x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x","x"],"nix":["u","i","o","e","o","a","u","e","e","e","o","i","a","o","e","u","u"],"ixu":["m","m","n","m"],"xum":["$","$","$"],"phu":["r","r","r","n","r","m"],"hur":["i","u","u","u","a"],"uri":["t"],"rit":["h","h","h","h"],"ith":["$","$","$","$","$","$","$","$","$","$","$","$","$","$"],"ixi":["b","t"],"xib":["o"],"ibo":["k","r","k","k"],"bok":["$","$","$"],"phe":["t","s","s"],"het":["h","h","h"],"eth":["e","o","o","g","a","i","e","a"],"the":["s","s"],"hes":["h","h","h","h","h"],"esh":["$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$"],"uru":["m","m","m"],"rum":["$","$","$","$"],"phi":["t","t"],"hit":["h","h","h","h"],"^^g":["o","o","o","o","o","o","o","o","o","o","o"],"^go":["r","r","r","r","r","r","r","r","r","r","r"],"gor":["u","o","a","o","i","e","i","o","o","o","a"],"oru":["m"],"^^o":["n","n","n","n","n","n","n","n"],"^on":["d","d","d","d","d","d","d","d"],"ond":["u","u","u","u","u","u","u","u"],"ndu":["a","e","u","e","g","a","i","e"],"dua":["n","n"],"uan":["o","u"],"ano":["k","k"],"nok":["$","$","$"],"^^d":["o","o","o","o","o","o"],"^do":["l","l","l","l","l","l"],"dol":["o","i","o","e","i","i"],"olo":["r","k","l","r"],"lor":["$","$","i"],"^^u":["m","m","m","m","m","m","m","m","m","m","m","m","m","m","m"],"^um":["o","a","o","e","e","o","i","a","a","a","e","i","u","e","o"],"umo":["k","r","l","k"],"mok":["$","$"],"uma":["s","a","s","n"],"mas":["h","h"],"ash":["e","u","e","e","a","g","a","i","a","a","o","u","o","e","o","o","o","g","a","u"],"she":["n","t","t","s"],"hen":["$"],"^^v":["a","a","a","a","a","a","a","a","a","a","a","a","a"],"^va":["s","s","s","s","s","s","s","s","s","s","s","s","s"],"vas":["h","h","h","h","h","h","h","h","h","h","h","h","h"],"shu":["r","m","m"],"mor":["$"],"ume":["t","s","t","s"],"met":["h","h"],"tho":["k","k"],"hok":["$","$","$"],"mes":["h","h"],"rol":["o"],"lok":["$"],"mol":["e"],"ole":["n","s","n"],"len":["$","$","$"],"oli":["b","b","b"],"lib":["a","g","o","o","o"],"iba":["a"],"baa":["l"],"aal":["$","$","$","$","$","$","$","$","$","$","$"],"due":["n","s","s"],"uen":["$"],"^^k":["r","r","r","r","r","r","r","r","r","r","r","r","r","r"],"^kr":["e","e","e","e","e","e","e","e","e","e","e","e","e","e"],"kre":["l","l","l","l","l","l","l","l","l","l","l","l","l","l"],"rel":["u","e","i","i","u","u","e","i","e","a","o","a","a","e"],"elu":["n","r","m"],"lun":["u"],"unu":["m"],"num":["$","$","$"],"thg":["u"],"hgu":["l","l","l","l"],"gul":["$","$","$","$","$","$"],"ele":["n","s","s","t"],"phg":["u"],"ora":["n","s"],"ran":["i"],"ani":["t","t","t"],"nit":["h","h","h"],"duu":["r"],"uur":["o"],"uro":["k"],"ixo":["l","k","r","r"],"xol":["a"],"ola":["a"],"laa":["l","l"],"ues":["h","h"],"eli":["b","t","b"],"ibg":["u"],"bgu":["l"],"ixe":["t","t","s","s","s"],"xet":["h","h"],"tha":["a","a"],"haa":["l","l","l","l"],"sha":["s","n","a","n","s"],"has":["h","h","h"],"shg":["u","u"],"xok":["$"],"ixa":["a","n"],"xaa":["l"],"ori":["t","t","t"],"han":["a","i"],"ana":["a"],"naa":["l"],"dug":["u"],"ugu":["l"],"hun":["o"],"uno":["k"],"ura":["a"],"raa":["l"],"shi":["t"],"thi":["t"],"lol":["o"],"lit":["h"],"hol":["e"],"les":["h","h","h"],"umi":["b","b"],"mib":["e","u"],"ibe":["s"],"bes":["h"],"ore":["n","n","n","n"],"ren":["$","$","$","$"],"lur":["e"],"ure":["s"],"res":["h"],"maa":["l"],"xes":["h","h","h"],"lum":["$"],"sho":["r","r","k","r","r"],"man":["o"],"anu":["m","m"],"bor":["$"],"xor":["e","e"],"ror":["o","$","e"],"xit":["h"],"xan":["u"],"pha":["s","a"],"hum":["$","$","$"],"ibu":["m"],"bum":["$"],"ras":["h"],"ela":["s","a","n"],"las":["h"],"elo":["r"],"umu":["m"],"mum":["$"],"xun":["e"],"une":["s"],"nes":["h"],"dui":["t"],"uit":["h"],"lan":["i"],"let":["h"]},
+    "Terrienne": {"^^^":["j","d","b","m","d","m","g","e","j","d","e","g","a","e","d","b","b","d","a","e","j","m","k","m","d","d","d","m","m","k","b","d","d","m","g","b","d","b","b","d","g","k","d","e","d","a","j","d","k","j","e","e","k","a","b","n","n","k","g","g","e","n","d","e","n","b","m","g","n","e","k","d","j","d","d","d","n","k","m","d","a","k","j","d","g","a","g","b","m","k","g","a","b","b","d","n","m","k","k","m"],"^^j":["o","o","o","o","o","o","o"],"^jo":["n","n","n","n","n","n","n"],"jon":["a","a","c","e","a","o","a"],"ona":["t","r","r","r","r","r"],"nat":["h","h","s","e","a","h","a","e","s"],"ath":["h","t","a","d","i"],"thh":["a"],"hha":["n"],"han":["$","$","$","$","$","$","$","$","$","$","$","$","$"],"^^d":["e","e","e","e","e","e","e","e","e","e","e","e","e","e","e","e","e","e","e","e","e","e","e"],"^de":["x","x","x","x","x","r","x","x","r","x","x","r","r","r","x","x","r","r","r","r","x","x","r"],"dex":["c","a","e","i","i","a","h","k","i","i","h","i","i"],"exc":["u"],"xcu":["s"],"cus":["u","u","a","k","d","a","h","i"],"usu":["s","s"],"sus":["$","$"],"^^b":["r","r","r","r","r","r","r","r","r","r","r","r"],"^br":["a","a","a","a","a","a","a","a","a","a","a","a"],"bra":["n","n","n","n","n","n","n","n","n","n","n","n"],"ran":["o","o","a","k","e","t","o","t","s","a","$","$","h","i","a"],"ano":["n","n","n"],"non":["i","s","h","h"],"oni":["k"],"nik":["$","$"],"^^m":["a","a","a","a","a","a","a","a","a","a","a","a"],"^ma":["r","r","r","r","r","r","r","r","r","r","r","r"],"mar":["k","s","i","a","a","t","e","e","e","o","a","h"],"ark":["$","$"],"exa":["r","r"],"xar":["a","d"],"ara":["r","t","n","r","n","r"],"rar":["d","i","a","d","k","d","d","d"],"ard":["$","$","$","$","$","$","$","$","$","$","o"],"ars":["o","$"],"rso":["n"],"son":["$","$","$","$"],"^^g":["u","u","u","u","u","u","u","u","u","u"],"^gu":["n","n","n","n","n","n","n","n","n","n"],"gun":["t","t","t","t","t","t","t","t","t","t"],"unt":["i","e","i","e","i","k","a","k","a","c"],"nti":["k","n","c"],"tik":["$"],"^^e":["r","r","r","r","r","r","r","r","r","r"],"^er":["e","h","i","c","i","a","i","a","a","a"],"ere":["k"],"rek":["h","$","$","s","s","$"],"ekh":["a","e","e"],"kha":["n"],"nar":["s","e","d","e","d","a","d"],"exe":["k"],"xek":["$"],"erh":["e","a"],"rhe":["r"],"her":["$","$","$","$","$","$","$","$"],"nte":["k","r","r","r","k"],"tek":["h","$","k","h"],"khe":["r","r"],"^^a":["d","d","d","d","d","d","d"],"^ad":["r","r","r","r","r","r","r"],"adr":["d","u","c","a","o","e","i"],"drd":["o"],"rdo":["n","n","n"],"don":["$","$","$","$","$","$"],"eri":["c","c","n","a"],"ric":["$","$","$"],"exi":["n","n","a","n","n","a"],"xin":["e","u","h","h"],"ine":["k","n"],"nek":["$","$"],"ons":["o"],"nso":["n","n"],"ana":["r","n","t","n","r"],"are":["n","k","k","k","k"],"ren":["$"],"inu":["s"],"nus":["$","$"],"dru":["s"],"rus":["$","$"],"erc":["u"],"rcu":["s","s"],"onc":["u"],"ncu":["s"],"usa":["r","n"],"sar":["d"],"ari":["n","k","c"],"rin":["t","s"],"int":["e"],"ter":["$","$","$","$","$"],"^^k":["e","e","e","e","e","e","e","e","e","e","e","e"],"^ke":["v","v","v","v","v","v","v","v","v","v","v","v"],"kev":["i","a","h","a","c","e","h","u","i","i","c","c"],"evi":["n","a","k"],"vin":["e"],"nen":["$","$","$"],"rat":["h"],"tht":["e"],"hte":["r"],"der":["d","i","o","a","k","k","s","h","s","u"],"erd":["o"],"exh":["a","a"],"xha":["n","n"],"ank":["$","$"],"art":["e"],"rte":["r"],"eva":["n","r"],"van":["k"],"ane":["n","k"],"exk":["$"],"tin":["s"],"ins":["o","$"],"ant":["e","e"],"xia":["n","n"],"ian":["a","h","u","h","e"],"nan":["$","a"],"onh":["a","a"],"nha":["n","n","n","n"],"ero":["n"],"ron":["a","a","d"],"evh":["e","e"],"vhe":["r","r"],"era":["r","r","r","r","n"],"rik":["$"],"erk":["$","$"],"drc":["u"],"usk":["$"],"one":["n"],"inh":["e","a"],"nhe":["r","r","r"],"var":["i"],"ria":["n","n"],"anh":["e","a","e"],"evc":["u","u","u"],"vcu":["s","s","s"],"usd":["o"],"sdo":["n"],"dra":["r"],"ans":["$"],"^^n":["a","a","a","a","a","a","a"],"^na":["t","t","t","t","t","t","t"],"tha":["n"],"ats":["o","$"],"tso":["n"],"eve":["n"],"ven":["$"],"tic":["$"],"ntk":["$","$"],"ate":["k","k"],"ekk":["$"],"ata":["r","n"],"tar":["h","d"],"arh":["a","a"],"rha":["n","n","n"],"thd":["o"],"hdo":["n"],"eks":["$","$"],"nta":["r","t"],"tan":["$"],"ono":["n"],"ers":["$","$"],"evu":["s"],"vus":["$"],"dro":["n"],"via":["n"],"anu":["s"],"dre":["k"],"tat":["h"],"thi":["k"],"hik":["$"],"aro":["n"],"ond":["o"],"ndo":["n"],"vik":["$"],"ntc":["u"],"tcu":["s"],"san":["$"],"dri":["a"],"ani":["k"],"eru":["s"],"ush":["a"],"sha":["n"],"usi":["c"],"sic":["$"]},
+    "Commune": {"^^^":["e","h","r","r","m","r","a","t","m","m","j","h","e","e","t","m","h","b","b","m","m","b","j","b","t","h","t","a","j","h","r","a","j","m","m","a","m","t","j","e","e","r","b","a","r","m","r","r","r","m","a","a","m","h","t","b","r","a","e","b","b","h","r","t","b","m","e","t","e","t","r","e","m","e","m","t","r","h","m","e","e","j","h","m","a","t","m","a","e","e","b","t","r","j","m","r","j","r","b","t"],"^^e":["d","d","d","d","d","d","d","d","d","d","d","d","d","d"],"^ed":["e","e","a","a","o","a","a","a","e","a","o","a","m","t"],"ede":["l","n","n"],"del":["l"],"ell":["i"],"lli":["n","n","n","n"],"lin":["$","$","$","$","w","$","$","$","$","$"],"^^h":["e","e","e","e","e","e","e","e","e"],"^he":["n","n","n","n","n","n","n","n","n"],"hen":["a","o","e","m","t","e","i","a","a"],"ena":["l","r","r","l"],"nal":["d","d","d"],"ald":["$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$"],"^^r":["o","o","o","o","o","o","o","o","o","o","o","o","o","o","o","o"],"^ro":["s","s","s","s","s","s","s","s","s","s","s","s","s","s","s","s"],"ros":["r","a","r","o","a","a","e","o","o","a","a","e","t","l","o","a"],"osr":["y","y"],"sry":["$","$"],"osa":["n","l","n","r","l","l"],"san":["r","w"],"anr":["i"],"nri":["c","c"],"ric":["$","$","$","k","$","$","$","k","k","k","k","k","$","$","k","$","$"],"^^m":["a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a","a"],"^ma":["r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"],"mar":["a","t","e","e","t","a","r","o","a","e","a","o","a","o","i","a","t","e","m"],"ara":["l","r","r","l","r","l"],"ral":["d","d","d","d","d","d"],"^^a":["l","l","l","l","l","l","l","l","l","l"],"^al":["a","r","a","w","l","e","i","m","a","m"],"ala":["l","l","n"],"lal":["d","d","d","d","d"],"^^t":["h","h","h","h","h","h","h","h","h","h","h","h","h"],"^th":["o","o","o","o","o","o","o","o","o","o","o","o","o"],"tho":["r","a","a","w","i","t","e","m","a","a","e","i","i"],"hor":["y"],"ory":["$"],"art":["a","a","a","a"],"rta":["$","$","$","$"],"are":["n","l","l","n"],"ren":["w","a"],"enw":["e","e"],"nwe":["n","n","n","n"],"wen":["$","$","$","$","$","$","$","$","$"],"^^j":["a","a","a","a","a","a","a","a"],"^ja":["n","n","n","n","n","n","n","n"],"jan":["o","o","t","o","a","a","e","a"],"ano":["l","r","l"],"nol":["a","r","r"],"ola":["l"],"eno":["l"],"olr":["y","i","y","y","y"],"lry":["$","$","$","$","$","$"],"den":["r","i"],"enr":["y","y"],"nry":["$","$"],"eda":["n","r","r","r","r","l","r"],"dan":["l"],"anl":["i"],"nli":["n"],"hoa":["r","r","l","r"],"oar":["d","t","d"],"ard":["m","r","i","l","i","r","a","r","r"],"rdm":["o"],"dmo":["n","n"],"mon":["d","d","d","d","d","d","d","d"],"ond":["$","$","$","$","$","$","$","$"],"rel":["r","w","r","a"],"elr":["i","y"],"lri":["c","c"],"ene":["n","n"],"nen":["i","i","w"],"eni":["c","c","c","c"],"nic":["k","k","k","k"],"ick":["$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$","$"],"^^b":["e","e","e","e","e","e","e","e","e","e","e"],"^be":["r","r","r","r","r","r","r","r","r","r","r"],"ber":["a","l","w","o","a","r","i","e","o","a","e"],"era":["l","r","r"],"erl":["i"],"rli":["n","n"],"rar":["d","r","i","i","d"],"rdr":["i","i","i","y"],"dri":["c","c","c"],"erw":["e"],"rwe":["n"],"nor":["a"],"ora":["l","l"],"ero":["r","l"],"ror":["i","r"],"ori":["c","c","c"],"enm":["o","o"],"nmo":["n","n"],"how":["e"],"owe":["n"],"alr":["y"],"ant":["a","a","a"],"nta":["$","$","$","$"],"ent":["a"],"oso":["l","l","l","r"],"sol":["r","r","w"],"arr":["i","y","y","y","i"],"rri":["c","c","c"],"aro":["r","l","l"],"orr":["i"],"alw":["e"],"lwe":["n","n","n"],"rry":["$","$","$","$"],"hoi":["c","n","c"],"oic":["k","k"],"ana":["n","r","l","n"],"nan":["t","t"],"dar":["d","d","r","r","d"],"rdi":["c","c"],"dic":["k","k"],"edo":["r","r"],"dor":["i","i"],"sal":["d","d","d"],"ari":["c","c","c"],"all":["i"],"anw":["e"],"elw":["e"],"ose":["n","l"],"sen":["r"],"olw":["e"],"ale":["l"],"lel":["a"],"ela":["l","l"],"ali":["n"],"inw":["e"],"rol":["r","l","l"],"hot":["a"],"ota":["$"],"err":["y"],"sar":["d"],"rdl":["i"],"dli":["n"],"alm":["o","o"],"lmo":["n","n"],"eri":["c"],"ere":["l","l"],"hoe":["l","n"],"oel":["i"],"eli":["c","c"],"lic":["k","k"],"oll":["i","i"],"hom":["o"],"omo":["n"],"oal":["d"],"sel":["i"],"dal":["d","d"],"ost":["a"],"sta":["$"],"nar":["r","l","d"],"rda":["l"],"arl":["i"],"lan":["a"],"oen":["m"],"edm":["o"],"edt":["a"],"dta":["$"],"dry":["$"],"oin":["r"],"inr":["i"],"osl":["i"],"sli":["n"],"ane":["n"],"arm":["o"],"rmo":["n"],"sor":["a"]}
+  };
+
+  function generateMarkovSurname(family) {
+    const model = MARKOV_SURNAME_MODELS_DATA[family];
+    if (!model) return capitalize(generatePrenomLike(family)); // filet de sécurité (famille sans modèle)
+    return capitalize(generateMarkovWord(model, MARKOV_ORDER, 4, 10));
+  }
+
+  function generateNom(race, metier) {
+    const family = NAME_FAMILIES[race.name] || "Commune";
+    const prenom = generatePrenomLike(family);
+    const suffix = PATRONYMIC_SUFFIX[family];
+    const nomFamille = suffix ? generatePrenomLike(family) + suffix : generateMarkovSurname(family);
+    const nicknames = METIER_NICKNAMES[metier];
+    const surnom = (nicknames && Math.random() < 0.4) ? pick(nicknames) : null;
+    return surnom ? `${prenom} ${nomFamille} "${surnom}"` : `${prenom} ${nomFamille}`;
+  }
+  // --- Apparence physique par famille (même regroupement que pour les sonorités de noms) ---
+  // Premier jet à valider/ajuster : tailles en cm, corpulences, teintes et styles de chevelure,
+  // probabilité de barbe (par famille de sonorités). L'âge, lui, dépend de l'Époque (ancienneté
+  // réelle de la race) et non de la famille — voir AGE_RANGES_BY_ERA plus bas.
+  const PHYSICAL_ARCHETYPES = {
+    Elfique: { taille: [165, 195], corpulence: ["Svelte", "Élancé", "Athlétique"],
+      cheveuxCouleur: ["doré", "argenté", "châtain clair", "noir de jais", "roux cuivré"],
+      cheveuxStyle: ["longs et raides", "longs et ondulés", "tressés", "noués haut"],
+      barbeProb: 0.03 },
+    Naine: { taille: [130, 150], corpulence: ["Trapu", "Robuste", "Massif"],
+      cheveuxCouleur: ["roux", "brun", "gris", "blanc", "noir"],
+      cheveuxStyle: ["tressés", "nattés", "hirsutes"],
+      barbeProb: 0.85 },
+    Orque: { taille: [175, 220], corpulence: ["Massif", "Musclé", "Imposant"],
+      cheveuxCouleur: ["noir", "brun foncé", "gris"],
+      cheveuxStyle: ["crâne rasé", "hirsutes", "en crête"],
+      barbeProb: 0.3 },
+    Gobeline: { taille: [90, 130], corpulence: ["Maigre", "Chétif", "Noueux"],
+      cheveuxCouleur: ["noir", "brun terne", "vert sale"],
+      cheveuxStyle: ["hirsutes", "clairsemés", "chauve"],
+      barbeProb: 0.15 },
+    Maritime: { taille: [160, 190], corpulence: ["Svelte", "Musclé", "Athlétique"],
+      cheveuxCouleur: ["bleu-vert", "gris perle", "blond délavé", "brun"],
+      cheveuxStyle: ["longs et humides", "tressés de coquillages", "courts"],
+      barbeProb: 0.25 },
+    Nordique: { taille: [170, 200], corpulence: ["Robuste", "Musclé", "Athlétique", "Massif"],
+      cheveuxCouleur: ["blond", "roux", "blond cendré", "châtain clair", "gris"],
+      cheveuxStyle: ["longs et tressés", "nattés", "courts et hirsutes", "en catogan"],
+      barbeProb: 0.7 },
+    PetitPeuple: { taille: [90, 130], corpulence: ["Rondelet", "Trapu", "Menu"],
+      cheveuxCouleur: ["brun", "roux", "blond", "châtain"],
+      cheveuxStyle: ["bouclés", "courts et soignés", "en bataille"],
+      barbeProb: 0.1 },
+    Arcanique: { taille: [150, 190], corpulence: ["Maigre", "Élancé", "Frêle"],
+      cheveuxCouleur: ["gris cendré", "blanc", "noir", "violet argenté"],
+      cheveuxStyle: ["longs et négligés", "en partie rasés", "noués en chignon savant"],
+      barbeProb: 0.2 },
+    Feline: { taille: [155, 185], corpulence: ["Svelte", "Agile", "Musclé"],
+      cheveuxCouleur: ["roux tacheté", "gris tigré", "noir", "fauve"],
+      cheveuxStyle: ["courts et lisses", "en pics", "ras"],
+      barbeProb: 0.05 },
+    Reptilienne: { taille: [160, 200], corpulence: ["Sec", "Écailleux", "Robuste"],
+      cheveuxCouleur: ["écailles verdâtres", "écailles brunes", "écailles grises"],
+      cheveuxStyle: ["lisses", "crêtées", "cornées"],
+      barbeProb: 0 },
+    Chtonienne: { taille: [140, 175], corpulence: ["Voûté", "Maigre", "Noueux"],
+      cheveuxCouleur: ["blanc terne", "gris", "noir"],
+      cheveuxStyle: ["clairsemés", "longs et fins", "chauve"],
+      barbeProb: 0.2 },
+    Terrienne: { taille: [165, 185], corpulence: ["Athlétique", "Standard", "Musclé"],
+      cheveuxCouleur: ["noir", "brun", "blond", "gris métallisé"],
+      cheveuxStyle: ["courts et nets", "rasés sur les côtés", "en dégradé"],
+      barbeProb: 0.25 },
+    Commune: { taille: [160, 185], corpulence: ["Mince", "Robuste", "Standard", "Corpulent"],
+      cheveuxCouleur: ["brun", "châtain", "blond", "roux", "noir", "gris"],
+      cheveuxStyle: ["courts", "longs", "en queue de cheval", "bouclés"],
+      barbeProb: 0.35 }
+  };
+
+  // Fourchette d'âge [adolescence, maximum atteignable] par Époque — reflète l'espérance de vie
+  // réelle de l'ancienneté de la race, indépendamment de sa famille de sonorités.
+  const AGE_RANGES_BY_ERA = {
+    "Humaines": [14, 120],
+    "Semi-humaines": [14, 180],
+    "Anciennes": [20, 350],
+    "Vénérables": [30, 800],
+    "Antédiluviennes": [40, 2000],
+    "Originelles": [50, 5000]
+  };
+
+  // Fenêtre [min, max] de la fraction d'âge (0 = adolescence, 1 = âge maximal) accessible à
+  // chaque Niveau. Resserrée aux extrêmes (pas de vieil Apprenti ni de jeune Divin), mais assez
+  // large au milieu pour permettre un Pro ou un Expert âgé qui n'a jamais beaucoup progressé.
+  const AGE_WINDOW_BY_LEVEL = {
+    "Apprenti": [0.00, 0.15],
+    "Novice": [0.04, 0.24],
+    "Pro": [0.12, 0.62],
+    "Expert": [0.28, 0.78],
+    "Compagnon": [0.45, 0.90],
+    "Maître": [0.68, 1.00],
+    "Divin": [0.88, 1.00]
+  };
+
+  function randInt(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
+
+  // Tirage de l'âge : fourchette réelle selon l'Époque de la race, position dans cette fourchette
+  // pondérée par le Niveau. Le tirage à l'intérieur de la fenêtre est "triangulaire" (moyenne de
+  // 2 tirages) pour resserrer vers le centre de la fenêtre et rendre les bords rares plutôt qu'exclus.
+  function generateAge(race, level) {
+    const [ageMin, ageMax] = AGE_RANGES_BY_ERA[race.era] || [16, 80];
+    const [wMin, wMax] = AGE_WINDOW_BY_LEVEL[level.name] || [0, 1];
+    // Tirage asymétrique : médiane exactement au 1/3 bas de la fenêtre du Niveau (pas au milieu).
+    // U^k avec k = ln(1/3)/ln(0.5) ≈ 1.585 place la médiane de U^k à 1/3 au lieu de 1/2.
+    const K = Math.log(1 / 3) / Math.log(0.5);
+    const biased = Math.pow(Math.random(), K);
+    const fraction = wMin + biased * (wMax - wMin);
+    return Math.round(ageMin + fraction * (ageMax - ageMin));
+  }
+
+  const BARBE_TYPES = [
+    "négligée", "courte", "longue", "barbiche", "bouc", "favoris", "fer à cheval", "tressée",
+    "ornée", "moustache brosse", "moustache classique", "moustache fine", "moustache guidon", "moustache manshu"
+  ];
+
+  function generatePhysique(race, level) {
+    const family = NAME_FAMILIES[race.name] || "Commune";
+    const archetype = PHYSICAL_ARCHETYPES[family];
+    const age = generateAge(race, level);
+
+    const taille = randInt(archetype.taille[0], archetype.taille[1]);
+    const corpulence = pick(archetype.corpulence);
+    const couleur = pick(archetype.cheveuxCouleur);
+    const style = pick(archetype.cheveuxStyle);
+    const aBarbe = Math.random() < archetype.barbeProb;
+    const cheveux = aBarbe ? `${couleur}, ${style}, barbe ${pick(BARBE_TYPES)}` : `${couleur}, ${style}`;
+
+    return { age, taille, corpulence, cheveux };
+  }
+  // --- Navigation entre écrans ---
+  const screenTitles = { creer: "Recueil des PNJ", mespnj: "Mes PNJ", objets: "Objets magiques", mesobjets: "Mes Objets", sauvegarde: "Sauvegarde" };
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.screen;
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b === btn));
+      document.querySelectorAll('.screen').forEach(s => s.classList.toggle('hidden', s.id !== `screen-${target}`));
+      document.getElementById('screenTitle').textContent = screenTitles[target];
+      if (target === 'mespnj') renderMesPnj();
+      if (target === 'mesobjets') renderMesObjets();
+      if (target === 'sauvegarde') updateExportCount();
+      window.scrollTo(0, 0);
+    });
+  });
+
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function sampleWithoutReplacement(arr, n) {
+    const pool = arr.slice();
+    const result = [];
+    while (result.length < n && pool.length > 0) {
+      const i = Math.floor(Math.random() * pool.length);
+      result.push(pool.splice(i, 1)[0]);
+    }
+    return result;
+  }
+
+  function pickWeighted(weightsObj) {
+    const entries = Object.entries(weightsObj);
+    const total = entries.reduce((sum, [, w]) => sum + w, 0);
+    let r = Math.random() * total;
+    for (const [key, w] of entries) {
+      if (r < w) return key;
+      r -= w;
+    }
+    return entries[entries.length - 1][0];
+  }
+
+  function racesByEra(era) {
+    return RACES.filter(r => r.era === era);
+  }
+
+  // --- Peuplement du menu "Métier" (depuis TABLES.metier) ---
+  const metierSelect = document.getElementById('metier');
+  TABLES.metier.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m;
+    opt.textContent = m;
+    metierSelect.appendChild(opt);
+  });
+
+  // --- Peuplement du menu "Trait particulier" ---
+  const traitSelect = document.getElementById('trait');
+  TABLES.trait.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t;
+    opt.textContent = t;
+    traitSelect.appendChild(opt);
+  });
+
+  // --- Construction des cases à cocher (Époque et Race) ---
+  const epoqueChecks = document.getElementById('epoqueChecks');
+  ALL_ERAS.forEach(era => {
+    const label = document.createElement('label');
+    label.className = 'chip';
+    label.innerHTML = `<input type="checkbox" value="${era}"> ${era === "Originelles" ? "Originelles (éteinte)" : era}`;
+    const input = label.querySelector('input');
+    input.addEventListener('change', () => label.classList.toggle('checked', input.checked));
+    epoqueChecks.appendChild(label);
+  });
+
+  const raceChecks = document.getElementById('raceChecks');
+  ALL_ERAS.forEach(era => {
+    const group = document.createElement('div');
+    group.className = 'era-group';
+    const title = document.createElement('div');
+    title.className = 'era-title';
+    title.textContent = era;
+    group.appendChild(title);
+    racesByEra(era).forEach(r => {
+      const label = document.createElement('label');
+      label.className = 'chip';
+      label.innerHTML = `<input type="checkbox" value="${r.name}"> ${r.name}`;
+      const input = label.querySelector('input');
+      input.addEventListener('change', () => label.classList.toggle('checked', input.checked));
+      group.appendChild(label);
+    });
+    raceChecks.appendChild(group);
+  });
+
+  const niveauChecks = document.getElementById('niveauChecks');
+  LEVELS.forEach(lvl => {
+    const label = document.createElement('label');
+    label.className = 'chip';
+    label.innerHTML = `<input type="checkbox" value="${lvl.name}"> ${lvl.name}`;
+    const input = label.querySelector('input');
+    input.addEventListener('change', () => label.classList.toggle('checked', input.checked));
+    niveauChecks.appendChild(label);
+  });
+
+  function getChecked(container) {
+    return Array.from(container.querySelectorAll('input:checked')).map(i => i.value);
+  }
+
+  const raceModeSelect = document.getElementById('raceMode');
+  const wrapEpoque = document.getElementById('wrapEpoque');
+  const wrapRace = document.getElementById('wrapRace');
+
+  raceModeSelect.addEventListener('change', () => {
+    wrapEpoque.classList.toggle('hidden', raceModeSelect.value !== 'epoque');
+    wrapRace.classList.toggle('hidden', raceModeSelect.value !== 'race');
+  });
+
+  // --- Génération ---
+  function pickRace(mode) {
+    if (mode === 'race') {
+      const chosen = getChecked(raceChecks);
+      const pool = chosen.length ? RACES.filter(r => chosen.includes(r.name)) : RACES;
+      return pick(pool);
+    }
+    if (mode === 'epoque') {
+      const chosen = getChecked(epoqueChecks);
+      const pool = chosen.length ? RACES.filter(r => chosen.includes(r.era)) : RACES;
+      return pick(pool);
+    }
+    // pondéré par époque
+    const era = pickWeighted(ERA_WEIGHTS);
+    return pick(racesByEra(era));
+  }
+
+  // Répartition des points d'expérience sur les 6 Traits, dans la limite de (valeur raciale + 2).
+  // Priorité : les 2 premiers points vont dans le Trait lié à la 1ère compétence maîtrisée
+  // (pour maximiser son score), les points suivants dans les Traits des autres compétences
+  // du personnage (dans l'ordre : autres maîtrisées, puis secondaires), en bouclant si besoin.
+  function allocateExperience(race, points, priorityTrait, otherTraitsInOrder) {
+    const traitOrder = ['FOR', 'AGI', 'INT', 'PER', 'MAI', 'CHA'];
+    const totals = {};
+    traitOrder.forEach(k => totals[k] = race[k]);
+    const boosted = new Set();
+    const canTake = (t) => totals[t] < race[t] + 2;
+
+    let remaining = points;
+
+    // Étape 1 : jusqu'à 2 points dans le Trait de la 1ère compétence maîtrisée (si elle en a un).
+    let priorityPoints = priorityTrait ? Math.min(2, remaining) : 0;
+    while (priorityPoints > 0 && canTake(priorityTrait)) {
+      totals[priorityTrait] += 1;
+      boosted.add(priorityTrait);
+      remaining -= 1;
+      priorityPoints -= 1;
+    }
+
+    // Étape 2 : points suivants dans les Traits des autres compétences, en bouclant.
+    let guard = 200;
+    let i = 0;
+    while (remaining > 0 && otherTraitsInOrder.length > 0 && guard-- > 0) {
+      const t = otherTraitsInOrder[i % otherTraitsInOrder.length];
+      if (canTake(t)) {
+        totals[t] += 1;
+        boosted.add(t);
+        remaining -= 1;
+      }
+      i += 1;
+      // si un tour complet ne peut plus rien placer, on sort pour éviter une boucle infinie
+      if (i % otherTraitsInOrder.length === 0 && otherTraitsInOrder.every(tt => !canTake(tt))) break;
+    }
+
+    // Étape 3 (filet de sécurité) : points restants placés au hasard si tout le reste est plafonné
+    // ou qu'il n'y avait pas d'autre Trait de compétence disponible.
+    guard = 200;
+    while (remaining > 0 && guard-- > 0) {
+      const eligible = traitOrder.filter(canTake);
+      if (eligible.length === 0) break;
+      const t = pick(eligible);
+      totals[t] += 1;
+      boosted.add(t);
+      remaining -= 1;
+    }
+
+    return { totals, boosted };
+  }
+
+  // Poids favorisant un nombre restreint de scores "ciblés" (regroupement des points), sans
+  // jamais l'imposer strictement — un tirage occasionnel peut viser les 6 sauvegardes à la fois.
+  const SAUVEGARDE_FOCUS_WEIGHTS = [30, 25, 18, 13, 9, 5]; // poids pour k = 1..6 scores ciblés
+
+  // Partitionne `total` en `k` parts entières positives, de tailles inégales (tirage par
+  // "points de coupure" aléatoires), pour éviter une répartition mécaniquement égale.
+  function randomPartition(total, k) {
+    if (k <= 1) return [total];
+    const cutPositions = Array.from({ length: total - 1 }, (_, i) => i + 1);
+    const cuts = sampleWithoutReplacement(cutPositions, k - 1).sort((a, b) => a - b);
+    const bounds = [0, ...cuts, total];
+    const parts = [];
+    for (let i = 0; i < bounds.length - 1; i++) parts.push(bounds[i + 1] - bounds[i]);
+    return parts;
+  }
+
+  // Répartition des points de Sauvegarde (2 par Niveau d'expérience, indépendants des points de
+  // Trait) sur les 6 scores. Pas de plafond. Le nombre de scores ciblés est choisi au hasard,
+  // pondéré vers un petit nombre pour favoriser un regroupement (mais pas systématiquement).
+  function allocateSauvegardes(totals, levelPoints) {
+    const traitOrder = ['FOR', 'AGI', 'INT', 'PER', 'MAI', 'CHA'];
+    const totalPoints = 2 * levelPoints;
+    const bonus = {};
+    traitOrder.forEach(t => bonus[t] = 0);
+
+    if (totalPoints > 0) {
+      const maxK = Math.min(6, totalPoints);
+      const weights = {};
+      for (let k = 1; k <= maxK; k++) weights[k] = SAUVEGARDE_FOCUS_WEIGHTS[k - 1];
+      const k = parseInt(pickWeighted(weights), 10);
+      const chosen = sampleWithoutReplacement(traitOrder, k);
+      const parts = randomPartition(totalPoints, k);
+      chosen.forEach((t, i) => bonus[t] = parts[i]);
+    }
+
+    const sauvegardes = {};
+    traitOrder.forEach(t => sauvegardes[t] = totals[t] + bonus[t]);
+    return sauvegardes;
+  }
+
+  function generatePNJ(options, index, level) {
+    const race = pickRace(options.raceMode);
+    const metier = options.metier === "alea" ? pick(TABLES.metier) : options.metier;
+    const trait = options.trait === "alea"
+      ? sampleWithoutReplacement(TABLES.trait.filter(t => t !== "Aucun"), 2).join(", ")
+      : options.trait;
+    const prenom = generateNom(race, metier);
+    const disposition = pick(TABLES.disposition);
+    const physique = generatePhysique(race, level);
+
+    // Tirage des compétences d'abord, pour connaître la 1ère maîtrisée avant de répartir l'expérience.
+    // Les candidates du Métier sont déjà pertinentes ; les secondaires respectent l'éligibilité (ex. race).
+    const candidats = (METIER_SKILLS[metier] || []).filter(n => isSkillEligible(n, race));
+    const maitriseesNames = sampleWithoutReplacement(candidats, level.maitrisees);
+    const poolSecondaires = ALL_SKILLS.filter(s => !maitriseesNames.includes(s.name) && isSkillEligible(s.name, race));
+    const secondairesNames = sampleWithoutReplacement(poolSecondaires.map(s => s.name), level.secondaires);
+
+    const priorityTrait = maitriseesNames.length ? skillTrait(maitriseesNames[0]) : null;
+    const otherTraitsInOrder = [
+      ...maitriseesNames.slice(1).map(skillTrait),
+      ...secondairesNames.map(skillTrait)
+    ].filter(Boolean);
+
+    const { totals, boosted } = allocateExperience(race, level.points, priorityTrait, otherTraitsInOrder);
+    const sauvegardes = allocateSauvegardes(totals, level.points);
+
+    const build = (name, mastered, isFirstOfCategory) => {
+      const trait = skillTrait(name);
+      const composante = isFirstOfCategory ? level.points : Math.max(0, level.points - 1);
+      const score = composante + (trait ? totals[trait] : 0);
+      return { name, trait, mastered, composante, score };
+    };
+    const competences = [
+      ...maitriseesNames.map((n, idx) => build(n, true, idx === 0)),
+      ...secondairesNames.map((n, idx) => build(n, false, idx === 0))
+    ];
+
+    const findComp = (name) => competences.find(c => c.name === name);
+    const findScore = (name) => {
+      const c = findComp(name);
+      return c ? c.score : 0;
+    };
+    // Contribution "Santé" d'une compétence de combat : pour les 2 compétences dont le Trait
+    // est déjà compté à part dans la formule (FOR pour les armes à 2 mains, MAI pour les armes
+    // à une main), on ne reprend que la composante de Niveau afin de ne pas compter ce Trait 2x.
+    const combatContribution = (name) => {
+      const c = findComp(name);
+      if (!c) return 0;
+      if (c.trait === 'FOR' || c.trait === 'MAI') return c.composante;
+      return c.score;
+    };
+
+    // Points de Santé : 15 + 3 x (FOR + MAI + Compétences de combat + Foi + Magie Cyber)
+    const combatSum = COMBAT_SKILLS.reduce((s, n) => s + combatContribution(n), 0);
+    const ps = 15 + 3 * (totals.FOR + totals.MAI + combatSum + findScore("Foi") + findScore("Magie Cyber"));
+
+    // Points de Mana : pour chaque Haute Magie possédée, 3 x (Trait lié + MAI + composante de Niveau de la compétence)
+    const pm = competences
+      .filter(c => c.name.startsWith("Haute Magie"))
+      .reduce((sum, c) => sum + 3 * (totals[c.trait] + totals.MAI + c.composante), 0);
+
+    const equipement = generateEquipementForPNJ({ metier, level });
+
+    return {
+      id: newId('pnj'), groupe: '', index, prenom, race, metier, trait, disposition, level, physique,
+      traits: totals, sauvegardes, boosted: Array.from(boosted), competences, equipement,
+      ps, pm, psActuel: ps, pmActuel: pm
+    };
+  }
+
+  function fmtMod(v) {
+    return v > 0 ? `+${v}` : `${v}`;
+  }
+
+  // --- Stockage local (fonctionne une fois le fichier ouvert normalement dans un navigateur ;
+  // ne fonctionne pas dans l'aperçu intégré au chat, qui ne conserve pas cet espace de stockage) ---
+  const PNJStore = {
+    indexKey: 'pnj:index',
+    listIds() {
+      try {
+        return JSON.parse(localStorage.getItem(this.indexKey) || '[]');
+      } catch (e) { return []; }
+    },
+    save(pnj) {
+      try {
+        const ids = this.listIds();
+        if (!ids.includes(pnj.id)) {
+          ids.push(pnj.id);
+          localStorage.setItem(this.indexKey, JSON.stringify(ids));
+        }
+        localStorage.setItem('pnj:' + pnj.id, JSON.stringify(pnj));
+        return true;
+      } catch (e) {
+        console.warn('Sauvegarde impossible (stockage indisponible) :', e);
+        return false;
+      }
+    },
+    remove(id) {
+      try {
+        const ids = this.listIds().filter(i => i !== id);
+        localStorage.setItem(this.indexKey, JSON.stringify(ids));
+        localStorage.removeItem('pnj:' + id);
+      } catch (e) { /* stockage indisponible */ }
+    },
+    loadAll() {
+      return this.listIds().map(id => {
+        try { return JSON.parse(localStorage.getItem('pnj:' + id)); }
+        catch (e) { return null; }
+      }).filter(Boolean);
+    }
+  };
+
+  // Registre en mémoire de tous les PNJ actuellement affichés (créés ou chargés depuis Mes PNJ),
+  // pour retrouver l'objet à jour lors d'une modification ou d'un enregistrement.
+  const PNJ_REGISTRY = new Map();
+  function newId(prefix) {
+    // Horodatage + double segment aléatoire (base36) : réduit fortement le risque de collision,
+    // y compris entre deux appareils différents fusionnés via import.
+    const rand = () => Math.random().toString(36).slice(2, 10);
+    return (prefix || 'id') + '_' + Date.now().toString(36) + '_' + rand() + rand();
+  }
+
+  function renderCard(pnj, opts = {}) {
+    PNJ_REGISTRY.set(pnj.id, pnj);
+    const saved = opts.saved || false;
+    const traitOrder = ['FOR', 'AGI', 'INT', 'PER', 'MAI', 'CHA'];
+    const traitsHtml = traitOrder.map(k => {
+      const v = pnj.traits[k];
+      const sv = pnj.sauvegardes ? pnj.sauvegardes[k] : v;
+      const cls = v >= 0 ? 'pos' : 'neg';
+      const raceMod = pnj.race[k];
+      const raceTag = raceMod !== 0 ? `<div class="race-tag">race ${fmtMod(raceMod)}</div>` : '<div class="race-tag">&nbsp;</div>';
+      return `
+        <div class="trait">
+          <div class="k">${k}</div>
+          <div class="k sauv-col">&nbsp;</div>
+          <input class="v-input ${cls}" type="number" value="${v}" data-id="${pnj.id}" data-field="traits.${k}">
+          <input class="v-input sauv-input sauv-col" type="number" value="${sv}" data-id="${pnj.id}" data-field="sauvegardes.${k}">
+          ${raceTag}
+          <div class="race-tag sauv-col">Sauv.</div>
+        </div>`;
+    }).join('');
+
+    const compsSorted = pnj.competences.map((c, idx) => ({ ...c, idx }))
+      .sort((a, b) => (b.mastered - a.mastered));
+    const compTraitOptions = (current) => ['FOR', 'AGI', 'INT', 'PER', 'MAI', 'CHA', ''].map(t =>
+      `<option value="${t}" ${(current || '') === t ? 'selected' : ''}>${t || 'Aucun'}</option>`
+    ).join('');
+    const compsHtml = compsSorted.map(c => `
+      <div class="comp-row">
+        <input type="checkbox" class="mark-check" ${c.mastered ? 'checked' : ''} data-id="${pnj.id}" data-field="comp.${c.idx}.mastered">
+        <input type="text" class="comp-name-input" value="${c.mastered ? `${c.name} (${pnj.level.points}PC)` : c.name}" data-id="${pnj.id}" data-field="comp.${c.idx}.name">
+        <select class="comp-trait-select" data-id="${pnj.id}" data-field="comp.${c.idx}.trait">${compTraitOptions(c.trait)}</select>
+        <input class="score-input" type="number" value="${c.score}" data-id="${pnj.id}" data-field="comp.${c.idx}.score">
+        <button type="button" class="btn-row-del" data-kind="comp" data-id="${pnj.id}" data-idx="${c.idx}" title="Supprimer cette compétence" style="flex:0 0 auto;width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--parchment-dim);font-size:12px;line-height:1;cursor:pointer;padding:0;">✕</button>
+      </div>
+    `).join('');
+    const compAddHtml = `<button type="button" class="btn-row-add" data-kind="comp" data-id="${pnj.id}" style="margin-top:8px;width:100%;background:transparent;border:1px dashed var(--line);color:var(--brass-bright);border-radius:8px;padding:8px;font-family:'Inter',sans-serif;font-size:12px;letter-spacing:0.03em;cursor:pointer;">+ Ajouter une compétence</button>`;
+
+    const metierOptions = TABLES.metier.map(m => `<option value="${m}" ${m === pnj.metier ? 'selected' : ''}>${m}</option>`).join('');
+    const dispoOptions = TABLES.disposition.map(d => `<option value="${d}" ${d === pnj.disposition ? 'selected' : ''}>${d}</option>`).join('');
+
+    const equipList = pnj.equipement || [];
+    const equipHtml = equipList.length
+      ? equipList.map((eq, idx) => `
+        <div class="equip-item" style="display:flex;align-items:flex-start;gap:8px;">
+          <div style="flex:1;min-width:0;">
+            <input type="text" class="equip-line1" value="${eq.ligne1}" data-id="${pnj.id}" data-field="equipement.${idx}.ligne1">
+            <input type="text" class="equip-line2" value="${eq.ligne2}" data-id="${pnj.id}" data-field="equipement.${idx}.ligne2">
+          </div>
+          <button type="button" class="btn-row-del" data-kind="equip" data-id="${pnj.id}" data-idx="${idx}" title="Supprimer cet équipement" style="flex:0 0 auto;width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--parchment-dim);font-size:12px;line-height:1;cursor:pointer;padding:0;">✕</button>
+        </div>
+      `).join('')
+      : `<div class="equip-item"><span class="equip-empty">Aucun équipement</span></div>`;
+    const equipAddHtml = `<button type="button" class="btn-row-add" data-kind="equip" data-id="${pnj.id}" style="margin-top:8px;width:100%;background:transparent;border:1px dashed var(--line);color:var(--brass-bright);border-radius:8px;padding:8px;font-family:'Inter',sans-serif;font-size:12px;letter-spacing:0.03em;cursor:pointer;">+ Ajouter un objet</button>`;
+
+    return `
+      <div class="card" data-card-id="${pnj.id}">
+        <div class="card-top">
+          <div class="card-top-info">
+            <input class="name-input" type="text" value="${pnj.prenom}" data-id="${pnj.id}" data-field="prenom">
+          </div>
+        </div>
+        <div class="race-line">${pnj.race.name} <span class="era">· ${pnj.race.era}</span> · Niveau ${pnj.level.name}</div>
+        <div class="meta-grid">
+          <div><div class="k">Âge</div>
+            <span class="unit-field"><input class="mini-number-sm" type="number" value="${pnj.physique.age}" data-id="${pnj.id}" data-field="physique.age"> <span class="unit">ans</span></span>
+          </div>
+          <div><div class="k">Taille</div>
+            <span class="unit-field"><input class="mini-number-sm" type="number" value="${pnj.physique.taille}" data-id="${pnj.id}" data-field="physique.taille"> <span class="unit">cm</span></span>
+          </div>
+          <div><div class="k">Corpulence</div>
+            <input class="mini-text" type="text" value="${pnj.physique.corpulence}" data-id="${pnj.id}" data-field="physique.corpulence">
+          </div>
+          <div><div class="k">Chevelure</div>
+            <input class="mini-text" type="text" value="${pnj.physique.cheveux}" data-id="${pnj.id}" data-field="physique.cheveux">
+          </div>
+        </div>
+        <div class="field-inline">
+          <label>Trait(s) particulier(s)</label>
+          <input class="mini-text" type="text" value="${pnj.trait}" data-id="${pnj.id}" data-field="trait">
+        </div>
+        ${pnj.race.special ? `<div class="racial-special">${pnj.race.special}</div>` : ""}
+        <div class="traits-grid">${traitsHtml}</div>
+        <div class="meta-grid">
+          <div><div class="k">Points de Santé (max)</div>
+            <input class="mini-number-sm ps-max" type="number" value="${pnj.ps}" data-id="${pnj.id}" data-field="ps">
+          </div>
+          <div><div class="k">PS actuels</div>
+            <input class="mini-number-sm current" type="number" value="${pnj.psActuel}" data-id="${pnj.id}" data-field="psActuel">
+          </div>
+          <div><div class="k">Points de Mana (max)</div>
+            <input class="mini-number-sm pm-max" type="number" value="${pnj.pm}" data-id="${pnj.id}" data-field="pm">
+          </div>
+          <div><div class="k">PM actuels</div>
+            <input class="mini-number-sm current" type="number" value="${pnj.pmActuel}" data-id="${pnj.id}" data-field="pmActuel">
+          </div>
+        </div>
+        <div class="meta-grid">
+          <div><div class="k">Métier</div>
+            <select class="mini-select" data-id="${pnj.id}" data-field="metier">${metierOptions}</select>
+          </div>
+          <div><div class="k">Disposition</div>
+            <select class="mini-select" data-id="${pnj.id}" data-field="disposition">${dispoOptions}</select>
+          </div>
+        </div>
+        <div class="competences">
+          <div class="k">Compétences (◆ maîtrisée)</div>
+          ${compsHtml}
+          ${compAddHtml}
+        </div>
+        <div class="competences">
+          <div class="k">Équipement</div>
+          ${equipHtml}
+          ${equipAddHtml}
+        </div>
+        <div class="field-inline">
+          <label>Groupe / Tags</label>
+          <input class="mini-text" type="text" placeholder="ex. Taverne du Cerf, quête principale" value="${pnj.groupe || ''}" data-id="${pnj.id}" data-field="groupe">
+        </div>
+        <div class="card-actions">
+          <button class="btn-save" data-id="${pnj.id}">${saved ? 'Mettre à jour' : 'Enregistrer'}</button>
+          ${saved ? `<button class="btn-delete" data-id="${pnj.id}">Supprimer</button>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  function setDeep(obj, path, value) {
+    // path du type "traits.FOR" ou "comp.2.score"
+    const parts = path.split('.');
+    let target = obj;
+    for (let i = 0; i < parts.length - 1; i++) {
+      const key = parts[i] === 'comp' ? 'competences' : parts[i];
+      target = target[isNaN(parts[i]) ? key : parts[i]];
+    }
+    const lastKey = parts[parts.length - 1];
+    target[lastKey] = value;
+  }
+
+  // Tire une nouvelle Compétence pour le PNJ (non déjà possédée, éligible à sa race), en secondaire
+  // (non maîtrisée). La composante de Niveau suit la même règle que pour une 2e compétence
+  // générée normalement (voir build() dans generatePNJ) : pas de bonus "1ère de catégorie".
+  function pickNewCompetence(pnj) {
+    const existingNames = new Set(pnj.competences.map(c => c.name));
+    const pool = ALL_SKILLS.filter(s => !existingNames.has(s.name) && isSkillEligible(s.name, pnj.race));
+    if (pool.length === 0) return null;
+    const skill = pick(pool);
+    const trait = skill.trait;
+    const composante = Math.max(0, pnj.level.points - 1);
+    const score = composante + (trait ? (pnj.traits[trait] || 0) : 0);
+    return { name: skill.name, trait, mastered: false, composante, score };
+  }
+
+  // Tire une Rareté cohérente avec le Niveau du PNJ, en réutilisant la même table que pour
+  // l'équipement de départ (EQUIPMENT_TABLE / pickRareteInRange, définies dans app-objects.js).
+  function pickRareteForLevel(levelName) {
+    const slots = EQUIPMENT_TABLE[levelName];
+    if (slots && slots.length) {
+      return pickRareteInRange(pick(slots).rareteRange);
+    }
+    return pickRareteInRange(["Commun", "Peu commun"]);
+  }
+
+  // Remplace la fiche affichée par sa version à jour après ajout/suppression d'une ligne,
+  // en conservant l'état "enregistrée" (présence du bouton Supprimer) de la fiche actuelle.
+  function refreshCard(pnj, cardEl) {
+    if (!cardEl) return;
+    const saved = !!cardEl.querySelector('.btn-delete');
+    cardEl.outerHTML = renderCard(pnj, { saved });
+  }
+
+  // Délégation d'évènements : un seul écouteur gère tous les champs éditables de toutes les fiches.
+  function bindCardEvents(container) {
+    container.addEventListener('input', (e) => {
+      const el = e.target;
+      const id = el.dataset.id;
+      const field = el.dataset.field;
+      if (!id || !field) return;
+      const pnj = PNJ_REGISTRY.get(id);
+      if (!pnj) return;
+      let value = el.value;
+      if (el.type === 'number') value = value === '' ? 0 : Number(value);
+      if (el.type === 'checkbox') value = el.checked;
+      setDeep(pnj, field, value);
+
+      // La couleur des scores de Trait (vert >=0 / rouge <0) doit suivre la valeur en direct.
+      if (field.startsWith('traits.') && el.classList.contains('v-input')) {
+        el.classList.toggle('pos', value >= 0);
+        el.classList.toggle('neg', value < 0);
+      }
+    });
+    container.addEventListener('change', (e) => {
+      const el = e.target;
+      if (el.type === 'checkbox' && el.dataset.field) {
+        const pnj = PNJ_REGISTRY.get(el.dataset.id);
+        if (pnj) setDeep(pnj, el.dataset.field, el.checked);
+      }
+    });
+    container.addEventListener('click', (e) => {
+      const rowDelBtn = e.target.closest('.btn-row-del');
+      if (rowDelBtn) {
+        const pnj = PNJ_REGISTRY.get(rowDelBtn.dataset.id);
+        if (!pnj) return;
+        const idx = parseInt(rowDelBtn.dataset.idx, 10);
+        const kind = rowDelBtn.dataset.kind;
+        if (kind === 'comp') {
+          pnj.competences.splice(idx, 1);
+        } else if (kind === 'equip') {
+          (pnj.equipement || []).splice(idx, 1);
+        }
+        refreshCard(pnj, rowDelBtn.closest('.card'));
+        return;
+      }
+      const rowAddBtn = e.target.closest('.btn-row-add');
+      if (rowAddBtn) {
+        const pnj = PNJ_REGISTRY.get(rowAddBtn.dataset.id);
+        if (!pnj) return;
+        const kind = rowAddBtn.dataset.kind;
+        if (kind === 'comp') {
+          const newComp = pickNewCompetence(pnj);
+          if (newComp) pnj.competences.push(newComp);
+        } else if (kind === 'equip') {
+          if (!pnj.equipement) pnj.equipement = [];
+          const forcedRarete = pickRareteForLevel(pnj.level.name);
+          const obj = generateObjet({ categorie: 'alea', metier: pnj.metier, forcedRarete }, pnj.equipement.length + 1);
+          pnj.equipement.push(summarizeObjet(obj));
+        }
+        refreshCard(pnj, rowAddBtn.closest('.card'));
+        return;
+      }
+      const saveBtn = e.target.closest('.btn-save');
+      if (saveBtn) {
+        const pnj = PNJ_REGISTRY.get(saveBtn.dataset.id);
+        if (!pnj) return;
+        // PS/PM "actuels" ne sont jamais persistés : ce sont des compteurs de combat éphémères,
+        // qui doivent repartir de la valeur maximale à chaque rechargement depuis le stockage.
+        const toSave = { ...pnj, psActuel: pnj.ps, pmActuel: pnj.pm };
+        const ok = PNJStore.save(toSave);
+        saveBtn.textContent = ok ? 'Mettre à jour ✓' : 'Échec (stockage indisponible)';
+        setTimeout(() => { saveBtn.textContent = 'Mettre à jour'; }, 1500);
+        if (!saveBtn.closest('.card-actions').querySelector('.btn-delete') && ok) {
+          const del = document.createElement('button');
+          del.className = 'btn-delete';
+          del.dataset.id = pnj.id;
+          del.textContent = 'Supprimer';
+          saveBtn.after(del);
+        }
+        return;
+      }
+      const delBtn = e.target.closest('.btn-delete');
+      if (delBtn) {
+        PNJStore.remove(delBtn.dataset.id);
+        PNJ_REGISTRY.delete(delBtn.dataset.id);
+        delBtn.closest('.card').remove();
+      }
+    });
+  }
+
+  bindCardEvents(document.getElementById('results'));
+
+  // --- Écran Mes PNJ : liste + recherche parmi les fiches enregistrées ---
+  const mespnjResults = document.getElementById('mespnjResults');
+  bindCardEvents(mespnjResults);
+
+  function matchesSearch(pnj, q) {
+    if (!q) return true;
+    const haystack = [
+      pnj.prenom, pnj.race.name, pnj.race.era, pnj.metier,
+      pnj.level.name, pnj.disposition, pnj.groupe
+    ].join(' ').toLowerCase();
+    return haystack.includes(q.toLowerCase());
+  }
+
+  function renderMesPnj() {
+    const all = PNJStore.loadAll();
+    const q = document.getElementById('searchPnj').value.trim();
+    const filtered = all.filter(pnj => matchesSearch(pnj, q));
+
+    if (all.length === 0) {
+      mespnjResults.innerHTML = `<div class="panel"><div class="empty-state">Aucun PNJ enregistré pour l'instant.<br>Enregistre une fiche depuis l'écran "Créer" pour la retrouver ici.</div></div>`;
+      return;
+    }
+    if (filtered.length === 0) {
+      mespnjResults.innerHTML = `<div class="panel"><div class="empty-state">Aucun résultat pour cette recherche.</div></div>`;
+      return;
+    }
+    mespnjResults.innerHTML = filtered.map(pnj => renderCard(pnj, { saved: true })).join('');
+  }
+
+  document.getElementById('searchPnj').addEventListener('input', renderMesPnj);
+  // ============================================================
+  // OBJETS MAGIQUES
+  // ============================================================
+
+  // Coût en Écus d'or (€) pour un niveau d'enchantement total donné.
+  // Suit la progression 1-2-5 puis x10 à chaque palier de 3, comme la table fournie
+  // (niveau 1→1€, 2→2€, 3→5€, 4→10€... prolongée indéfiniment selon le même motif).
+  function costForNiveau(n) {
+    if (n <= 0) return 0;
+    const decade = Math.floor((n - 1) / 3);
+    const pos = (n - 1) % 3;
+    const mult = [1, 2, 5][pos];
+    return mult * Math.pow(10, decade);
+  }
+
+  // Paliers de Rareté : bornes du niveau total d'enchantement de l'objet.
+  const RARETES = [
+    { name: "Commun", min: 1, max: 2 },
+    { name: "Peu commun", min: 3, max: 4 },
+    { name: "Rare", min: 5, max: 6 },
+    { name: "Précieux", min: 7, max: 8 },
+    { name: "Exceptionnel", min: 9, max: 10 },
+    { name: "Légendaire", min: 11, max: 12 },
+    { name: "Mythique", min: 13, max: 14 }
+  ];
+
+  const OBJECT_TYPES = [
+    { name: "Dague (+1/+1)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Glaive (+1/+1)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Épée courte (+1/+1)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Épée (+1/+2)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Espadon (+2/+3)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },    
+	{ name: "Hachette (-1/+3)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+    { name: "Hache de travail (-1/+3)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Hache de guerre (0/+4)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Hache lourde (+1/+5)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },
+    { name: "Gourdin (0/+2)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Marteau (0/+2)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Marteau de guerre (+2/+4)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },
+	{ name: "Masse à une main (+1/+3)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Masse de guerre (+2/+4)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },
+	{ name: "Fléau d'armes (0/+3)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Bâton (+2/+1)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },    
+	{ name: "Lance (+2/+2)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },
+	{ name: "Vouge (+3/+3)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },
+	{ name: "Hallebarde (+3/+3)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },
+	{ name: "Fouet (-1/+2)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Dague de lancer (0/+1)", category: "ArmeJetLancer", requiredSkill: "Armes de Lancer" },
+    { name: "Hachette de lancer (-1/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de Lancer" },
+    { name: "Lance (+1/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de Lancer" },
+    { name: "Javelot (+2/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de Lancer" },
+    { name: "Shuriken (+2/-2)", category: "ArmeJetLancer", requiredSkill: "Armes de Lancer" },
+    { name: "Arc court (0/+1)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Arc composite (0/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Long Bow (0/+4)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Arbalette de poing (+2/+1)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Arbalette à levier (+2/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Arbalette à manivelle (+2/+4)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Lance-javelot (0/+3)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Sarbacane (+1/0)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Fronde (-1/+3)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Pistolet à Poudre-Noire (0/0)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Tromblon (0/+1)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Mousquet (0/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Pistolet Elohim (+2/+1)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Fusil Elohim (+2/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Matelassée", category: "Armure" },{ name: "Cuir souple", category: "Armure" },{ name: "Cuir dur", category: "Armure" },{ name: "Cuir clouté", category: "Armure" },{ name: "Maille", category: "Armure" },{ name: "Ecailles", category: "Armure" },{ name: "Brigandine", category: "Armure" },{ name: "Harnois", category: "Armure" },
+	{ name: "Bocle", category: "Armure" },{ name: "Rondache", category: "Armure" },{ name: "Ecu", category: "Armure" },{ name: "Pavois", category: "Armure" },
+	{ name: "Salade", category: "Armure" },{ name: "Bol", category: "Armure" },{ name: "Heaume", category: "Armure" },{ name: "Nasal", category: "Armure" },
+    { name: "Brassard", category: "Bijou" },{ name: "Anneau", category: "Bijou" }, { name: "Collier", category: "Bijou" }, { name: "Bracelet", category: "Bijou" },{ name: "Bracelet de bras", category: "Bijou" },{ name: "Boucle d'oreille", category: "Bijou" },{ name: "Serre-tête", category: "Bijou" },{ name: "Piercing", category: "Bijou" },
+    { name: "Cape", category: "Vêtement" },{ name: "Manteau", category: "Vêtement" }, { name: "Capeline", category: "Vêtement" },{ name: "Gants", category: "Vêtement" }, { name: "Mitaines", category: "Vêtement" },{ name: "Bottes", category: "Vêtement" },{ name: "Sandales", category: "Vêtement" },{ name: "Chaussures", category: "Vêtement" },{ name: "Bottes hautes", category: "Vêtement" },{ name: "Escarpins", category: "Vêtement" },
+	{ name: "Capuche", category: "Vêtement" },{ name: "Chapeau", category: "Vêtement" },{ name: "Béret", category: "Vêtement" },{ name: "Chainse", category: "Vêtement" },{ name: "Tunique", category: "Vêtement" },{ name: "Braies", category: "Vêtement" },{ name: "Chausses", category: "Vêtement" },{ name: "Culotte", category: "Vêtement" },{ name: "Robe", category: "Vêtement" },{ name: "Jupe", category: "Vêtement" },{ name: "Bandeau", category: "Vêtement" },{ name: "Ceinture", category: "Vêtement" },{ name: "Surcôt", category: "Vêtement" },
+    { name: "Torche", category: "Utilitaire" },{ name: "Chandelle", category: "Utilitaire" },{ name: "Lanterne", category: "Utilitaire" },{ name: "Besace", category: "Utilitaire" },{ name: "Bourse", category: "Utilitaire" },{ name: "Sac", category: "Utilitaire" },{ name: "Gourde", category: "Utilitaire" },{ name: "Outre", category: "Utilitaire" },
+	{ name: "Mouchoir", category: "Utilitaire" },{ name: "Briquet", category: "Utilitaire" },{ name: "Timbale", category: "Utilitaire" },{ name: "Couverture", category: "Utilitaire" },{ name: "Pierre à aiguiser", category: "Utilitaire" },{ name: "Écritoire", category: "Utilitaire" },{ name: "Plume", category: "Utilitaire" },{ name: "Encrier", category: "Utilitaire" },
+	{ name: "Siflet", category: "Utilitaire" },{ name: "Fiole de...", category: "Utilitaire" },{ name: "Miroir", category: "Utilitaire" },{ name: "Coutelas", category: "Utilitaire" },{ name: "Lunettes", category: "Utilitaire" },{ name: "Longue-vue", category: "Utilitaire" },{ name: "Boussole", category: "Utilitaire" },{ name: "Pansement de premiers secours", category: "Utilitaire" },
+    { name: "Flûte", category: "Instrument" },{ name: "Pipeau", category: "Instrument" },{ name: "Luth", category: "Instrument" },{ name: "Mandoline", category: "Instrument" },{ name: "Guimbarde", category: "Instrument" },
+  ];
+
+  // Traits dont les Compétences liées sont thématiquement cohérentes avec chaque catégorie d'objet
+  // (ex. une arme porte plutôt un bonus de combat, un bijou plutôt un bonus social/mental).
+  const CATEGORY_TRAITS = {
+    ArmeMêlée: ["FOR", "MAI"],
+	ArmeJetLancer: ["PER", "AGI"],
+    Armure: ["FOR", "MAI"],
+    Bijou: ["FOR", "AGI", "INT", "PER", "MAI", "CHA"],
+    Vêtement: ["FOR", "AGI", "PER", "CHA"],
+    Utilitaire: ["FOR", "AGI", "INT", "PER", "MAI", "CHA"],
+    Instrument: ["CHA", "AGI"]
+  };
+
+  // Catégories "logiques" d'objets par Métier, utilisées pour choisir un type d'objet cohérent
+  // quand l'objet est lié à un Métier. "Arme" regroupe les deux catégories techniques d'armes
+  // (ArmeMêlée / ArmeJetLancer), tirées 50/50 au moment de la génération.
+  const METIER_CATEGORIES = {
+    "Forgeron": ["Arme", "Armure", "Utilitaire"],
+    "Marchand": ["Bijou", "Utilitaire", "Vêtement"],
+    "Officier": ["Arme", "Armure", "Vêtement"],
+    "Sous-Officier": ["Arme", "Armure", "Vêtement"],
+    "Soldat de ligne": ["Arme", "Armure", "Vêtement"],
+    "Soldat de tir": ["Arme", "Utilitaire", "Vêtement"],
+    "Garde du corps": ["Arme", "Armure", "Vêtement"],
+    "Voleur": ["Arme", "Utilitaire", "Vêtement"],
+    "Aubergiste": ["Utilitaire", "Bijou"],
+    "Serveur": ["Utilitaire", "Bijou"],
+    "Ménestrel": ["Bijou", "Vêtement", "Instrument"],
+    "Danseur": ["Vêtement", "Bijou"],
+    "Mendiant": ["Utilitaire", "Vêtement", "Instrument"],
+    "Haut Mage": ["Bijou", "Vêtement", "Utilitaire"],
+    "Prêtre": ["Bijou", "Vêtement"],
+    "Médecin": ["Utilitaire", "Bijou"],
+    "Artisan": ["Utilitaire", "Bijou"],
+    "Soldat terrien": ["Armure", "Arme", "Vêtement"],
+    "Capitaine éthéré": ["Vêtement", "Bijou"],
+    "Ingénieur éthéré": ["Utilitaire", "Bijou"],
+    "Marin éthéré": ["Vêtement", "Utilitaire"],
+    "Canonnier éthéré": ["Arme", "Armure"],
+    "Herboriste": ["Utilitaire", "Bijou"],
+    "Éclaireur": ["Arme", "Vêtement"],
+    "Palefrenier": ["Vêtement", "Utilitaire"],
+    "Ingénieur militaire": ["Utilitaire", "Armure"],
+    "Marin": ["Vêtement", "Utilitaire"],
+    "Assassin": ["Arme", "Vêtement", "Bijou"]
+  };
+
+  // Résout la catégorie technique réelle à partir d'une entrée de METIER_CATEGORIES
+  // ("Arme" est un alias regroupant les deux catégories d'armes existantes).
+  function resolveMetierCategory(logicalCategory) {
+    if (logicalCategory === "Arme") return pick(["ArmeMêlée", "ArmeJetLancer"]);
+    return logicalCategory;
+  }
+
+
+  // Effets non chiffrés (capacités spéciales), avec un niveau fixé "à dire d'expert" en attendant
+  // la vraie table de Haute Magie. Échelle calibrée sur les 4 exemples donnés (bougie=1, vêtement
+  // toujours sec=4, marche sur l'air=6, téléportation=10).
+  const SPECIAL_ENCHANTMENTS = [
+    { name: "Finition raffinée (effet mineur)", niveau: 1, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Bougie magique (lumière permanente)", niveau: 1, categories: ["Utilitaire", "Bijou"] },
+    { name: "Réchaud de poche (chaleur à la demande)", niveau: 1, categories: ["Vêtement", "Utilitaire"] },
+    { name: "Vision nocturne", niveau: 2, categories: ["Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Vêtement toujours sec (imperméabilité totale)", niveau: 4, categories: ["Vêtement"] },
+    { name: "Résistance au feu", niveau: 5, categories: ["Armure", "Vêtement"] },
+    { name: "Respiration aquatique", niveau: 5, categories: ["Vêtement", "Bijou"] },
+    { name: "Bottes pour marcher sur l'air (lévitation basse)", niveau: 6, categories: ["Vêtement"] },
+    { name: "Communication télépathique (courte portée)", niveau: 7, categories: ["Bijou", "Utilitaire"] },
+    { name: "Illusion (dissimule la nature magique de l'objet)", niveau: 8, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Régénération lente des blessures", niveau: 9, categories: ["Bijou", "Armure"] },
+    { name: "Invisibilité temporaire", niveau: 9, categories: ["Vêtement", "Bijou"] },
+    { name: "Téléportation courte distance", niveau: 10, categories: ["Bijou", "Vêtement"] },
+    { name: "Contrôle du temps local (petite zone)", niveau: 12, categories: ["Utilitaire", "Bijou"] },
+    { name: "Résurrection d'urgence (usage unique)", niveau: 14, categories: ["Bijou"] }
+  ];
+
+  const MATERIALS = ["or", "argent", "mythril", "bronze"];
+  const GEMS = ["rubis", "saphir", "émeraude", "diamant", "aigue-marine", "lapis lazuli", "pierre de lune", "cornaline", "aventurine", "améthyste", "topaze",  "opale", "jade", "citrine", "onyx", "quartz fumé", "perles", "nacre", "ambre"];
+  // Remplit le budget de niveaux d'un objet avec 1 à 3 enchantements (chiffrés ou spéciaux),
+  // compatibles avec sa catégorie, jusqu'à épuiser le budget (ou ne plus pouvoir le faire).
+  // excludeSkillNames : compétences déjà attribuées (ex. le bonus principal lié au Métier),
+  // à ne pas retirer une seconde fois.
+  // Certaines Compétences ne peuvent recevoir de bonus que de catégories d'objets précises
+  // (ex. Boxe/Lutte et Arts Martiaux sont des compétences à mains nues : par définition, aucune
+  // arme ne peut les booster, seuls un Vêtement ou un Bijou le peuvent).
+  const SKILL_CATEGORY_RESTRICTIONS = {
+    "Boxe/Lutte": ["Vêtement", "Bijou"],
+    "Arts Martiaux": ["Vêtement", "Bijou"]
+  };
+
+  function isSkillAllowedForCategory(skillName, category) {
+    const allowed = SKILL_CATEGORY_RESTRICTIONS[skillName];
+    return !allowed || allowed.includes(category);
+  }
+
+  function fillEnchantments(category, budget, forcedSkillName, excludeSkillNames) {
+    const enchantements = [];
+    let remaining = budget;
+    const maxSlots = 3;
+    const compatibleTraits = CATEGORY_TRAITS[category] || ["FOR", "AGI", "INT", "PER", "MAI", "CHA"];
+    const usedSkillNames = new Set(excludeSkillNames || []);
+    const usedSpecialNames = new Set();
+
+    while (remaining > 0 && enchantements.length < maxSlots) {
+      // Une arme est toujours liée à sa compétence de maniement précise, pas à une compétence
+      // de combat tirée au hasard dans la catégorie.
+      const skillPool = forcedSkillName
+        ? ALL_SKILLS.filter(s => s.name === forcedSkillName)
+        : ALL_SKILLS.filter(s => s.trait && compatibleTraits.includes(s.trait) && isSkillAllowedForCategory(s.name, category));
+      const compatibleSkills = skillPool.filter(s => !usedSkillNames.has(s.name));
+      const specialOptions = SPECIAL_ENCHANTMENTS.filter(s => s.categories.includes(category) && s.niveau <= remaining && !usedSpecialNames.has(s.name));
+      const canBonus = remaining >= 2 && compatibleSkills.length > 0;
+      const canSpecial = specialOptions.length > 0;
+      if (!canBonus && !canSpecial) break;
+
+      const useBonus = canBonus && (!canSpecial || Math.random() < 0.55);
+      if (useBonus) {
+        const maxMagnitude = Math.max(1, Math.floor(remaining / 2));
+        const magnitude = 1 + Math.floor(Math.random() * maxMagnitude);
+        const skill = pick(compatibleSkills);
+        const niveau = magnitude * 2;
+        enchantements.push({ type: "bonus", name: skill.name, trait: skill.trait, magnitude, niveau });
+        usedSkillNames.add(skill.name);
+        remaining -= niveau;
+      } else {
+        const chosen = pick(specialOptions);
+        enchantements.push({ type: "special", name: chosen.name, niveau: chosen.niveau });
+        usedSpecialNames.add(chosen.name);
+        remaining -= chosen.niveau;
+      }
+    }
+    return enchantements;
+  }
+
+  // Résout le Métier attribué à l'objet pour cette génération, selon les règles :
+  // choix explicite -> ce Métier ; sinon 80% un Métier aléatoire, 20% aucun.
+  function resolveObjectMetier(options) {
+    if (options.metier === null) return null; // "aucun métier" explicitement demandé (slot générique)
+    if (options.metier && options.metier !== 'alea') return options.metier;
+    if (Math.random() < 0.8) return pick(TABLES.metier);
+    return null;
+  }
+
+  // Garantit que le total des niveaux d'enchantement tombe bien dans la fourchette de la Rareté
+  // tirée. Comme les bonus se font par multiples de 2 (magnitude x2) et que chaque fourchette de
+  // Rareté est un couple [impair, pair], un budget tombé sur l'impair laisse un point orphelin
+  // qu'un bonus seul ne peut pas consommer. Plutôt que d'ajouter un effet de complément séparé,
+  // on augmente en priorité la magnitude d'un bonus déjà présent : ça absorbe le point manquant
+  // ET atterrit pile sur le max (pair) de la fourchette, gardant l'objet "bonus pur".
+  function ensureWithinRarete(enchantements, category, requiredSkill, rarete) {
+    const total = () => enchantements.reduce((s, e) => s + e.niveau, 0);
+    if (total() >= rarete.min) return enchantements;
+    const shortfall = rarete.min - total();
+    const addMagnitude = Math.ceil(shortfall / 2);
+
+    const existingBonus = enchantements.find(e => e.type === "bonus");
+    if (existingBonus) {
+      existingBonus.magnitude += addMagnitude;
+      existingBonus.niveau += addMagnitude * 2;
+      return enchantements;
+    }
+
+    // Aucun bonus existant (objet 100% effets spéciaux) : on en ajoute un nouveau si un
+    // emplacement est disponible et qu'une compétence compatible existe.
+    const compatibleTraits = CATEGORY_TRAITS[category] || ["FOR", "AGI", "INT", "PER", "MAI", "CHA"];
+    const usedSkillNames = new Set(enchantements.map(e => e.name));
+    const skillPool = requiredSkill
+      ? ALL_SKILLS.filter(s => s.name === requiredSkill)
+      : ALL_SKILLS.filter(s => s.trait && compatibleTraits.includes(s.trait) && !usedSkillNames.has(s.name) && isSkillAllowedForCategory(s.name, category));
+
+    if (enchantements.length < 3) {
+      if (skillPool.length > 0) {
+        const skill = pick(skillPool);
+        const magnitude = Math.max(1, addMagnitude);
+        enchantements.push({ type: "bonus", name: skill.name, trait: skill.trait, magnitude, niveau: magnitude * 2 });
+      }
+    } else if (skillPool.length > 0) {
+      // Les 3 emplacements sont déjà occupés par des effets spéciaux : on remplace le plus
+      // faible par un bonus qui couvre à la fois sa propre valeur et le manque restant.
+      let minIdx = 0;
+      for (let i = 1; i < enchantements.length; i++) {
+        if (enchantements[i].niveau < enchantements[minIdx].niveau) minIdx = i;
+      }
+      const neededNiveau = shortfall + enchantements[minIdx].niveau;
+      const magnitude = Math.max(1, Math.ceil(neededNiveau / 2));
+      const skill = pick(skillPool);
+      enchantements[minIdx] = { type: "bonus", name: skill.name, trait: skill.trait, magnitude, niveau: magnitude * 2 };
+    }
+    return enchantements;
+  }
+
+  function generateObjet(options, index) {
+    // Une Rareté explicite (ex. table d'équipement des PNJ) court-circuite la lecture des cases
+    // à cocher de l'écran "Objets", qui ne sert que pour le tirage manuel.
+    let rarete;
+    if (options.forcedRarete) {
+      rarete = RARETES.find(r => r.name === options.forcedRarete) || RARETES[0];
+    } else {
+      const rareteChecked = getChecked(document.getElementById('raretesChecks'));
+      const rareteList = rareteChecked.length ? RARETES.filter(r => rareteChecked.includes(r.name)) : RARETES;
+      rarete = pick(rareteList);
+    }
+    const rareteIndex = RARETES.findIndex(r => r.name === rarete.name);
+    const budget = rarete.min + Math.floor(Math.random() * (rarete.max - rarete.min + 1));
+
+    // Le Métier est résolu avant la catégorie, car il peut orienter le choix du type d'objet
+    // (ex. un Ménestrel tirera plus volontiers un Instrument qu'une Armure).
+    const preliminaryMetier = resolveObjectMetier(options);
+
+    // Catégorie : un choix explicite de l'utilisateur est toujours respecté ; sinon, si un
+    // Métier est attribué et qu'il a des catégories cohérentes définies, on tire dedans ;
+    // sinon, catégorie totalement aléatoire (comportement d'origine).
+    let category;
+    if (options.categorie && options.categorie !== "alea") {
+      category = options.categorie;
+    } else if (preliminaryMetier && METIER_CATEGORIES[preliminaryMetier]) {
+      category = resolveMetierCategory(pick(METIER_CATEGORIES[preliminaryMetier]));
+    } else {
+      category = pick(Object.keys(CATEGORY_TRAITS));
+    }
+
+    const type = pick(OBJECT_TYPES.filter(t => t.category === category));
+
+    // Une arme ne doit JAMAIS donner de bonus sur une autre compétence que celle de son
+    // maniement (cas particulier, contrairement à tous les autres types d'objets). On force donc
+    // systématiquement sa compétence, ce qui l'exclut de fait de la logique liée au Métier
+    // ci-dessous — elle peut toujours recevoir un effet spécial en plus si le budget le permet.
+    const requiredSkill = type.requiredSkill || null;
+
+    // Le Métier ne joue un rôle sur le BONUS que pour les objets dont la compétence n'est pas
+    // imposée (une arme reste toujours liée à sa compétence de maniement, même si son type a
+    // été choisi en cohérence avec le Métier ci-dessus).
+    const metier = requiredSkill ? null : preliminaryMetier;
+    const metierCandidats = metier
+      ? (METIER_SKILLS[metier] || []).filter(name => ALL_SKILLS.some(s => s.name === name) && isSkillAllowedForCategory(name, category))
+      : [];
+
+    let enchantements;
+    if (metier && metierCandidats.length > 0 && budget >= 2) {
+      const primarySkillName = pick(metierCandidats);
+      const skillObj = ALL_SKILLS.find(s => s.name === primarySkillName);
+
+      if (Math.random() < 0.7) {
+        // 70% : bonus maximal permis par la Rareté -> seul effet de l'objet.
+        const magnitude = Math.max(1, Math.floor(budget / 2));
+        const niveau = magnitude * 2;
+        enchantements = [{ type: "bonus", name: primarySkillName, trait: skillObj.trait, magnitude, niveau }];
+      } else {
+        // 30% : bonus équivalent à une Rareté d'un cran inférieur, complété par d'autres effets
+        // pour utiliser le reste du budget de la Rareté tirée.
+        const loweredRarete = rareteIndex > 0 ? RARETES[rareteIndex - 1] : rarete;
+        const loweredBudget = loweredRarete.min + Math.floor(Math.random() * (loweredRarete.max - loweredRarete.min + 1));
+        const magnitude = Math.max(1, Math.floor(loweredBudget / 2));
+        const niveau = magnitude * 2;
+        const primary = { type: "bonus", name: primarySkillName, trait: skillObj.trait, magnitude, niveau };
+        const remaining = Math.max(0, budget - niveau);
+        const extra = remaining > 0 ? fillEnchantments(category, remaining, requiredSkill, [primarySkillName]) : [];
+        enchantements = [primary, ...extra];
+      }
+    } else {
+      enchantements = fillEnchantments(category, budget, requiredSkill);
+    }
+
+    enchantements = ensureWithinRarete(enchantements, category, requiredSkill, rarete);
+
+    const niveauTotal = enchantements.reduce((s, e) => s + e.niveau, 0);
+    const cout = costForNiveau(niveauTotal);
+
+    const materiau = pick(MATERIALS);
+    const gemme = pick(GEMS);
+    const nom = `${type.name} (${materiau} et ${gemme})`;
+
+    return { id: newId('obj'), index, nom, type: type.name, category, rarete: rarete.name, materiau, gemme, enchantements, niveauTotal, cout, groupe: '', sousTitre: `${rarete.name} · ${category} · Niveau d'enchantement total : ${niveauTotal}` };
+  }
+
+  // ============================================================
+  // ÉQUIPEMENT DE DÉPART DES PNJ (table Niveau -> emplacements d'objets)
+  // ============================================================
+  // Chaque emplacement (slot) : probabilité d'apparition, fourchette de Rareté ([min,max] de
+  // RARETES, bornes incluses) dans laquelle une Rareté est tirée, et "metier" (true = l'objet est
+  // lié au Métier du PNJ, false = objet générique, sans lien de Métier forcé).
+  // Exceptionnel reste rare même aux Niveaux élevés (slot "Bonus rare" à faible probabilité) ;
+  // Légendaire et Mythique n'apparaissent jamais à la création (réservés au MJ).
+  const EQUIPMENT_TABLE = {
+    "Apprenti": [
+      { prob: 0.60, rareteRange: ["Commun", "Commun"], metier: true }
+    ],
+    "Novice": [
+      { prob: 0.90, rareteRange: ["Peu commun", "Peu commun"], metier: true },
+      { prob: 0.50, rareteRange: ["Commun", "Peu commun"], metier: true },
+      { prob: 0.10, rareteRange: ["Commun", "Commun"], metier: false }
+    ],
+    "Pro": [
+      { prob: 1.00, rareteRange: ["Peu commun", "Rare"], metier: true },
+      { prob: 0.90, rareteRange: ["Commun", "Peu commun"], metier: true },
+      { prob: 0.50, rareteRange: ["Commun", "Peu commun"], metier: false },
+      { prob: 0.15, rareteRange: ["Commun", "Commun"], metier: false },
+      { prob: 0.05, rareteRange: ["Précieux", "Précieux"], metier: true }
+    ],
+    "Expert": [
+      { prob: 1.00, rareteRange: ["Rare", "Précieux"], metier: true },
+      { prob: 0.90, rareteRange: ["Peu commun", "Rare"], metier: true },
+      { prob: 0.70, rareteRange: ["Commun", "Peu commun"], metier: false },
+      { prob: 0.25, rareteRange: ["Commun", "Peu commun"], metier: false },
+      { prob: 0.10, rareteRange: ["Précieux", "Précieux"], metier: true }
+    ],
+    "Compagnon": [
+      { prob: 1.00, rareteRange: ["Rare", "Précieux"], metier: true },
+      { prob: 0.95, rareteRange: ["Rare", "Précieux"], metier: true },
+      { prob: 0.80, rareteRange: ["Peu commun", "Rare"], metier: false },
+      { prob: 0.40, rareteRange: ["Commun", "Peu commun"], metier: false },
+      { prob: 0.10, rareteRange: ["Exceptionnel", "Exceptionnel"], metier: true }
+    ],
+    "Maître": [
+      { prob: 1.00, rareteRange: ["Précieux", "Exceptionnel"], metier: true },
+      { prob: 0.95, rareteRange: ["Rare", "Précieux"], metier: true },
+      { prob: 0.85, rareteRange: ["Peu commun", "Rare"], metier: false },
+      { prob: 0.50, rareteRange: ["Commun", "Peu commun"], metier: false },
+      { prob: 0.20, rareteRange: ["Exceptionnel", "Exceptionnel"], metier: true }
+    ],
+    "Divin": [
+      { prob: 1.00, rareteRange: ["Précieux", "Exceptionnel"], metier: true },
+      { prob: 1.00, rareteRange: ["Rare", "Précieux"], metier: true },
+      { prob: 0.90, rareteRange: ["Peu commun", "Rare"], metier: false },
+      { prob: 0.60, rareteRange: ["Commun", "Peu commun"], metier: false },
+      { prob: 0.30, rareteRange: ["Exceptionnel", "Exceptionnel"], metier: true }
+    ]
+  };
+
+  function pickRareteInRange(rangeNames) {
+    const startIdx = RARETES.findIndex(r => r.name === rangeNames[0]);
+    const endIdx = RARETES.findIndex(r => r.name === rangeNames[1]);
+    const options = RARETES.slice(startIdx, endIdx + 1);
+    return pick(options).name;
+  }
+
+  // Résumé condensé d'un objet, tel qu'affiché (et librement éditable) dans la fiche du PNJ :
+  // une ligne "type - rareté - coût", une ligne listant les effets (sans Trait ni Niveau).
+  function summarizeObjet(obj) {
+    const ligne1 = `${obj.type} (${obj.materiau} et ${obj.gemme}) · ${obj.rarete} · ${obj.cout}€`;
+    const ligne2 = obj.enchantements
+      .map(e => e.type === "bonus" ? `+${e.magnitude} ${e.name}` : e.name)
+      .join(', ');
+    return { ligne1, ligne2 };
+  }
+
+  // Génère l'équipement de départ d'un PNJ selon son Niveau, en suivant EQUIPMENT_TABLE.
+  function generateEquipementForPNJ(pnj) {
+    const slots = EQUIPMENT_TABLE[pnj.level.name] || [];
+    const equipement = [];
+    slots.forEach(slot => {
+      if (Math.random() >= slot.prob) return;
+      const forcedRarete = pickRareteInRange(slot.rareteRange);
+      const options = {
+        categorie: "alea",
+        metier: slot.metier ? pnj.metier : null,
+        forcedRarete
+      };
+      const obj = generateObjet(options, equipement.length + 1);
+      equipement.push(summarizeObjet(obj));
+    });
+    return equipement;
+  }
+
+  function renderObjCard(obj, opts = {}) {
+    OBJ_REGISTRY.set(obj.id, obj);
+    const saved = opts.saved || false;
+    const enchHtml = obj.enchantements.map((e, idx) => `
+      <div class="comp-row">
+        <input type="text" class="comp-name-input" value="${e.type === 'bonus' ? `+${e.magnitude} ${e.name}` : e.name}" data-id="${obj.id}" data-field="obj-ench.${idx}.name">
+        ${e.trait ? `<span class="trait-tag">(${e.trait})</span>` : ''}
+        <span class="trait-tag">niv.</span>
+        <input class="score-input" type="number" value="${e.niveau}" data-id="${obj.id}" data-field="obj-ench.${idx}.niveau">
+      </div>
+    `).join('');
+
+    return `
+      <div class="card" data-card-id="${obj.id}">
+        <div class="card-top">
+          <div class="card-top-info">
+            <input class="name-input" type="text" value="${obj.nom}" data-id="${obj.id}" data-field="nom">
+          </div>
+        </div>
+        <input class="race-line-input" type="text" value="${obj.sousTitre}" data-id="${obj.id}" data-field="sousTitre">
+        <div class="competences">
+          <div class="k">Enchantements</div>
+          ${enchHtml}
+        </div>
+        <div class="field-inline">
+          <label>Coût (Écus d'or €)</label>
+          <input class="mini-number current" type="number" value="${obj.cout}" data-id="${obj.id}" data-field="cout">
+        </div>
+        <div class="field-inline">
+          <label>Groupe / Tags</label>
+          <input class="mini-text" type="text" placeholder="ex. Butin donjon, boutique de Maître Orin" value="${obj.groupe || ''}" data-id="${obj.id}" data-field="groupe">
+        </div>
+        <div class="card-actions">
+          <button class="btn-save" data-id="${obj.id}">${saved ? 'Mettre à jour' : 'Enregistrer'}</button>
+          ${saved ? `<button class="btn-delete" data-id="${obj.id}">Supprimer</button>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  const ObjetStore = {
+    indexKey: 'objet:index',
+    listIds() {
+      try { return JSON.parse(localStorage.getItem(this.indexKey) || '[]'); }
+      catch (e) { return []; }
+    },
+    save(obj) {
+      try {
+        const ids = this.listIds();
+        if (!ids.includes(obj.id)) { ids.push(obj.id); localStorage.setItem(this.indexKey, JSON.stringify(ids)); }
+        localStorage.setItem('objet:' + obj.id, JSON.stringify(obj));
+        return true;
+      } catch (e) { console.warn('Sauvegarde objet impossible :', e); return false; }
+    },
+    remove(id) {
+      try {
+        localStorage.setItem(this.indexKey, JSON.stringify(this.listIds().filter(i => i !== id)));
+        localStorage.removeItem('objet:' + id);
+      } catch (e) { /* stockage indisponible */ }
+    },
+    loadAll() {
+      return this.listIds().map(id => {
+        try { return JSON.parse(localStorage.getItem('objet:' + id)); } catch (e) { return null; }
+      }).filter(Boolean);
+    }
+  };
+
+  const OBJ_REGISTRY = new Map();
+
+  function setDeepObj(obj, path, value) {
+    if (path.startsWith('obj-ench.')) {
+      const [, idx, field] = path.split('.');
+      obj.enchantements[idx][field] = value;
+      return;
+    }
+    obj[path] = value;
+  }
+
+  function bindObjEvents(container) {
+    container.addEventListener('input', (e) => {
+      const el = e.target;
+      const id = el.dataset.id;
+      const field = el.dataset.field;
+      if (!id || !field) return;
+      const obj = OBJ_REGISTRY.get(id);
+      if (!obj) return;
+      let value = el.value;
+      if (el.type === 'number') value = value === '' ? 0 : Number(value);
+      setDeepObj(obj, field, value);
+    });
+    container.addEventListener('click', (e) => {
+      const saveBtn = e.target.closest('.btn-save');
+      if (saveBtn) {
+        const obj = OBJ_REGISTRY.get(saveBtn.dataset.id);
+        if (!obj) return;
+        const ok = ObjetStore.save(obj);
+        saveBtn.textContent = ok ? 'Mettre à jour ✓' : 'Échec (stockage indisponible)';
+        setTimeout(() => { saveBtn.textContent = 'Mettre à jour'; }, 1500);
+        if (!saveBtn.closest('.card-actions').querySelector('.btn-delete') && ok) {
+          const del = document.createElement('button');
+          del.className = 'btn-delete';
+          del.dataset.id = obj.id;
+          del.textContent = 'Supprimer';
+          saveBtn.after(del);
+        }
+        return;
+      }
+      const delBtn = e.target.closest('.btn-delete');
+      if (delBtn) {
+        ObjetStore.remove(delBtn.dataset.id);
+        OBJ_REGISTRY.delete(delBtn.dataset.id);
+        delBtn.closest('.card').remove();
+      }
+    });
+  }
+
+  const objResults = document.getElementById('objResults');
+  bindObjEvents(objResults);
+
+  const raretesChecks = document.getElementById('raretesChecks');
+  RARETES.forEach(r => {
+    const label = document.createElement('label');
+    label.className = 'chip';
+    label.innerHTML = `<input type="checkbox" value="${r.name}"> ${r.name} (${r.min}-${r.max})`;
+    const input = label.querySelector('input');
+    input.addEventListener('change', () => label.classList.toggle('checked', input.checked));
+    raretesChecks.appendChild(label);
+  });
+
+  // --- Peuplement du menu "Métier" (optionnel) pour les objets ---
+  const objMetierSelect = document.getElementById('objMetier');
+  TABLES.metier.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m;
+    opt.textContent = m;
+    objMetierSelect.appendChild(opt);
+  });
+
+  let objCounter = 0;
+  document.getElementById('btnGenerateObj').addEventListener('click', () => {
+    const options = {
+      categorie: document.getElementById('objCategorie').value,
+      metier: document.getElementById('objMetier').value
+    };
+    const nb = Math.min(8, Math.max(1, parseInt(document.getElementById('nbObj').value) || 1));
+    objResults.innerHTML = "";
+    for (let i = 0; i < nb; i++) {
+      objCounter++;
+      const obj = generateObjet(options, objCounter);
+      objResults.insertAdjacentHTML('beforeend', renderObjCard(obj));
+    }
+  });
+
+  // --- Écran Mes Objets : liste + recherche parmi les fiches enregistrées ---
+  const mesobjetsResults = document.getElementById('mesobjetsResults');
+  bindObjEvents(mesobjetsResults);
+
+  function matchesSearchObj(obj, q) {
+    if (!q) return true;
+    const haystack = [
+      obj.nom, obj.type, obj.category, obj.rarete, obj.groupe
+    ].join(' ').toLowerCase();
+    return haystack.includes(q.toLowerCase());
+  }
+
+  function renderMesObjets() {
+    const all = ObjetStore.loadAll();
+    const q = document.getElementById('searchObj').value.trim();
+    const filtered = all.filter(obj => matchesSearchObj(obj, q));
+
+    if (all.length === 0) {
+      mesobjetsResults.innerHTML = `<div class="panel"><div class="empty-state">Aucun objet enregistré pour l'instant.<br>Enregistre une fiche depuis l'écran "Objets" pour la retrouver ici.</div></div>`;
+      return;
+    }
+    if (filtered.length === 0) {
+      mesobjetsResults.innerHTML = `<div class="panel"><div class="empty-state">Aucun résultat pour cette recherche.</div></div>`;
+      return;
+    }
+    mesobjetsResults.innerHTML = filtered.map(obj => renderObjCard(obj, { saved: true })).join('');
+  }
+
+  document.getElementById('searchObj').addEventListener('input', renderMesObjets);
+
+
+
+  // --- Écran Sauvegarde : export / import (PNJ + Objets combinés dans un seul fichier) ---
+  function updateExportCount() {
+    const nPnj = PNJStore.loadAll().length;
+    const nObj = ObjetStore.loadAll().length;
+    document.getElementById('exportCount').textContent =
+      (nPnj === 0 && nObj === 0)
+        ? "Rien d'enregistré pour l'instant."
+        : `${nPnj} PNJ et ${nObj} objet(s) actuellement enregistrés sur cet appareil.`;
+  }
+
+  document.getElementById('btnExport').addEventListener('click', () => {
+    const pnjs = PNJStore.loadAll();
+    const objets = ObjetStore.loadAll();
+    if (pnjs.length === 0 && objets.length === 0) {
+      document.getElementById('exportCount').textContent = "Rien à exporter.";
+      return;
+    }
+    const payload = { pnjs, objets };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const date = new Date().toISOString().slice(0, 10);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `recueil-pnj-export-${date}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('btnImport').addEventListener('click', () => {
+    const input = document.getElementById('importFile');
+    const status = document.getElementById('importStatus');
+    const file = input.files[0];
+    if (!file) {
+      status.textContent = "Choisis d'abord un fichier .json exporté depuis l'appli.";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        // Compatibilité : un ancien fichier exporté avant l'ajout des objets est un simple
+        // tableau de PNJ. Le nouveau format est { pnjs: [...], objets: [...] }.
+        const pnjsIn = Array.isArray(data) ? data : (data.pnjs || []);
+        const objetsIn = Array.isArray(data) ? [] : (data.objets || []);
+
+        const existingPnjIds = new Set(PNJStore.listIds());
+        let pnjCreated = 0, pnjOverwritten = 0;
+        pnjsIn.forEach(pnj => {
+          if (!pnj || !pnj.prenom || !pnj.traits) return; // validation minimale
+          if (!pnj.id) pnj.id = newId('pnj'); // filet de sécurité si le fichier est incomplet
+          if (existingPnjIds.has(pnj.id)) pnjOverwritten += 1; else pnjCreated += 1;
+          PNJStore.save(pnj);
+        });
+
+        const existingObjIds = new Set(ObjetStore.listIds());
+        let objCreated = 0, objOverwritten = 0;
+        objetsIn.forEach(obj => {
+          if (!obj || !obj.nom || !obj.enchantements) return; // validation minimale
+          if (!obj.id) obj.id = newId('obj'); // filet de sécurité si le fichier est incomplet
+          if (existingObjIds.has(obj.id)) objOverwritten += 1; else objCreated += 1;
+          ObjetStore.save(obj);
+        });
+
+        const total = pnjCreated + pnjOverwritten + objCreated + objOverwritten;
+        if (total === 0) {
+          status.textContent = "Le fichier ne contenait ni PNJ ni objet valide.";
+        } else {
+          const pnjMsg = (pnjCreated + pnjOverwritten) > 0
+            ? `${pnjCreated} PNJ importé(s)${pnjOverwritten > 0 ? ` (dont ${pnjOverwritten} écrasé(s))` : ''}`
+            : null;
+          const objMsg = (objCreated + objOverwritten) > 0
+            ? `${objCreated} objet(s) importé(s)${objOverwritten > 0 ? ` (dont ${objOverwritten} écrasé(s))` : ''}`
+            : null;
+          status.textContent = [pnjMsg, objMsg].filter(Boolean).join(' · ') + '.';
+        }
+        updateExportCount();
+        input.value = '';
+      } catch (err) {
+        status.textContent = "Erreur : ce fichier n'est pas un export valide du Recueil des PNJ.";
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  let counter = 0;
+
+  document.getElementById('btnGenerate').addEventListener('click', () => {
+    const options = {
+      raceMode: raceModeSelect.value,
+      metier: document.getElementById('metier').value,
+      trait: document.getElementById('trait').value
+    };
+    const nb = Math.min(8, Math.max(1, parseInt(document.getElementById('nb').value) || 1));
+
+    // Répartition des Niveaux : si plusieurs Niveaux sont sélectionnés (ou tous par défaut),
+    // on garantit un personnage par Niveau tant qu'il y a assez de PNJ à générer ; les PNJ
+    // en plus sont répartis aléatoirement parmi les Niveaux sélectionnés.
+    const levelPool = getChecked(niveauChecks).length ? LEVELS.filter(l => getChecked(niveauChecks).includes(l.name)) : LEVELS;
+    const shuffledPool = shuffle(levelPool);
+    const levelAssignments = [];
+    for (let i = 0; i < Math.min(nb, shuffledPool.length); i++) levelAssignments.push(shuffledPool[i]);
+    for (let i = levelAssignments.length; i < nb; i++) levelAssignments.push(pick(levelPool));
+    shuffle(levelAssignments);
+
+    const resultsEl = document.getElementById('results');
+    resultsEl.innerHTML = "";
+
+    for (let i = 0; i < nb; i++) {
+      counter++;
+      const pnj = generatePNJ(options, counter, levelAssignments[i]);
+      resultsEl.insertAdjacentHTML('beforeend', renderCard(pnj));
+    }
+  });
+
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
