@@ -1,6 +1,6 @@
 {
   "name": "Recueil des PNJ",
-  "short_name": "PNJ",
+  "short_name": "MJ Compagnon",
   "description": "Générateur de PNJ et d'objets magiques",
   "start_url": "./index.html",
   "scope": "./",
