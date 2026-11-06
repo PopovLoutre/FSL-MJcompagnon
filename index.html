@@ -1692,6 +1692,10 @@
         return false;
       }
     },
+    load(id) {
+      try { return JSON.parse(localStorage.getItem('pnj:' + id)); }
+      catch (e) { return null; }
+    },
     remove(id) {
       try {
         const ids = this.listIds().filter(i => i !== id);
@@ -1717,9 +1721,43 @@
     return (prefix || 'id') + '_' + Date.now().toString(36) + '_' + rand() + rand();
   }
 
+  // Échappement HTML pour les valeurs injectées dans les attributs / le texte des fiches.
+  function escHtml(v) {
+    return String(v === undefined || v === null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // Style des champs affichés en mode Lecture (texte simple, sans soulignement d'édition, retour à la ligne).
+  const RO_STYLE = 'border-bottom-color:transparent;white-space:normal;overflow-wrap:anywhere;';
+
+  // Fabrique les générateurs de champs d'une fiche : en mode Édition ce sont des champs de saisie,
+  // en mode Lecture du texte figé. fLive reste toujours éditable (compteurs PS/PM actuels).
+  function makeFieldHelpers(id, ro) {
+    return {
+      fText: (cls, val, field, placeholder) => ro
+        ? `<div class="${cls}" style="${RO_STYLE}">${escHtml(val)}</div>`
+        : `<input type="text" class="${cls}" value="${escHtml(val)}"${placeholder ? ` placeholder="${escHtml(placeholder)}"` : ''} data-id="${id}" data-field="${field}">`,
+      fNum: (cls, val, field) => ro
+        ? `<div class="${cls}" style="${RO_STYLE}">${val}</div>`
+        : `<input class="${cls}" type="number" value="${val}" data-id="${id}" data-field="${field}">`,
+      fLive: (cls, val, field) =>
+        `<input class="${cls}" type="number" value="${val}" data-id="${id}" data-field="${field}">`,
+      fSel: (cls, optionsHtml, label, field) => ro
+        ? `<div class="${cls}" style="${RO_STYLE}">${escHtml(label)}</div>`
+        : `<select class="${cls}" data-id="${id}" data-field="${field}">${optionsHtml}</select>`
+    };
+  }
+
+  // opts.saved : fiche déjà enregistrée ; opts.mode : 'read' (Lecture) ou 'edit' (Édition).
+  // Par défaut : une fiche enregistrée s'ouvre en Lecture, une fiche neuve en Édition.
   function renderCard(pnj, opts = {}) {
     PNJ_REGISTRY.set(pnj.id, pnj);
     const saved = opts.saved || false;
+    const mode = opts.mode || (saved ? 'read' : 'edit');
+    const ro = mode === 'read';
+    const id = pnj.id;
+    const { fText, fNum, fLive, fSel } = makeFieldHelpers(id, ro);
+
     const traitOrder = ['FOR', 'AGI', 'INT', 'PER', 'MAI', 'CHA'];
     const traitsHtml = traitOrder.map(k => {
       const v = pnj.traits[k];
@@ -1731,94 +1769,127 @@
         <div class="trait">
           <div class="k">${k}</div>
           <div class="k sauv-col">&nbsp;</div>
-          <input class="v-input ${cls}" type="number" value="${v}" data-id="${pnj.id}" data-field="traits.${k}">
-          <input class="v-input sauv-input sauv-col" type="number" value="${sv}" data-id="${pnj.id}" data-field="sauvegardes.${k}">
+          ${fNum(`v-input ${cls}`, v, `traits.${k}`)}
+          ${fNum('v-input sauv-input sauv-col', sv, `sauvegardes.${k}`)}
           ${raceTag}
           <div class="race-tag sauv-col">Sauv.</div>
         </div>`;
     }).join('');
+
+    // Repères propres à la race : fourchette de taille (Édition seulement) et espérance de vie.
+    const family = NAME_FAMILIES[pnj.race.name] || 'Commune';
+    const archetype = PHYSICAL_ARCHETYPES[family] || PHYSICAL_ARCHETYPES.Commune;
+    const lifespan = (AGE_RANGES_BY_ERA[pnj.race.era] || [])[1];
+    const hintStyle = 'text-transform:none;letter-spacing:0;';
+    const ageHint = lifespan ? ` <span style="${hintStyle}">(Esp. ${lifespan} ans)</span>` : '';
+    const tailleHint = ro ? '' : ` <span style="${hintStyle}">(${archetype.taille[0]}–${archetype.taille[1]} cm)</span>`;
 
     const compsSorted = pnj.competences.map((c, idx) => ({ ...c, idx }))
       .sort((a, b) => (b.mastered - a.mastered));
     const compTraitOptions = (current) => ['FOR', 'AGI', 'INT', 'PER', 'MAI', 'CHA', ''].map(t =>
       `<option value="${t}" ${(current || '') === t ? 'selected' : ''}>${t || 'Aucun'}</option>`
     ).join('');
-    const compsHtml = compsSorted.map(c => `
+    const compsHtml = compsSorted.map(c => {
+      const mark = ro
+        ? (c.mastered ? '<span class="mark">◆</span>' : '<span class="mark" style="display:inline-block;width:7px;"></span>')
+        : `<input type="checkbox" class="mark-check" ${c.mastered ? 'checked' : ''} data-id="${id}" data-field="comp.${c.idx}.mastered">`;
+      const label = c.mastered ? `${c.name} (${pnj.level.points}PC)` : c.name;
+      const delBtn = ro ? '' : `<button type="button" class="btn-row-del" data-kind="comp" data-id="${id}" data-idx="${c.idx}" title="Supprimer cette compétence" style="flex:0 0 auto;width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--parchment-dim);font-size:12px;line-height:1;cursor:pointer;padding:0;">✕</button>`;
+      return `
       <div class="comp-row">
-        <input type="checkbox" class="mark-check" ${c.mastered ? 'checked' : ''} data-id="${pnj.id}" data-field="comp.${c.idx}.mastered">
-        <input type="text" class="comp-name-input" value="${c.mastered ? `${c.name} (${pnj.level.points}PC)` : c.name}" data-id="${pnj.id}" data-field="comp.${c.idx}.name">
-        <select class="comp-trait-select" data-id="${pnj.id}" data-field="comp.${c.idx}.trait">${compTraitOptions(c.trait)}</select>
-        <input class="score-input" type="number" value="${c.score}" data-id="${pnj.id}" data-field="comp.${c.idx}.score">
-        <button type="button" class="btn-row-del" data-kind="comp" data-id="${pnj.id}" data-idx="${c.idx}" title="Supprimer cette compétence" style="flex:0 0 auto;width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--parchment-dim);font-size:12px;line-height:1;cursor:pointer;padding:0;">✕</button>
-      </div>
-    `).join('');
-    const compAddHtml = `<button type="button" class="btn-row-add" data-kind="comp" data-id="${pnj.id}" style="margin-top:8px;width:100%;background:transparent;border:1px dashed var(--line);color:var(--brass-bright);border-radius:8px;padding:8px;font-family:'Inter',sans-serif;font-size:12px;letter-spacing:0.03em;cursor:pointer;">+ Ajouter une compétence</button>`;
+        ${mark}
+        ${fText('comp-name-input', label, `comp.${c.idx}.name`)}
+        ${fSel('comp-trait-select', compTraitOptions(c.trait), c.trait || '—', `comp.${c.idx}.trait`)}
+        ${fNum('score-input', c.score, `comp.${c.idx}.score`)}
+        ${delBtn}
+      </div>`;
+    }).join('');
+    const compAddHtml = ro ? '' : `<button type="button" class="btn-row-add" data-kind="comp" data-id="${id}" style="margin-top:8px;width:100%;background:transparent;border:1px dashed var(--line);color:var(--brass-bright);border-radius:8px;padding:8px;font-family:'Inter',sans-serif;font-size:12px;letter-spacing:0.03em;cursor:pointer;">+ Ajouter une compétence</button>`;
 
     const metierOptions = TABLES.metier.map(m => `<option value="${m}" ${m === pnj.metier ? 'selected' : ''}>${m}</option>`).join('');
     const dispoOptions = TABLES.disposition.map(d => `<option value="${d}" ${d === pnj.disposition ? 'selected' : ''}>${d}</option>`).join('');
 
     const equipList = pnj.equipement || [];
     const equipHtml = equipList.length
-      ? equipList.map((eq, idx) => `
+      ? equipList.map((eq, idx) => ro
+        ? `
+        <div class="equip-item">
+          ${fText('equip-line1', eq.ligne1, `equipement.${idx}.ligne1`)}
+          ${eq.ligne2 ? fText('equip-line2', eq.ligne2, `equipement.${idx}.ligne2`) : ''}
+        </div>`
+        : `
         <div class="equip-item" style="display:flex;align-items:flex-start;gap:8px;">
           <div style="flex:1;min-width:0;">
-            <input type="text" class="equip-line1" value="${eq.ligne1}" data-id="${pnj.id}" data-field="equipement.${idx}.ligne1">
-            <input type="text" class="equip-line2" value="${eq.ligne2}" data-id="${pnj.id}" data-field="equipement.${idx}.ligne2">
+            ${fText('equip-line1', eq.ligne1, `equipement.${idx}.ligne1`)}
+            ${fText('equip-line2', eq.ligne2, `equipement.${idx}.ligne2`)}
           </div>
-          <button type="button" class="btn-row-del" data-kind="equip" data-id="${pnj.id}" data-idx="${idx}" title="Supprimer cet équipement" style="flex:0 0 auto;width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--parchment-dim);font-size:12px;line-height:1;cursor:pointer;padding:0;">✕</button>
-        </div>
-      `).join('')
+          <button type="button" class="btn-row-del" data-kind="equip" data-id="${id}" data-idx="${idx}" title="Supprimer cet équipement" style="flex:0 0 auto;width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--parchment-dim);font-size:12px;line-height:1;cursor:pointer;padding:0;">✕</button>
+        </div>`).join('')
       : `<div class="equip-item"><span class="equip-empty">Aucun équipement</span></div>`;
-    const equipAddHtml = `<button type="button" class="btn-row-add" data-kind="equip" data-id="${pnj.id}" style="margin-top:8px;width:100%;background:transparent;border:1px dashed var(--line);color:var(--brass-bright);border-radius:8px;padding:8px;font-family:'Inter',sans-serif;font-size:12px;letter-spacing:0.03em;cursor:pointer;">+ Ajouter un objet</button>`;
+    const equipAddHtml = ro ? '' : `<button type="button" class="btn-row-add" data-kind="equip" data-id="${id}" style="margin-top:8px;width:100%;background:transparent;border:1px dashed var(--line);color:var(--brass-bright);border-radius:8px;padding:8px;font-family:'Inter',sans-serif;font-size:12px;letter-spacing:0.03em;cursor:pointer;">+ Ajouter un objet</button>`;
+
+    const groupeHtml = (ro && !pnj.groupe) ? '' : `
+        <div class="field-inline">
+          <label>Groupe / Tags</label>
+          ${fText('mini-text', pnj.groupe || '', 'groupe', 'ex. Taverne du Cerf, quête principale')}
+        </div>`;
+
+    const actionsHtml = ro
+      ? `<button class="btn-save btn-edit" data-id="${id}">Modifier</button>`
+      : (saved
+        ? `<button class="btn-save" data-id="${id}" style="flex:1 1 45%;">Mettre à jour</button>
+          <button class="btn-delete btn-cancel" data-id="${id}" style="flex:1 1 45%;">Annuler</button>
+          <button class="btn-delete" data-id="${id}" style="flex:1 1 100%;">Supprimer</button>`
+        : `<button class="btn-save" data-id="${id}">Enregistrer</button>`);
 
     return `
-      <div class="card" data-card-id="${pnj.id}">
+      <div class="card${ro ? ' mode-read' : ''}" data-card-id="${id}" data-saved="${saved ? 1 : 0}" data-mode="${mode}"${opts.instant ? ' style="animation:none"' : ''}>
         <div class="card-top">
           <div class="card-top-info">
-            <input class="name-input" type="text" value="${pnj.prenom}" data-id="${pnj.id}" data-field="prenom">
+            ${fText('name-input', pnj.prenom, 'prenom')}
           </div>
         </div>
         <div class="race-line">${pnj.race.name} <span class="era">· ${pnj.race.era}</span> · Niveau ${pnj.level.name}</div>
         <div class="meta-grid">
-          <div><div class="k">Âge</div>
-            <span class="unit-field"><input class="mini-number-sm" type="number" value="${pnj.physique.age}" data-id="${pnj.id}" data-field="physique.age"> <span class="unit">ans</span></span>
+          <div><div class="k">Âge${ageHint}</div>
+            <span class="unit-field">${fNum('mini-number-sm', pnj.physique.age, 'physique.age')} <span class="unit">ans</span></span>
           </div>
-          <div><div class="k">Taille</div>
-            <span class="unit-field"><input class="mini-number-sm" type="number" value="${pnj.physique.taille}" data-id="${pnj.id}" data-field="physique.taille"> <span class="unit">cm</span></span>
+          <div><div class="k">Taille${tailleHint}</div>
+            <span class="unit-field">${fNum('mini-number-sm', pnj.physique.taille, 'physique.taille')} <span class="unit">cm</span></span>
           </div>
           <div><div class="k">Corpulence</div>
-            <input class="mini-text" type="text" value="${pnj.physique.corpulence}" data-id="${pnj.id}" data-field="physique.corpulence">
+            ${fText('mini-text', pnj.physique.corpulence, 'physique.corpulence')}
           </div>
           <div><div class="k">Chevelure</div>
-            <input class="mini-text" type="text" value="${pnj.physique.cheveux}" data-id="${pnj.id}" data-field="physique.cheveux">
+            ${fText('mini-text', pnj.physique.cheveux, 'physique.cheveux')}
           </div>
         </div>
         <div class="field-inline">
           <label>Trait(s) particulier(s)</label>
-          <input class="mini-text" type="text" value="${pnj.trait}" data-id="${pnj.id}" data-field="trait">
+          ${fText('mini-text', pnj.trait, 'trait')}
         </div>
         ${pnj.race.special ? `<div class="racial-special">${pnj.race.special}</div>` : ""}
         <div class="traits-grid">${traitsHtml}</div>
         <div class="meta-grid">
           <div><div class="k">Points de Santé (max)</div>
-            <input class="mini-number-sm ps-max" type="number" value="${pnj.ps}" data-id="${pnj.id}" data-field="ps">
+            ${fNum('mini-number-sm ps-max', pnj.ps, 'ps')}
           </div>
           <div><div class="k">PS actuels</div>
-            <input class="mini-number-sm current" type="number" value="${pnj.psActuel}" data-id="${pnj.id}" data-field="psActuel">
+            ${fLive('mini-number-sm current', pnj.psActuel, 'psActuel')}
           </div>
           <div><div class="k">Points de Mana (max)</div>
-            <input class="mini-number-sm pm-max" type="number" value="${pnj.pm}" data-id="${pnj.id}" data-field="pm">
+            ${fNum('mini-number-sm pm-max', pnj.pm, 'pm')}
           </div>
           <div><div class="k">PM actuels</div>
-            <input class="mini-number-sm current" type="number" value="${pnj.pmActuel}" data-id="${pnj.id}" data-field="pmActuel">
+            ${fLive('mini-number-sm current', pnj.pmActuel, 'pmActuel')}
           </div>
         </div>
         <div class="meta-grid">
           <div><div class="k">Métier</div>
-            <select class="mini-select" data-id="${pnj.id}" data-field="metier">${metierOptions}</select>
+            ${fSel('mini-select', metierOptions, pnj.metier, 'metier')}
           </div>
           <div><div class="k">Disposition</div>
-            <select class="mini-select" data-id="${pnj.id}" data-field="disposition">${dispoOptions}</select>
+            ${fSel('mini-select', dispoOptions, pnj.disposition, 'disposition')}
           </div>
         </div>
         <div class="competences">
@@ -1831,13 +1902,9 @@
           ${equipHtml}
           ${equipAddHtml}
         </div>
-        <div class="field-inline">
-          <label>Groupe / Tags</label>
-          <input class="mini-text" type="text" placeholder="ex. Taverne du Cerf, quête principale" value="${pnj.groupe || ''}" data-id="${pnj.id}" data-field="groupe">
-        </div>
-        <div class="card-actions">
-          <button class="btn-save" data-id="${pnj.id}">${saved ? 'Mettre à jour' : 'Enregistrer'}</button>
-          ${saved ? `<button class="btn-delete" data-id="${pnj.id}">Supprimer</button>` : ''}
+        ${groupeHtml}
+        <div class="card-actions" style="flex-wrap:wrap;">
+          ${actionsHtml}
         </div>
       </div>
     `;
@@ -1879,12 +1946,13 @@
     return pickRareteInRange(["Commun", "Peu commun"]);
   }
 
-  // Remplace la fiche affichée par sa version à jour après ajout/suppression d'une ligne,
-  // en conservant l'état "enregistrée" (présence du bouton Supprimer) de la fiche actuelle.
-  function refreshCard(pnj, cardEl) {
+  // Remplace la fiche affichée par sa version à jour (après ajout/suppression d'une ligne, ou
+  // changement de mode). Sans précision, l'état "enregistrée" et le mode actuels sont conservés.
+  function refreshCard(pnj, cardEl, over = {}) {
     if (!cardEl) return;
-    const saved = !!cardEl.querySelector('.btn-delete');
-    cardEl.outerHTML = renderCard(pnj, { saved });
+    const saved = over.saved !== undefined ? over.saved : cardEl.dataset.saved === '1';
+    const mode = over.mode || cardEl.dataset.mode || (saved ? 'read' : 'edit');
+    cardEl.outerHTML = renderCard(pnj, { saved, mode, instant: true });
   }
 
   // Délégation d'évènements : un seul écouteur gère tous les champs éditables de toutes les fiches.
@@ -1915,6 +1983,24 @@
       }
     });
     container.addEventListener('click', (e) => {
+      const editBtn = e.target.closest('.btn-edit');
+      if (editBtn) {
+        const pnj = PNJ_REGISTRY.get(editBtn.dataset.id);
+        if (pnj) refreshCard(pnj, editBtn.closest('.card'), { mode: 'edit' });
+        return;
+      }
+      const cancelBtn = e.target.closest('.btn-cancel');
+      if (cancelBtn) {
+        // Défausse les modifications non enregistrées : on recharge la version stockée.
+        const current = PNJ_REGISTRY.get(cancelBtn.dataset.id);
+        const stored = PNJStore.load(cancelBtn.dataset.id);
+        if (stored) {
+          // Les compteurs PS/PM actuels ne font pas partie des modifications à défausser.
+          if (current) { stored.psActuel = current.psActuel; stored.pmActuel = current.pmActuel; }
+          refreshCard(stored, cancelBtn.closest('.card'), { saved: true, mode: 'read' });
+        }
+        return;
+      }
       const rowDelBtn = e.target.closest('.btn-row-del');
       if (rowDelBtn) {
         const pnj = PNJ_REGISTRY.get(rowDelBtn.dataset.id);
@@ -1950,19 +2036,19 @@
       if (saveBtn) {
         const pnj = PNJ_REGISTRY.get(saveBtn.dataset.id);
         if (!pnj) return;
+        const card = saveBtn.closest('.card');
         // PS/PM "actuels" ne sont jamais persistés : ce sont des compteurs de combat éphémères,
         // qui doivent repartir de la valeur maximale à chaque rechargement depuis le stockage.
         const toSave = { ...pnj, psActuel: pnj.ps, pmActuel: pnj.pm };
         const ok = PNJStore.save(toSave);
-        saveBtn.textContent = ok ? 'Mettre à jour ✓' : 'Échec (stockage indisponible)';
-        setTimeout(() => { saveBtn.textContent = 'Mettre à jour'; }, 1500);
-        if (!saveBtn.closest('.card-actions').querySelector('.btn-delete') && ok) {
-          const del = document.createElement('button');
-          del.className = 'btn-delete';
-          del.dataset.id = pnj.id;
-          del.textContent = 'Supprimer';
-          saveBtn.after(del);
+        if (!ok) {
+          const prev = saveBtn.textContent;
+          saveBtn.textContent = 'Échec (stockage indisponible)';
+          setTimeout(() => { saveBtn.textContent = prev; }, 1500);
+          return;
         }
+        // Après enregistrement, la fiche repasse en Lecture.
+        refreshCard(pnj, card, { saved: true, mode: 'read' });
         return;
       }
       const delBtn = e.target.closest('.btn-delete');
@@ -2447,44 +2533,69 @@
     return equipement;
   }
 
+  // opts.saved : fiche déjà enregistrée ; opts.mode : 'read' (Lecture) ou 'edit' (Édition).
   function renderObjCard(obj, opts = {}) {
     OBJ_REGISTRY.set(obj.id, obj);
     const saved = opts.saved || false;
+    const mode = opts.mode || (saved ? 'read' : 'edit');
+    const ro = mode === 'read';
+    const id = obj.id;
+    const { fText, fNum } = makeFieldHelpers(id, ro);
+
     const enchHtml = obj.enchantements.map((e, idx) => `
       <div class="comp-row">
-        <input type="text" class="comp-name-input" value="${e.type === 'bonus' ? `+${e.magnitude} ${e.name}` : e.name}" data-id="${obj.id}" data-field="obj-ench.${idx}.name">
+        ${fText('comp-name-input', e.type === 'bonus' ? `+${e.magnitude} ${e.name}` : e.name, `obj-ench.${idx}.name`)}
         ${e.trait ? `<span class="trait-tag">(${e.trait})</span>` : ''}
         <span class="trait-tag">niv.</span>
-        <input class="score-input" type="number" value="${e.niveau}" data-id="${obj.id}" data-field="obj-ench.${idx}.niveau">
+        ${fNum('score-input', e.niveau, `obj-ench.${idx}.niveau`)}
       </div>
     `).join('');
 
+    const groupeHtml = (ro && !obj.groupe) ? '' : `
+        <div class="field-inline">
+          <label>Groupe / Tags</label>
+          ${fText('mini-text', obj.groupe || '', 'groupe', 'ex. Butin donjon, boutique de Maître Orin')}
+        </div>`;
+
+    const actionsHtml = ro
+      ? `<button class="btn-save btn-edit" data-id="${id}">Modifier</button>`
+      : (saved
+        ? `<button class="btn-save" data-id="${id}" style="flex:1 1 45%;">Mettre à jour</button>
+          <button class="btn-delete btn-cancel" data-id="${id}" style="flex:1 1 45%;">Annuler</button>
+          <button class="btn-delete" data-id="${id}" style="flex:1 1 100%;">Supprimer</button>`
+        : `<button class="btn-save" data-id="${id}">Enregistrer</button>`);
+
     return `
-      <div class="card" data-card-id="${obj.id}">
+      <div class="card${ro ? ' mode-read' : ''}" data-card-id="${id}" data-saved="${saved ? 1 : 0}" data-mode="${mode}"${opts.instant ? ' style="animation:none"' : ''}>
         <div class="card-top">
           <div class="card-top-info">
-            <input class="name-input" type="text" value="${obj.nom}" data-id="${obj.id}" data-field="nom">
+            ${fText('name-input', obj.nom, 'nom')}
           </div>
         </div>
-        <input class="race-line-input" type="text" value="${obj.sousTitre}" data-id="${obj.id}" data-field="sousTitre">
+        ${fText('race-line-input', obj.sousTitre, 'sousTitre')}
         <div class="competences">
           <div class="k">Enchantements</div>
           ${enchHtml}
         </div>
         <div class="field-inline">
           <label>Coût (Écus d'or €)</label>
-          <input class="mini-number current" type="number" value="${obj.cout}" data-id="${obj.id}" data-field="cout">
+          ${fNum('mini-number current', obj.cout, 'cout')}
         </div>
-        <div class="field-inline">
-          <label>Groupe / Tags</label>
-          <input class="mini-text" type="text" placeholder="ex. Butin donjon, boutique de Maître Orin" value="${obj.groupe || ''}" data-id="${obj.id}" data-field="groupe">
-        </div>
-        <div class="card-actions">
-          <button class="btn-save" data-id="${obj.id}">${saved ? 'Mettre à jour' : 'Enregistrer'}</button>
-          ${saved ? `<button class="btn-delete" data-id="${obj.id}">Supprimer</button>` : ''}
+        ${groupeHtml}
+        <div class="card-actions" style="flex-wrap:wrap;">
+          ${actionsHtml}
         </div>
       </div>
     `;
+  }
+
+  // Remplace la fiche affichée par sa version à jour (changement de mode), en conservant par défaut
+  // l'état "enregistrée" et le mode actuels.
+  function refreshObjCard(obj, cardEl, over = {}) {
+    if (!cardEl) return;
+    const saved = over.saved !== undefined ? over.saved : cardEl.dataset.saved === '1';
+    const mode = over.mode || cardEl.dataset.mode || (saved ? 'read' : 'edit');
+    cardEl.outerHTML = renderObjCard(obj, { saved, mode, instant: true });
   }
 
   const ObjetStore = {
@@ -2500,6 +2611,10 @@
         localStorage.setItem('objet:' + obj.id, JSON.stringify(obj));
         return true;
       } catch (e) { console.warn('Sauvegarde objet impossible :', e); return false; }
+    },
+    load(id) {
+      try { return JSON.parse(localStorage.getItem('objet:' + id)); }
+      catch (e) { return null; }
     },
     remove(id) {
       try {
@@ -2538,20 +2653,33 @@
       setDeepObj(obj, field, value);
     });
     container.addEventListener('click', (e) => {
+      const editBtn = e.target.closest('.btn-edit');
+      if (editBtn) {
+        const obj = OBJ_REGISTRY.get(editBtn.dataset.id);
+        if (obj) refreshObjCard(obj, editBtn.closest('.card'), { mode: 'edit' });
+        return;
+      }
+      const cancelBtn = e.target.closest('.btn-cancel');
+      if (cancelBtn) {
+        // Défausse les modifications non enregistrées : on recharge la version stockée.
+        const stored = ObjetStore.load(cancelBtn.dataset.id);
+        if (stored) refreshObjCard(stored, cancelBtn.closest('.card'), { saved: true, mode: 'read' });
+        return;
+      }
       const saveBtn = e.target.closest('.btn-save');
       if (saveBtn) {
         const obj = OBJ_REGISTRY.get(saveBtn.dataset.id);
         if (!obj) return;
+        const card = saveBtn.closest('.card');
         const ok = ObjetStore.save(obj);
-        saveBtn.textContent = ok ? 'Mettre à jour ✓' : 'Échec (stockage indisponible)';
-        setTimeout(() => { saveBtn.textContent = 'Mettre à jour'; }, 1500);
-        if (!saveBtn.closest('.card-actions').querySelector('.btn-delete') && ok) {
-          const del = document.createElement('button');
-          del.className = 'btn-delete';
-          del.dataset.id = obj.id;
-          del.textContent = 'Supprimer';
-          saveBtn.after(del);
+        if (!ok) {
+          const prev = saveBtn.textContent;
+          saveBtn.textContent = 'Échec (stockage indisponible)';
+          setTimeout(() => { saveBtn.textContent = prev; }, 1500);
+          return;
         }
+        // Après enregistrement, la fiche repasse en Lecture.
+        refreshObjCard(obj, card, { saved: true, mode: 'read' });
         return;
       }
       const delBtn = e.target.closest('.btn-delete');
