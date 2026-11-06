@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#17151a">
+<meta name="theme-color" content="#1a120c">
 <title>Recueil des PNJ</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
@@ -14,16 +14,16 @@
 <style>
   :root {
     color-scheme: dark;
-    --ink: #17151a;
-    --ink-panel: #211e26;
-    --ink-card: #2a2530;
-    --parchment: #e9dcc0;
-    --parchment-dim: #a89d84;
+    --ink: #1a120c;
+    --ink-panel: rgba(38,27,19,0.92);
+    --ink-card: rgba(47,34,25,0.95);
+    --parchment: #efe3c8;
+    --parchment-dim: #bcae90;
     --brass: #b08d4f;
     --brass-bright: #d4ac6e;
     --wax: #9c3b3f;
     --wax-bright: #c14c4f;
-    --line: #3c3644;
+    --line: #5b4533;
     --radius: 10px;
   }
 
@@ -43,9 +43,6 @@
   body {
     margin: 0;
     background: var(--ink);
-    background-image:
-      radial-gradient(circle at 20% 0%, rgba(176,141,79,0.07), transparent 45%),
-      radial-gradient(circle at 90% 30%, rgba(156,59,63,0.06), transparent 50%);
     color: var(--parchment);
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
@@ -760,6 +757,125 @@
     color: var(--parchment-dim);
     margin-top: 24px;
     line-height: 1.5;
+  }
+
+  /* ============================================================
+     THÈME COSMÉTIQUE (fond texturé, bandeaux, Traits)
+     ============================================================ */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: #1d140d;
+    background-image:
+      radial-gradient(ellipse at 50% 30%, rgba(160,100,52,0.24), transparent 62%),
+      radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.62) 100%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.010' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.60  0 0 0 0 0.38  0 0 0 0 0.20  1.9 0 0 0 -0.75'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.85  0 0 0 0 0.72  0 0 0 0 0.55  0 0 0 0.9 -0.38'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: auto, auto, 900px 900px, 260px 260px;
+  }
+
+  header {
+    background: linear-gradient(180deg, rgba(18,11,7,0.82), rgba(62,41,26,0.82));
+    border: 1px solid var(--brass);
+    border-radius: var(--radius);
+    padding: 16px 12px 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5), inset 0 0 0 3px rgba(0,0,0,0.25), inset 0 0 0 4px rgba(176,141,79,0.35);
+  }
+  header .eyebrow { color: var(--brass-bright); }
+  header .eyebrow::before, header .eyebrow::after {
+    content: "";
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: var(--brass);
+    vertical-align: middle;
+    margin: 0 10px;
+  }
+  header h1 {
+    font-size: 28px;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.75);
+  }
+
+  .panel { box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
+  .bottom-nav { background: rgba(26,18,12,0.97); border-top: 1px solid var(--brass); }
+
+  .card { box-shadow: 0 6px 18px rgba(0,0,0,0.45); }
+
+  /* Bandeau supérieur de la fiche : le nom du personnage (ou de l'objet) */
+  .card-top {
+    margin: -16px -16px 12px;
+    padding: 12px 16px;
+    background: linear-gradient(90deg, #7d2f33, #5a2024);
+    border-bottom: 1px solid var(--brass);
+    border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+  }
+  .card:has(> .race-line-input) .card-top {
+    background: linear-gradient(90deg, #7a5e26, #54401a);
+  }
+  .card-top .name-input {
+    color: #f7edd8;
+    font-size: 21px;
+    letter-spacing: 0.02em;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    border-bottom-color: rgba(247,237,216,0.35);
+  }
+
+  /* Noms des Traits plus lisibles */
+  .trait .k {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--brass-bright);
+  }
+  .trait .race-tag { font-size: 10px; }
+
+  /* Mode Lecture : Traits en ronds, Sauvegarde en petite pastille secondaire */
+  .traits-grid.ro {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px 8px;
+  }
+  .trait-ro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .trait-ro .tname {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--brass-bright);
+  }
+  .trait-ro .tval {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--parchment);
+    border: 2px solid var(--brass);
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.10), rgba(0,0,0,0.38));
+    box-shadow: 0 2px 6px rgba(0,0,0,0.45);
+  }
+  .trait-ro .tval.pos { color: #9fd49a; border-color: #6f9a6b; }
+  .trait-ro .tval.neg { color: #d58a8a; border-color: #9a5a5a; }
+  .trait-ro .trace { font-size: 10px; color: var(--parchment-dim); }
+  .trait-ro .tsauv {
+    font-size: 11px;
+    color: var(--brass-bright);
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1px 9px;
   }
 </style>
 </head>
@@ -1765,6 +1881,15 @@
       const cls = v >= 0 ? 'pos' : 'neg';
       const raceMod = pnj.race[k];
       const raceTag = raceMod !== 0 ? `<div class="race-tag">race ${fmtMod(raceMod)}</div>` : '<div class="race-tag">&nbsp;</div>';
+      if (ro) {
+        return `
+        <div class="trait-ro">
+          <div class="tname">${k}</div>
+          <div class="tval ${cls}">${v}</div>
+          <div class="trace">${raceMod !== 0 ? `race ${fmtMod(raceMod)}` : '&nbsp;'}</div>
+          <div class="tsauv">Sauv. ${sv}</div>
+        </div>`;
+      }
       return `
         <div class="trait">
           <div class="k">${k}</div>
@@ -1869,7 +1994,7 @@
           ${fText('mini-text', pnj.trait, 'trait')}
         </div>
         ${pnj.race.special ? `<div class="racial-special">${pnj.race.special}</div>` : ""}
-        <div class="traits-grid">${traitsHtml}</div>
+        <div class="traits-grid${ro ? ' ro' : ''}">${traitsHtml}</div>
         <div class="meta-grid">
           <div><div class="k">Points de Santé (max)</div>
             ${fNum('mini-number-sm ps-max', pnj.ps, 'ps')}
