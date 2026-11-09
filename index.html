@@ -949,6 +949,20 @@
   #portraitViewer .pv-cap { color:var(--parchment); font-family:'Inter',sans-serif; font-size:15px; }
   #portraitViewer .pv-cap span { color:var(--parchment-dim); }
 </style>
+<script>
+/* Diagnostic : affiche une erreur JavaScript à l'écran (utile sur téléphone, sans console). */
+window.addEventListener('error', function (e) {
+  try {
+    var d = document.getElementById('jsErrBanner');
+    if (!d) {
+      d = document.createElement('div'); d.id = 'jsErrBanner';
+      d.style.cssText = 'position:fixed;left:0;right:0;top:0;z-index:99999;background:#7a1f1f;color:#fff;font:12px/1.4 sans-serif;padding:8px 10px;white-space:pre-wrap;word-break:break-word;';
+      (document.body || document.documentElement).appendChild(d);
+    }
+    d.textContent += 'Erreur JS : ' + e.message + (e.lineno ? ' (ligne ' + e.lineno + ')' : '') + '\n';
+  } catch (_) {}
+});
+</script>
 </head>
 <body>
 <div class="app">
@@ -1216,31 +1230,39 @@
     "Marin éthéré": ["Navigation éthérée", "Escalade", "Armes de jet", "Baratin", "Jeu", "Artillerie éthérée"],
     "Canonnier éthéré": ["Artillerie éthérée", "Observation", "Systèmes éthérés", "Intimidation", "Navigation éthérée"],
     "Herboriste": ["Herboristerie", "Savoirs théoriques", "Investigation", "Médecine", "Négoce (entre pros)"],
-    "Eclaireur": ["Chasse/Pistage", "Discrétion", "Orientation", "Survie", "Armes de jet"],
+    "Éclaireur": ["Chasse/Pistage", "Discrétion", "Orientation", "Survie", "Armes de jet"],
     "Palefrenier": ["Équitation", "Dressage", "Soins Vétérinaires", "Observation", "Baratin"],
     "Ingénieur militaire": ["Génie/Fortifications", "Bricolage", "Artisanat", "Stratégie militaire", "Observation"],
     "Marin": ["Navigation maritime", "Natation", "Armes de jet", "Orientation", "Baratin"],
-    "Assassin": ["Discrétion", "Herboristerie", "Crochetage", "Armes de jet", "Bluff"],
-    "Politicien": ["Étiquette", "Baratin", "Bluff", "Discrétion", "Radio couloir"]
+    "Assassin": ["Discrétion", "Herboristerie", "Crochetage", "Armes de jet", "Bluff"]
   };
 
   // Compétences de combat comptant dans le calcul des Points de Santé.
   const COMBAT_SKILLS = ["Armes de Mêlée à une main", "Armes de mêlée à 2 mains", "Armes de jet", "Armes de Lancer", "Arts Martiaux"];
 
   const TABLES = {
-    metier: ['Artisan', 'Assassin', 'Aubergiste', 'Canonnier éthéré', 'Capitaine éthéré', 'Danseur', 'Eclaireur', 'Forgeron', 'Garde du corps', 'Haut Mage',
-	'Herboriste', 'Ingénieur militaire', 'Ingénieur éthéré', 'Marchand', 'Marin', 'Marin éthéré', 'Mendiant', 'Médecin', 'Ménestrel', 'Officier', 'Palefrenier',
-	'Politicien', 'Prêtre', 'Serveur', 'Soldat de ligne', 'Soldat de tir', 'Soldat terrien', 'Sous-Officier', 'Voleur'],
-    trait: ['Aucun', 'Bavard incorrigible', 'Boiteux', 'Borgne', 'Brûlures anciennes', 'Bègue', 'Calculateur froid', 'Cicatrice au visage',
-	'Collectionneur compulsif', "Craint l'autorité", 'Crâne rasé', 'Dents en or', "Direct jusqu'à la brutalité", 'Doigts manquants', "Econome à l'excès",
-	"Empathique à l'excès", 'Fataliste', 'Flatteur', 'Fume la pipe sans arrêt', "Généreux à l'excès", 'Hyperactif', 'Impulsif', 'Insomniaque',
-	'Jure constamment', 'Kleptomane', 'Mains calleuses', 'Menteur compulsif', 'Mâchouille quelque chose en permanence', 'Mémoire eidétique',
-	'Nostalgique du passé', 'Obsédé du détail', 'Paranoïaque', 'Parle tout seul', 'Peau tachetée', 'Perfectionniste', "Peur de l'eau",
-	'Peur des hauteurs', 'Piercings multiples', 'Provocateur', 'Rit nerveusement', 'Rituel superstitieux (sel, portes...)', 'Rêveur distrait',
-	'Superstitieux', 'Taciturne', 'Tatouages tribaux', 'Toujours en retard', 'Toujours ivre', 'Très grand pour sa race', 'Très petit pour sa race',
-	'Voix rauque', 'Yeux vairons'],
-    disposition: ['Agressif', 'Amical', 'Autoritaire', 'Bavard', 'Chaleureux', 'Condescendant', 'Craintif', 'Curieux', 'Distant', 'Enjoué',
-	'Flatteur', 'Froid', 'Hostile', 'Indifférent', 'Manipulateur', 'Méfiant', 'Mélancolique', 'Nerveux', 'Neutre', 'Réservé', 'Serviable']
+    metier: ["Forgeron", "Marchand", "Officier", "Sous-Officier", "Soldat de ligne", "Soldat de tir", "Garde du corps", "Voleur", "Aubergiste", "Serveur", "Ménestrel", "Danseur", "Mendiant", "Haut Mage", "Prêtre", "Médecin", "Artisan", "Soldat terrien", "Capitaine éthéré", "Ingénieur éthéré", "Marin éthéré", "Canonnier éthéré", "Herboriste", "Éclaireur", "Palefrenier", "Ingénieur militaire", "Marin", "Assassin"],
+    trait: [
+      "Cicatrice au visage", "Borgne", "Tatouages tribaux", "Boiteux", "Voix rauque",
+      "Très grand pour sa race", "Très petit pour sa race", "Mains calleuses", "Yeux vairons",
+      "Dents en or", "Piercings multiples", "Crâne rasé", "Peau tachetée", "Doigts manquants",
+      "Brûlures anciennes", "Superstitieux", "Paranoïaque", "Mémoire eidétique", "Insomniaque",
+      "Kleptomane", "Peur des hauteurs", "Peur de l'eau", "Obsédé du détail", "Rêveur distrait",
+      "Calculateur froid", "Empathique à l'excès", "Nostalgique du passé", "Fataliste",
+      "Perfectionniste", "Impulsif", "Bègue", "Rit nerveusement", "Toujours ivre",
+      "Parle tout seul", "Jure constamment", "Mâchouille quelque chose en permanence",
+      "Collectionneur compulsif", "Toujours en retard", "Hyperactif", "Économe à l'excès",
+      "Généreux à l'excès", "Menteur compulsif", "Direct jusqu'à la brutalité", "Flatteur",
+      "Craint l'autorité", "Provocateur", "Taciturne", "Bavard incorrigible",
+      "Rituel superstitieux (sel, portes...)", "Fume la pipe sans arrêt",
+      "Aucun"
+    ],
+    disposition: [
+      "Amical", "Chaleureux", "Enjoué", "Serviable", "Bavard", "Curieux",
+      "Neutre", "Indifférent", "Réservé", "Distant", "Nerveux", "Craintif",
+      "Méfiant", "Froid", "Condescendant", "Autoritaire", "Manipulateur",
+      "Flatteur", "Mélancolique", "Hostile", "Agressif"
+    ]
   };
   // --- Génération de noms par famille de sonorités ---
   // Chaque race est rattachée à une famille phonétique (regroupement thématique, pas lié à
@@ -1933,7 +1955,7 @@
   // Tout ce qui se règle à la main est regroupé ici : style, descriptions par famille et par race.
 
   // Style général, placé en tête du prompt.
-  const PORTRAIT_STYLE = "Portrait en buste d'un personnage de fantasy médiévale, illustration numérique peinte, réaliste, éclairage dramatique, fond sombre cohérent avec le métier du personnage, haute qualité, sans texte ni cadre.";
+  const PORTRAIT_STYLE = "Portrait en buste d'un personnage de fantasy médiévale, illustration au crayons de couleur à la main, plutôt réaliste, fond de texture parchemin sombre, sans texte ni cadre.";
 
   // Description visuelle de base selon la famille de sonorités de la race (voir NAME_FAMILIES).
   const PORTRAIT_FAMILY_LOOKS = {
@@ -2005,9 +2027,11 @@
       .map(([, txt]) => txt);
     const marks = PORTRAIT_VISIBLE_TRAITS.filter(t => (pnj.trait || '').includes(t));
 
-    const lines = [PORTRAIT_STYLE];
+    const sx = pnj.physique.sexe;
+    const sujet = sx === 'Femme' ? "d'une femme, personnage" : sx === 'Homme' ? "d'un homme, personnage" : "d'un personnage";
+    const lines = [PORTRAIT_STYLE.replace("d'un personnage", sujet)];
     lines.push(`Race : ${baseName} (${look}${specials.length ? ', ' + specials.join(', ') : ''}).`);
-    if (pnj.physique.sexe) lines.push(`Sexe : ${pnj.physique.sexe.toLowerCase()}.`);
+    if (pnj.physique.sexe) lines.push(`Sexe : ${pnj.physique.sexe === 'Femme' ? 'féminin (femme)' : 'masculin (homme)'}.`);
     lines.push(`Âge apparent : ${portraitAgeLabel(pnj)}.`);
     lines.push(`Corpulence : ${String(pnj.physique.corpulence).toLowerCase()}.`);
     lines.push(`Chevelure : ${pnj.physique.cheveux}.`);
@@ -2610,6 +2634,161 @@
   }
 
   document.getElementById('searchPnj').addEventListener('input', renderMesPnj);
+  // ============================================================
+  // OBJETS MAGIQUES
+  // ============================================================
+
+  // Coût en Écus d'or (€) pour un niveau d'enchantement total donné.
+  // Suit la progression 1-2-5 puis x10 à chaque palier de 3, comme la table fournie
+  // (niveau 1→1€, 2→2€, 3→5€, 4→10€... prolongée indéfiniment selon le même motif).
+  function costForNiveau(n) {
+    if (n <= 0) return 0;
+    const decade = Math.floor((n - 1) / 3);
+    const pos = (n - 1) % 3;
+    const mult = [1, 2, 5][pos];
+    return mult * Math.pow(10, decade);
+  }
+
+  // Paliers de Rareté : bornes du niveau total d'enchantement de l'objet.
+  const RARETES = [
+    { name: "Commun", min: 1, max: 2 },
+    { name: "Peu commun", min: 3, max: 4 },
+    { name: "Rare", min: 5, max: 6 },
+    { name: "Précieux", min: 7, max: 8 },
+    { name: "Exceptionnel", min: 9, max: 10 },
+    { name: "Légendaire", min: 11, max: 12 },
+    { name: "Mythique", min: 13, max: 14 }
+  ];
+
+  const OBJECT_TYPES = [
+    { name: "Dague (+1/+1)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Glaive (+1/+1)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Épée courte (+1/+1)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Épée (+1/+2)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Espadon (+2/+3)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },    
+	{ name: "Hachette (-1/+3)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+    { name: "Hache de travail (-1/+3)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Hache de guerre (0/+4)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Hache lourde (+1/+5)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },
+    { name: "Gourdin (0/+2)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Marteau (0/+2)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Marteau de guerre (+2/+4)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },
+	{ name: "Masse à une main (+1/+3)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Masse de guerre (+2/+4)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },
+	{ name: "Fléau d'armes (0/+3)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Bâton (+2/+1)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },    
+	{ name: "Lance (+2/+2)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },
+	{ name: "Vouge (+3/+3)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },
+	{ name: "Hallebarde (+3/+3)", category: "ArmeMêlée", requiredSkill: "Armes de mêlée à 2 mains" },
+	{ name: "Fouet (-1/+2)", category: "ArmeMêlée", requiredSkill: "Armes de Mêlée à une main" },
+	{ name: "Dague de lancer (0/+1)", category: "ArmeJetLancer", requiredSkill: "Armes de Lancer" },
+    { name: "Hachette de lancer (-1/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de Lancer" },
+    { name: "Lance (+1/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de Lancer" },
+    { name: "Javelot (+2/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de Lancer" },
+    { name: "Shuriken (+2/-2)", category: "ArmeJetLancer", requiredSkill: "Armes de Lancer" },
+    { name: "Arc court (0/+1)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Arc composite (0/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Long Bow (0/+4)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Arbalette de poing (+2/+1)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Arbalette à levier (+2/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Arbalette à manivelle (+2/+4)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Lance-javelot (0/+3)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Sarbacane (+1/0)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Fronde (-1/+3)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Pistolet à Poudre-Noire (0/0)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Tromblon (0/+1)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Mousquet (0/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Pistolet Elohim (+2/+1)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Fusil Elohim (+2/+2)", category: "ArmeJetLancer", requiredSkill: "Armes de jet" },
+    { name: "Matelassée", category: "Armure" },{ name: "Cuir souple", category: "Armure" },{ name: "Cuir dur", category: "Armure" },{ name: "Cuir clouté", category: "Armure" },{ name: "Maille", category: "Armure" },{ name: "Ecailles", category: "Armure" },{ name: "Brigandine", category: "Armure" },{ name: "Harnois", category: "Armure" },
+	{ name: "Bocle", category: "Armure" },{ name: "Rondache", category: "Armure" },{ name: "Ecu", category: "Armure" },{ name: "Pavois", category: "Armure" },
+	{ name: "Salade", category: "Armure" },{ name: "Bol", category: "Armure" },{ name: "Heaume", category: "Armure" },{ name: "Nasal", category: "Armure" },
+    { name: "Brassard", category: "Bijou" },{ name: "Anneau", category: "Bijou" }, { name: "Collier", category: "Bijou" }, { name: "Bracelet", category: "Bijou" },{ name: "Bracelet de bras", category: "Bijou" },{ name: "Boucle d'oreille", category: "Bijou" },{ name: "Serre-tête", category: "Bijou" },{ name: "Piercing", category: "Bijou" },
+    { name: "Cape", category: "Vêtement" },{ name: "Manteau", category: "Vêtement" }, { name: "Capeline", category: "Vêtement" },{ name: "Gants", category: "Vêtement" }, { name: "Mitaines", category: "Vêtement" },{ name: "Bottes", category: "Vêtement" },{ name: "Sandales", category: "Vêtement" },{ name: "Chaussures", category: "Vêtement" },{ name: "Bottes hautes", category: "Vêtement" },{ name: "Escarpins", category: "Vêtement" },
+	{ name: "Capuche", category: "Vêtement" },{ name: "Chapeau", category: "Vêtement" },{ name: "Béret", category: "Vêtement" },{ name: "Chainse", category: "Vêtement" },{ name: "Tunique", category: "Vêtement" },{ name: "Braies", category: "Vêtement" },{ name: "Chausses", category: "Vêtement" },{ name: "Culotte", category: "Vêtement" },{ name: "Robe", category: "Vêtement" },{ name: "Jupe", category: "Vêtement" },{ name: "Bandeau", category: "Vêtement" },{ name: "Ceinture", category: "Vêtement" },{ name: "Surcôt", category: "Vêtement" },
+    { name: "Torche", category: "Utilitaire" },{ name: "Chandelle", category: "Utilitaire" },{ name: "Lanterne", category: "Utilitaire" },{ name: "Besace", category: "Utilitaire" },{ name: "Bourse", category: "Utilitaire" },{ name: "Sac", category: "Utilitaire" },{ name: "Gourde", category: "Utilitaire" },{ name: "Outre", category: "Utilitaire" },
+	{ name: "Mouchoir", category: "Utilitaire" },{ name: "Briquet", category: "Utilitaire" },{ name: "Timbale", category: "Utilitaire" },{ name: "Couverture", category: "Utilitaire" },{ name: "Pierre à aiguiser", category: "Utilitaire" },{ name: "Écritoire", category: "Utilitaire" },{ name: "Plume", category: "Utilitaire" },{ name: "Encrier", category: "Utilitaire" },
+	{ name: "Siflet", category: "Utilitaire" },{ name: "Fiole de...", category: "Utilitaire" },{ name: "Miroir", category: "Utilitaire" },{ name: "Coutelas", category: "Utilitaire" },{ name: "Lunettes", category: "Utilitaire" },{ name: "Longue-vue", category: "Utilitaire" },{ name: "Boussole", category: "Utilitaire" },{ name: "Pansement de premiers secours", category: "Utilitaire" },
+    { name: "Flûte", category: "Instrument" },{ name: "Pipeau", category: "Instrument" },{ name: "Luth", category: "Instrument" },{ name: "Mandoline", category: "Instrument" },{ name: "Guimbarde", category: "Instrument" },
+  ];
+
+  // Traits dont les Compétences liées sont thématiquement cohérentes avec chaque catégorie d'objet
+  // (ex. une arme porte plutôt un bonus de combat, un bijou plutôt un bonus social/mental).
+  const CATEGORY_TRAITS = {
+    ArmeMêlée: ["FOR", "MAI"],
+	ArmeJetLancer: ["PER", "AGI"],
+    Armure: ["FOR", "MAI"],
+    Bijou: ["FOR", "AGI", "INT", "PER", "MAI", "CHA"],
+    Vêtement: ["FOR", "AGI", "PER", "CHA"],
+    Utilitaire: ["FOR", "AGI", "INT", "PER", "MAI", "CHA"],
+    Instrument: ["CHA", "AGI"]
+  };
+
+  // Catégories "logiques" d'objets par Métier, utilisées pour choisir un type d'objet cohérent
+  // quand l'objet est lié à un Métier. "Arme" regroupe les deux catégories techniques d'armes
+  // (ArmeMêlée / ArmeJetLancer), tirées 50/50 au moment de la génération.
+  const METIER_CATEGORIES = {
+    "Forgeron": ["Arme", "Armure", "Utilitaire"],
+    "Marchand": ["Bijou", "Utilitaire", "Vêtement"],
+    "Officier": ["Arme", "Armure", "Vêtement"],
+    "Sous-Officier": ["Arme", "Armure", "Vêtement"],
+    "Soldat de ligne": ["Arme", "Armure", "Vêtement"],
+    "Soldat de tir": ["Arme", "Utilitaire", "Vêtement"],
+    "Garde du corps": ["Arme", "Armure", "Vêtement"],
+    "Voleur": ["Arme", "Utilitaire", "Vêtement"],
+    "Aubergiste": ["Utilitaire", "Bijou"],
+    "Serveur": ["Utilitaire", "Bijou"],
+    "Ménestrel": ["Bijou", "Vêtement", "Instrument"],
+    "Danseur": ["Vêtement", "Bijou"],
+    "Mendiant": ["Utilitaire", "Vêtement", "Instrument"],
+    "Haut Mage": ["Bijou", "Vêtement", "Utilitaire"],
+    "Prêtre": ["Bijou", "Vêtement"],
+    "Médecin": ["Utilitaire", "Bijou"],
+    "Artisan": ["Utilitaire", "Bijou"],
+    "Soldat terrien": ["Armure", "Arme", "Vêtement"],
+    "Capitaine éthéré": ["Vêtement", "Bijou"],
+    "Ingénieur éthéré": ["Utilitaire", "Bijou"],
+    "Marin éthéré": ["Vêtement", "Utilitaire"],
+    "Canonnier éthéré": ["Arme", "Armure"],
+    "Herboriste": ["Utilitaire", "Bijou"],
+    "Éclaireur": ["Arme", "Vêtement"],
+    "Palefrenier": ["Vêtement", "Utilitaire"],
+    "Ingénieur militaire": ["Utilitaire", "Armure"],
+    "Marin": ["Vêtement", "Utilitaire"],
+    "Assassin": ["Arme", "Vêtement", "Bijou"]
+  };
+
+  // Résout la catégorie technique réelle à partir d'une entrée de METIER_CATEGORIES
+  // ("Arme" est un alias regroupant les deux catégories d'armes existantes).
+  function resolveMetierCategory(logicalCategory) {
+    if (logicalCategory === "Arme") return pick(["ArmeMêlée", "ArmeJetLancer"]);
+    return logicalCategory;
+  }
+
+
+  // Effets non chiffrés (capacités spéciales), avec un niveau fixé "à dire d'expert" en attendant
+  // la vraie table de Haute Magie. Échelle calibrée sur les 4 exemples donnés (bougie=1, vêtement
+  // toujours sec=4, marche sur l'air=6, téléportation=10).
+  const SPECIAL_ENCHANTMENTS = [
+    { name: "Finition raffinée (effet mineur)", niveau: 1, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Bougie magique (lumière permanente)", niveau: 1, categories: ["Utilitaire", "Bijou"] },
+    { name: "Réchaud de poche (chaleur à la demande)", niveau: 1, categories: ["Vêtement", "Utilitaire"] },
+    { name: "Vision nocturne", niveau: 2, categories: ["Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Vêtement toujours sec (imperméabilité totale)", niveau: 4, categories: ["Vêtement"] },
+    { name: "Résistance au feu", niveau: 5, categories: ["Armure", "Vêtement"] },
+    { name: "Respiration aquatique", niveau: 5, categories: ["Vêtement", "Bijou"] },
+    { name: "Bottes pour marcher sur l'air (lévitation basse)", niveau: 6, categories: ["Vêtement"] },
+    { name: "Communication télépathique (courte portée)", niveau: 7, categories: ["Bijou", "Utilitaire"] },
+    { name: "Illusion (dissimule la nature magique de l'objet)", niveau: 8, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Régénération lente des blessures", niveau: 9, categories: ["Bijou", "Armure"] },
+    { name: "Invisibilité temporaire", niveau: 9, categories: ["Vêtement", "Bijou"] },
+    { name: "Téléportation courte distance", niveau: 10, categories: ["Bijou", "Vêtement"] },
+    { name: "Contrôle du temps local (petite zone)", niveau: 12, categories: ["Utilitaire", "Bijou"] },
+    { name: "Résurrection d'urgence (usage unique)", niveau: 14, categories: ["Bijou"] }
+  ];
+
+  const MATERIALS = ["or", "argent", "mythril", "bronze"];
+  const GEMS = ["rubis", "saphir", "émeraude", "diamant", "aigue-marine", "lapis lazuli", "pierre de lune", "cornaline", "aventurine", "améthyste", "topaze",  "opale", "jade", "citrine", "onyx", "quartz fumé", "perles", "nacre", "ambre"];
   // Remplit le budget de niveaux d'un objet avec 1 à 3 enchantements (chiffrés ou spéciaux),
   // compatibles avec sa catégorie, jusqu'à épuiser le budget (ou ne plus pouvoir le faire).
   // excludeSkillNames : compétences déjà attribuées (ex. le bonus principal lié au Métier),
@@ -3205,634 +3384,6 @@
             status.textContent += ` ATTENTION : ${importFailed} élément(s) n'ont pas pu être enregistrés (stockage plein).`;
             alert(`${importFailed} élément(s) n'ont pas pu être enregistrés : le stockage du navigateur est plein.`);
           }
-        }
-        updateExportCount();
-        input.value = '';
-      } catch (err) {
-        status.textContent = "Erreur : ce fichier n'est pas un export valide du Recueil des PNJ.";
-      }
-    };
-    reader.readAsText(file);
-  });
-
-  let counter = 0;
-
-  document.getElementById('btnGenerate').addEventListener('click', () => {
-    const options = {
-      raceMode: raceModeSelect.value,
-      metier: document.getElementById('metier').value,
-      trait: document.getElementById('trait').value
-    };
-    const nb = Math.min(8, Math.max(1, parseInt(document.getElementById('nb').value) || 1));
-
-    // Répartition des Niveaux : si plusieurs Niveaux sont sélectionnés (ou tous par défaut),
-    // on garantit un personnage par Niveau tant qu'il y a assez de PNJ à générer ; les PNJ
-    // en plus sont répartis aléatoirement parmi les Niveaux sélectionnés.
-    const levelPool = getChecked(niveauChecks).length ? LEVELS.filter(l => getChecked(niveauChecks).includes(l.name)) : LEVELS;
-    const shuffledPool = shuffle(levelPool);
-    const levelAssignments = [];
-    for (let i = 0; i < Math.min(nb, shuffledPool.length); i++) levelAssignments.push(shuffledPool[i]);
-    for (let i = levelAssignments.length; i < nb; i++) levelAssignments.push(pick(levelPool));
-    shuffle(levelAssignments);
-
-    const resultsEl = document.getElementById('results');
-    resultsEl.innerHTML = "";
-
-    for (let i = 0; i < nb; i++) {
-      counter++;
-      const pnj = generatePNJ(options, counter, levelAssignments[i]);
-      resultsEl.insertAdjacentHTML('beforeend', renderCard(pnj));
-    }
-  });
-  // Remplit le budget de niveaux d'un objet avec 1 à 3 enchantements (chiffrés ou spéciaux),
-  // compatibles avec sa catégorie, jusqu'à épuiser le budget (ou ne plus pouvoir le faire).
-  // excludeSkillNames : compétences déjà attribuées (ex. le bonus principal lié au Métier),
-  // à ne pas retirer une seconde fois.
-  // Certaines Compétences ne peuvent recevoir de bonus que de catégories d'objets précises
-  // (ex. Boxe/Lutte et Arts Martiaux sont des compétences à mains nues : par définition, aucune
-  // arme ne peut les booster, seuls un Vêtement ou un Bijou le peuvent).
-  const SKILL_CATEGORY_RESTRICTIONS = {
-    "Boxe/Lutte": ["Vêtement", "Bijou"],
-    "Arts Martiaux": ["Vêtement", "Bijou"]
-  };
-
-  function isSkillAllowedForCategory(skillName, category) {
-    const allowed = SKILL_CATEGORY_RESTRICTIONS[skillName];
-    return !allowed || allowed.includes(category);
-  }
-
-  function fillEnchantments(category, budget, forcedSkillName, excludeSkillNames) {
-    const enchantements = [];
-    let remaining = budget;
-    const maxSlots = 3;
-    const compatibleTraits = CATEGORY_TRAITS[category] || ["FOR", "AGI", "INT", "PER", "MAI", "CHA"];
-    const usedSkillNames = new Set(excludeSkillNames || []);
-    const usedSpecialNames = new Set();
-
-    while (remaining > 0 && enchantements.length < maxSlots) {
-      // Une arme est toujours liée à sa compétence de maniement précise, pas à une compétence
-      // de combat tirée au hasard dans la catégorie.
-      const skillPool = forcedSkillName
-        ? ALL_SKILLS.filter(s => s.name === forcedSkillName)
-        : ALL_SKILLS.filter(s => s.trait && compatibleTraits.includes(s.trait) && isSkillAllowedForCategory(s.name, category));
-      const compatibleSkills = skillPool.filter(s => !usedSkillNames.has(s.name));
-      const specialOptions = SPECIAL_ENCHANTMENTS.filter(s => s.categories.includes(category) && s.niveau <= remaining && !usedSpecialNames.has(s.name));
-      const canBonus = remaining >= 2 && compatibleSkills.length > 0;
-      const canSpecial = specialOptions.length > 0;
-      if (!canBonus && !canSpecial) break;
-
-      const useBonus = canBonus && (!canSpecial || Math.random() < 0.55);
-      if (useBonus) {
-        const maxMagnitude = Math.max(1, Math.floor(remaining / 2));
-        const magnitude = 1 + Math.floor(Math.random() * maxMagnitude);
-        const skill = pick(compatibleSkills);
-        const niveau = magnitude * 2;
-        enchantements.push({ type: "bonus", name: skill.name, trait: skill.trait, magnitude, niveau });
-        usedSkillNames.add(skill.name);
-        remaining -= niveau;
-      } else {
-        const chosen = pick(specialOptions);
-        enchantements.push({ type: "special", name: chosen.name, niveau: chosen.niveau });
-        usedSpecialNames.add(chosen.name);
-        remaining -= chosen.niveau;
-      }
-    }
-    return enchantements;
-  }
-
-  // Résout le Métier attribué à l'objet pour cette génération, selon les règles :
-  // choix explicite -> ce Métier ; sinon 80% un Métier aléatoire, 20% aucun.
-  function resolveObjectMetier(options) {
-    if (options.metier === null) return null; // "aucun métier" explicitement demandé (slot générique)
-    if (options.metier && options.metier !== 'alea') return options.metier;
-    if (Math.random() < 0.8) return pick(TABLES.metier);
-    return null;
-  }
-
-  // Garantit que le total des niveaux d'enchantement tombe bien dans la fourchette de la Rareté
-  // tirée. Comme les bonus se font par multiples de 2 (magnitude x2) et que chaque fourchette de
-  // Rareté est un couple [impair, pair], un budget tombé sur l'impair laisse un point orphelin
-  // qu'un bonus seul ne peut pas consommer. Plutôt que d'ajouter un effet de complément séparé,
-  // on augmente en priorité la magnitude d'un bonus déjà présent : ça absorbe le point manquant
-  // ET atterrit pile sur le max (pair) de la fourchette, gardant l'objet "bonus pur".
-  function ensureWithinRarete(enchantements, category, requiredSkill, rarete) {
-    const total = () => enchantements.reduce((s, e) => s + e.niveau, 0);
-    if (total() >= rarete.min) return enchantements;
-    const shortfall = rarete.min - total();
-    const addMagnitude = Math.ceil(shortfall / 2);
-
-    const existingBonus = enchantements.find(e => e.type === "bonus");
-    if (existingBonus) {
-      existingBonus.magnitude += addMagnitude;
-      existingBonus.niveau += addMagnitude * 2;
-      return enchantements;
-    }
-
-    // Aucun bonus existant (objet 100% effets spéciaux) : on en ajoute un nouveau si un
-    // emplacement est disponible et qu'une compétence compatible existe.
-    const compatibleTraits = CATEGORY_TRAITS[category] || ["FOR", "AGI", "INT", "PER", "MAI", "CHA"];
-    const usedSkillNames = new Set(enchantements.map(e => e.name));
-    const skillPool = requiredSkill
-      ? ALL_SKILLS.filter(s => s.name === requiredSkill)
-      : ALL_SKILLS.filter(s => s.trait && compatibleTraits.includes(s.trait) && !usedSkillNames.has(s.name) && isSkillAllowedForCategory(s.name, category));
-
-    if (enchantements.length < 3) {
-      if (skillPool.length > 0) {
-        const skill = pick(skillPool);
-        const magnitude = Math.max(1, addMagnitude);
-        enchantements.push({ type: "bonus", name: skill.name, trait: skill.trait, magnitude, niveau: magnitude * 2 });
-      }
-    } else if (skillPool.length > 0) {
-      // Les 3 emplacements sont déjà occupés par des effets spéciaux : on remplace le plus
-      // faible par un bonus qui couvre à la fois sa propre valeur et le manque restant.
-      let minIdx = 0;
-      for (let i = 1; i < enchantements.length; i++) {
-        if (enchantements[i].niveau < enchantements[minIdx].niveau) minIdx = i;
-      }
-      const neededNiveau = shortfall + enchantements[minIdx].niveau;
-      const magnitude = Math.max(1, Math.ceil(neededNiveau / 2));
-      const skill = pick(skillPool);
-      enchantements[minIdx] = { type: "bonus", name: skill.name, trait: skill.trait, magnitude, niveau: magnitude * 2 };
-    }
-    return enchantements;
-  }
-
-  function generateObjet(options, index) {
-    // Une Rareté explicite (ex. table d'équipement des PNJ) court-circuite la lecture des cases
-    // à cocher de l'écran "Objets", qui ne sert que pour le tirage manuel.
-    let rarete;
-    if (options.forcedRarete) {
-      rarete = RARETES.find(r => r.name === options.forcedRarete) || RARETES[0];
-    } else {
-      const rareteChecked = getChecked(document.getElementById('raretesChecks'));
-      const rareteList = rareteChecked.length ? RARETES.filter(r => rareteChecked.includes(r.name)) : RARETES;
-      rarete = pick(rareteList);
-    }
-    const rareteIndex = RARETES.findIndex(r => r.name === rarete.name);
-    const budget = rarete.min + Math.floor(Math.random() * (rarete.max - rarete.min + 1));
-
-    // Le Métier est résolu avant la catégorie, car il peut orienter le choix du type d'objet
-    // (ex. un Ménestrel tirera plus volontiers un Instrument qu'une Armure).
-    const preliminaryMetier = resolveObjectMetier(options);
-
-    // Catégorie : un choix explicite de l'utilisateur est toujours respecté ; sinon, si un
-    // Métier est attribué et qu'il a des catégories cohérentes définies, on tire dedans ;
-    // sinon, catégorie totalement aléatoire (comportement d'origine).
-    let category;
-    if (options.categorie && options.categorie !== "alea") {
-      category = options.categorie;
-    } else if (preliminaryMetier && METIER_CATEGORIES[preliminaryMetier]) {
-      category = resolveMetierCategory(pick(METIER_CATEGORIES[preliminaryMetier]));
-    } else {
-      category = pick(Object.keys(CATEGORY_TRAITS));
-    }
-
-    const type = pick(OBJECT_TYPES.filter(t => t.category === category));
-
-    // Une arme ne doit JAMAIS donner de bonus sur une autre compétence que celle de son
-    // maniement (cas particulier, contrairement à tous les autres types d'objets). On force donc
-    // systématiquement sa compétence, ce qui l'exclut de fait de la logique liée au Métier
-    // ci-dessous — elle peut toujours recevoir un effet spécial en plus si le budget le permet.
-    const requiredSkill = type.requiredSkill || null;
-
-    // Le Métier ne joue un rôle sur le BONUS que pour les objets dont la compétence n'est pas
-    // imposée (une arme reste toujours liée à sa compétence de maniement, même si son type a
-    // été choisi en cohérence avec le Métier ci-dessus).
-    const metier = requiredSkill ? null : preliminaryMetier;
-    const metierCandidats = metier
-      ? (METIER_SKILLS[metier] || []).filter(name => ALL_SKILLS.some(s => s.name === name) && isSkillAllowedForCategory(name, category))
-      : [];
-
-    let enchantements;
-    if (metier && metierCandidats.length > 0 && budget >= 2) {
-      const primarySkillName = pick(metierCandidats);
-      const skillObj = ALL_SKILLS.find(s => s.name === primarySkillName);
-
-      if (Math.random() < 0.7) {
-        // 70% : bonus maximal permis par la Rareté -> seul effet de l'objet.
-        const magnitude = Math.max(1, Math.floor(budget / 2));
-        const niveau = magnitude * 2;
-        enchantements = [{ type: "bonus", name: primarySkillName, trait: skillObj.trait, magnitude, niveau }];
-      } else {
-        // 30% : bonus équivalent à une Rareté d'un cran inférieur, complété par d'autres effets
-        // pour utiliser le reste du budget de la Rareté tirée.
-        const loweredRarete = rareteIndex > 0 ? RARETES[rareteIndex - 1] : rarete;
-        const loweredBudget = loweredRarete.min + Math.floor(Math.random() * (loweredRarete.max - loweredRarete.min + 1));
-        const magnitude = Math.max(1, Math.floor(loweredBudget / 2));
-        const niveau = magnitude * 2;
-        const primary = { type: "bonus", name: primarySkillName, trait: skillObj.trait, magnitude, niveau };
-        const remaining = Math.max(0, budget - niveau);
-        const extra = remaining > 0 ? fillEnchantments(category, remaining, requiredSkill, [primarySkillName]) : [];
-        enchantements = [primary, ...extra];
-      }
-    } else {
-      enchantements = fillEnchantments(category, budget, requiredSkill);
-    }
-
-    enchantements = ensureWithinRarete(enchantements, category, requiredSkill, rarete);
-
-    const niveauTotal = enchantements.reduce((s, e) => s + e.niveau, 0);
-    const cout = costForNiveau(niveauTotal);
-
-    const materiau = pick(MATERIALS);
-    const gemme = pick(GEMS);
-    const nom = `${type.name} (${materiau} et ${gemme})`;
-
-    return { id: newId('obj'), index, nom, type: type.name, category, rarete: rarete.name, materiau, gemme, enchantements, niveauTotal, cout, groupe: '', sousTitre: `${rarete.name} · ${category} · Niveau d'enchantement total : ${niveauTotal}` };
-  }
-
-  // ============================================================
-  // ÉQUIPEMENT DE DÉPART DES PNJ (table Niveau -> emplacements d'objets)
-  // ============================================================
-  // Chaque emplacement (slot) : probabilité d'apparition, fourchette de Rareté ([min,max] de
-  // RARETES, bornes incluses) dans laquelle une Rareté est tirée, et "metier" (true = l'objet est
-  // lié au Métier du PNJ, false = objet générique, sans lien de Métier forcé).
-  // Exceptionnel reste rare même aux Niveaux élevés (slot "Bonus rare" à faible probabilité) ;
-  // Légendaire et Mythique n'apparaissent jamais à la création (réservés au MJ).
-  const EQUIPMENT_TABLE = {
-    "Apprenti": [
-      { prob: 0.60, rareteRange: ["Commun", "Commun"], metier: true }
-    ],
-    "Novice": [
-      { prob: 0.90, rareteRange: ["Peu commun", "Peu commun"], metier: true },
-      { prob: 0.50, rareteRange: ["Commun", "Peu commun"], metier: true },
-      { prob: 0.10, rareteRange: ["Commun", "Commun"], metier: false }
-    ],
-    "Pro": [
-      { prob: 1.00, rareteRange: ["Peu commun", "Rare"], metier: true },
-      { prob: 0.90, rareteRange: ["Commun", "Peu commun"], metier: true },
-      { prob: 0.50, rareteRange: ["Commun", "Peu commun"], metier: false },
-      { prob: 0.15, rareteRange: ["Commun", "Commun"], metier: false },
-      { prob: 0.05, rareteRange: ["Précieux", "Précieux"], metier: true }
-    ],
-    "Expert": [
-      { prob: 1.00, rareteRange: ["Rare", "Précieux"], metier: true },
-      { prob: 0.90, rareteRange: ["Peu commun", "Rare"], metier: true },
-      { prob: 0.70, rareteRange: ["Commun", "Peu commun"], metier: false },
-      { prob: 0.25, rareteRange: ["Commun", "Peu commun"], metier: false },
-      { prob: 0.10, rareteRange: ["Précieux", "Précieux"], metier: true }
-    ],
-    "Compagnon": [
-      { prob: 1.00, rareteRange: ["Rare", "Précieux"], metier: true },
-      { prob: 0.95, rareteRange: ["Rare", "Précieux"], metier: true },
-      { prob: 0.80, rareteRange: ["Peu commun", "Rare"], metier: false },
-      { prob: 0.40, rareteRange: ["Commun", "Peu commun"], metier: false },
-      { prob: 0.10, rareteRange: ["Exceptionnel", "Exceptionnel"], metier: true }
-    ],
-    "Maître": [
-      { prob: 1.00, rareteRange: ["Précieux", "Exceptionnel"], metier: true },
-      { prob: 0.95, rareteRange: ["Rare", "Précieux"], metier: true },
-      { prob: 0.85, rareteRange: ["Peu commun", "Rare"], metier: false },
-      { prob: 0.50, rareteRange: ["Commun", "Peu commun"], metier: false },
-      { prob: 0.20, rareteRange: ["Exceptionnel", "Exceptionnel"], metier: true }
-    ],
-    "Divin": [
-      { prob: 1.00, rareteRange: ["Précieux", "Exceptionnel"], metier: true },
-      { prob: 1.00, rareteRange: ["Rare", "Précieux"], metier: true },
-      { prob: 0.90, rareteRange: ["Peu commun", "Rare"], metier: false },
-      { prob: 0.60, rareteRange: ["Commun", "Peu commun"], metier: false },
-      { prob: 0.30, rareteRange: ["Exceptionnel", "Exceptionnel"], metier: true }
-    ]
-  };
-
-  function pickRareteInRange(rangeNames) {
-    const startIdx = RARETES.findIndex(r => r.name === rangeNames[0]);
-    const endIdx = RARETES.findIndex(r => r.name === rangeNames[1]);
-    const options = RARETES.slice(startIdx, endIdx + 1);
-    return pick(options).name;
-  }
-
-  // Résumé condensé d'un objet, tel qu'affiché (et librement éditable) dans la fiche du PNJ :
-  // une ligne "type - rareté - coût", une ligne listant les effets (sans Trait ni Niveau).
-  function summarizeObjet(obj) {
-    const ligne1 = `${obj.type} (${obj.materiau} et ${obj.gemme}) · ${obj.rarete} · ${obj.cout}€`;
-    const ligne2 = obj.enchantements
-      .map(e => e.type === "bonus" ? `+${e.magnitude} ${e.name}` : e.name)
-      .join(', ');
-    return { ligne1, ligne2 };
-  }
-
-  // Génère l'équipement de départ d'un PNJ selon son Niveau, en suivant EQUIPMENT_TABLE.
-  function generateEquipementForPNJ(pnj) {
-    const slots = EQUIPMENT_TABLE[pnj.level.name] || [];
-    const equipement = [];
-    slots.forEach(slot => {
-      if (Math.random() >= slot.prob) return;
-      const forcedRarete = pickRareteInRange(slot.rareteRange);
-      const options = {
-        categorie: "alea",
-        metier: slot.metier ? pnj.metier : null,
-        forcedRarete
-      };
-      const obj = generateObjet(options, equipement.length + 1);
-      equipement.push(summarizeObjet(obj));
-    });
-    return equipement;
-  }
-
-  // opts.saved : fiche déjà enregistrée ; opts.mode : 'read' (Lecture) ou 'edit' (Édition).
-  function renderObjCard(obj, opts = {}) {
-    OBJ_REGISTRY.set(obj.id, obj);
-    const saved = opts.saved || false;
-    const mode = opts.mode || (saved ? 'read' : 'edit');
-    const ro = mode === 'read';
-    const id = obj.id;
-    const { fText, fNum } = makeFieldHelpers(id, ro);
-
-    const enchHtml = obj.enchantements.map((e, idx) => `
-      <div class="comp-row">
-        ${fText('comp-name-input', e.type === 'bonus' ? `+${e.magnitude} ${e.name}` : e.name, `obj-ench.${idx}.name`)}
-        ${e.trait ? `<span class="trait-tag">(${e.trait})</span>` : ''}
-        <span class="trait-tag">niv.</span>
-        ${fNum('score-input', e.niveau, `obj-ench.${idx}.niveau`)}
-      </div>
-    `).join('');
-
-    const groupeHtml = (ro && !obj.groupe) ? '' : `
-        <div class="field-inline">
-          <label>Groupe / Tags</label>
-          ${fText('mini-text', obj.groupe || '', 'groupe', 'ex. Butin donjon, boutique de Maître Orin')}
-        </div>`;
-
-    const actionsHtml = ro
-      ? `<button class="btn-save btn-edit" data-id="${id}">Modifier</button>`
-      : (saved
-        ? `<button class="btn-save" data-id="${id}" style="flex:1 1 45%;">Mettre à jour</button>
-          <button class="btn-delete btn-cancel" data-id="${id}" style="flex:1 1 45%;">Annuler</button>
-          <button class="btn-delete" data-id="${id}" style="flex:1 1 100%;">Supprimer</button>`
-        : `<button class="btn-save" data-id="${id}">Enregistrer</button>`);
-
-    return `
-      <div class="card${ro ? ' mode-read' : ''}" data-card-id="${id}" data-saved="${saved ? 1 : 0}" data-mode="${mode}"${opts.instant ? ' style="animation:none"' : ''}>
-        <div class="card-top">
-          <div class="card-top-info">
-            ${fText('name-input', obj.nom, 'nom')}
-          </div>
-        </div>
-        ${fText('race-line-input', obj.sousTitre, 'sousTitre')}
-        <div class="competences">
-          <div class="k">Enchantements</div>
-          ${enchHtml}
-        </div>
-        <div class="field-inline">
-          <label>Coût (Écus d'or €)</label>
-          ${fNum('mini-number current', obj.cout, 'cout')}
-        </div>
-        ${groupeHtml}
-        <div class="card-actions" style="flex-wrap:wrap;">
-          ${actionsHtml}
-        </div>
-      </div>
-    `;
-  }
-
-  // Remplace la fiche affichée par sa version à jour (changement de mode), en conservant par défaut
-  // l'état "enregistrée" et le mode actuels.
-  function refreshObjCard(obj, cardEl, over = {}) {
-    if (!cardEl) return;
-    const saved = over.saved !== undefined ? over.saved : cardEl.dataset.saved === '1';
-    const mode = over.mode || cardEl.dataset.mode || (saved ? 'read' : 'edit');
-    cardEl.outerHTML = renderObjCard(obj, { saved, mode, instant: true });
-  }
-
-  const ObjetStore = {
-    indexKey: 'objet:index',
-    listIds() {
-      try { return JSON.parse(localStorage.getItem(this.indexKey) || '[]'); }
-      catch (e) { return []; }
-    },
-    save(obj) {
-      try {
-        const ids = this.listIds();
-        if (!ids.includes(obj.id)) { ids.push(obj.id); localStorage.setItem(this.indexKey, JSON.stringify(ids)); }
-        localStorage.setItem('objet:' + obj.id, JSON.stringify(obj));
-        return true;
-      } catch (e) { console.warn('Sauvegarde objet impossible :', e); return false; }
-    },
-    load(id) {
-      try { return JSON.parse(localStorage.getItem('objet:' + id)); }
-      catch (e) { return null; }
-    },
-    remove(id) {
-      try {
-        localStorage.setItem(this.indexKey, JSON.stringify(this.listIds().filter(i => i !== id)));
-        localStorage.removeItem('objet:' + id);
-      } catch (e) { /* stockage indisponible */ }
-    },
-    loadAll() {
-      return this.listIds().map(id => {
-        try { return JSON.parse(localStorage.getItem('objet:' + id)); } catch (e) { return null; }
-      }).filter(Boolean);
-    }
-  };
-
-  const OBJ_REGISTRY = new Map();
-
-  function setDeepObj(obj, path, value) {
-    if (path.startsWith('obj-ench.')) {
-      const [, idx, field] = path.split('.');
-      obj.enchantements[idx][field] = value;
-      return;
-    }
-    obj[path] = value;
-  }
-
-  function bindObjEvents(container) {
-    container.addEventListener('input', (e) => {
-      const el = e.target;
-      const id = el.dataset.id;
-      const field = el.dataset.field;
-      if (!id || !field) return;
-      const obj = OBJ_REGISTRY.get(id);
-      if (!obj) return;
-      let value = el.value;
-      if (el.type === 'number') value = value === '' ? 0 : Number(value);
-      setDeepObj(obj, field, value);
-    });
-    container.addEventListener('click', (e) => {
-      const editBtn = e.target.closest('.btn-edit');
-      if (editBtn) {
-        const obj = OBJ_REGISTRY.get(editBtn.dataset.id);
-        if (obj) refreshObjCard(obj, editBtn.closest('.card'), { mode: 'edit' });
-        return;
-      }
-      const cancelBtn = e.target.closest('.btn-cancel');
-      if (cancelBtn) {
-        // Défausse les modifications non enregistrées : on recharge la version stockée.
-        const stored = ObjetStore.load(cancelBtn.dataset.id);
-        if (stored) refreshObjCard(stored, cancelBtn.closest('.card'), { saved: true, mode: 'read' });
-        return;
-      }
-      const saveBtn = e.target.closest('.btn-save');
-      if (saveBtn) {
-        const obj = OBJ_REGISTRY.get(saveBtn.dataset.id);
-        if (!obj) return;
-        const card = saveBtn.closest('.card');
-        const ok = ObjetStore.save(obj);
-        if (!ok) {
-          const prev = saveBtn.textContent;
-          saveBtn.textContent = 'Échec (stockage indisponible)';
-          setTimeout(() => { saveBtn.textContent = prev; }, 1500);
-          return;
-        }
-        // Après enregistrement, la fiche repasse en Lecture.
-        refreshObjCard(obj, card, { saved: true, mode: 'read' });
-        return;
-      }
-      const delBtn = e.target.closest('.btn-delete');
-      if (delBtn) {
-        ObjetStore.remove(delBtn.dataset.id);
-        OBJ_REGISTRY.delete(delBtn.dataset.id);
-        delBtn.closest('.card').remove();
-      }
-    });
-  }
-
-  const objResults = document.getElementById('objResults');
-  bindObjEvents(objResults);
-
-  const raretesChecks = document.getElementById('raretesChecks');
-  RARETES.forEach(r => {
-    const label = document.createElement('label');
-    label.className = 'chip';
-    label.innerHTML = `<input type="checkbox" value="${r.name}"> ${r.name} (${r.min}-${r.max})`;
-    const input = label.querySelector('input');
-    input.addEventListener('change', () => label.classList.toggle('checked', input.checked));
-    raretesChecks.appendChild(label);
-  });
-
-  // --- Peuplement du menu "Métier" (optionnel) pour les objets ---
-  const objMetierSelect = document.getElementById('objMetier');
-  TABLES.metier.forEach(m => {
-    const opt = document.createElement('option');
-    opt.value = m;
-    opt.textContent = m;
-    objMetierSelect.appendChild(opt);
-  });
-
-  let objCounter = 0;
-  document.getElementById('btnGenerateObj').addEventListener('click', () => {
-    const options = {
-      categorie: document.getElementById('objCategorie').value,
-      metier: document.getElementById('objMetier').value
-    };
-    const nb = Math.min(8, Math.max(1, parseInt(document.getElementById('nbObj').value) || 1));
-    objResults.innerHTML = "";
-    for (let i = 0; i < nb; i++) {
-      objCounter++;
-      const obj = generateObjet(options, objCounter);
-      objResults.insertAdjacentHTML('beforeend', renderObjCard(obj));
-    }
-  });
-
-  // --- Écran Mes Objets : liste + recherche parmi les fiches enregistrées ---
-  const mesobjetsResults = document.getElementById('mesobjetsResults');
-  bindObjEvents(mesobjetsResults);
-
-  function matchesSearchObj(obj, q) {
-    if (!q) return true;
-    const haystack = [
-      obj.nom, obj.type, obj.category, obj.rarete, obj.groupe
-    ].join(' ').toLowerCase();
-    return haystack.includes(q.toLowerCase());
-  }
-
-  function renderMesObjets() {
-    const all = ObjetStore.loadAll();
-    const q = document.getElementById('searchObj').value.trim();
-    const filtered = all.filter(obj => matchesSearchObj(obj, q));
-
-    if (all.length === 0) {
-      mesobjetsResults.innerHTML = `<div class="panel"><div class="empty-state">Aucun objet enregistré pour l'instant.<br>Enregistre une fiche depuis l'écran "Objets" pour la retrouver ici.</div></div>`;
-      return;
-    }
-    if (filtered.length === 0) {
-      mesobjetsResults.innerHTML = `<div class="panel"><div class="empty-state">Aucun résultat pour cette recherche.</div></div>`;
-      return;
-    }
-    mesobjetsResults.innerHTML = filtered.map(obj => renderObjCard(obj, { saved: true })).join('');
-  }
-
-  document.getElementById('searchObj').addEventListener('input', renderMesObjets);
-
-
-
-  // --- Écran Sauvegarde : export / import (PNJ + Objets combinés dans un seul fichier) ---
-  function updateExportCount() {
-    const nPnj = PNJStore.loadAll().length;
-    const nObj = ObjetStore.loadAll().length;
-    document.getElementById('exportCount').textContent =
-      (nPnj === 0 && nObj === 0)
-        ? "Rien d'enregistré pour l'instant."
-        : `${nPnj} PNJ et ${nObj} objet(s) actuellement enregistrés sur cet appareil.`;
-  }
-
-  document.getElementById('btnExport').addEventListener('click', () => {
-    const pnjs = PNJStore.loadAll();
-    const objets = ObjetStore.loadAll();
-    if (pnjs.length === 0 && objets.length === 0) {
-      document.getElementById('exportCount').textContent = "Rien à exporter.";
-      return;
-    }
-    const payload = { pnjs, objets };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const date = new Date().toISOString().slice(0, 10);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `recueil-pnj-export-${date}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  });
-
-  document.getElementById('btnImport').addEventListener('click', () => {
-    const input = document.getElementById('importFile');
-    const status = document.getElementById('importStatus');
-    const file = input.files[0];
-    if (!file) {
-      status.textContent = "Choisis d'abord un fichier .json exporté depuis l'appli.";
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = JSON.parse(e.target.result);
-        // Compatibilité : un ancien fichier exporté avant l'ajout des objets est un simple
-        // tableau de PNJ. Le nouveau format est { pnjs: [...], objets: [...] }.
-        const pnjsIn = Array.isArray(data) ? data : (data.pnjs || []);
-        const objetsIn = Array.isArray(data) ? [] : (data.objets || []);
-
-        const existingPnjIds = new Set(PNJStore.listIds());
-        let pnjCreated = 0, pnjOverwritten = 0;
-        pnjsIn.forEach(pnj => {
-          if (!pnj || !pnj.prenom || !pnj.traits) return; // validation minimale
-          if (!pnj.id) pnj.id = newId('pnj'); // filet de sécurité si le fichier est incomplet
-          if (existingPnjIds.has(pnj.id)) pnjOverwritten += 1; else pnjCreated += 1;
-          PNJStore.save(pnj);
-        });
-
-        const existingObjIds = new Set(ObjetStore.listIds());
-        let objCreated = 0, objOverwritten = 0;
-        objetsIn.forEach(obj => {
-          if (!obj || !obj.nom || !obj.enchantements) return; // validation minimale
-          if (!obj.id) obj.id = newId('obj'); // filet de sécurité si le fichier est incomplet
-          if (existingObjIds.has(obj.id)) objOverwritten += 1; else objCreated += 1;
-          ObjetStore.save(obj);
-        });
-
-        const total = pnjCreated + pnjOverwritten + objCreated + objOverwritten;
-        if (total === 0) {
-          status.textContent = "Le fichier ne contenait ni PNJ ni objet valide.";
-        } else {
-          const pnjMsg = (pnjCreated + pnjOverwritten) > 0
-            ? `${pnjCreated} PNJ importé(s)${pnjOverwritten > 0 ? ` (dont ${pnjOverwritten} écrasé(s))` : ''}`
-            : null;
-          const objMsg = (objCreated + objOverwritten) > 0
-            ? `${objCreated} objet(s) importé(s)${objOverwritten > 0 ? ` (dont ${objOverwritten} écrasé(s))` : ''}`
-            : null;
-          status.textContent = [pnjMsg, objMsg].filter(Boolean).join(' · ') + '.';
         }
         updateExportCount();
         input.value = '';
