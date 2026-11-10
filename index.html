@@ -1230,39 +1230,31 @@ window.addEventListener('error', function (e) {
     "Marin éthéré": ["Navigation éthérée", "Escalade", "Armes de jet", "Baratin", "Jeu", "Artillerie éthérée"],
     "Canonnier éthéré": ["Artillerie éthérée", "Observation", "Systèmes éthérés", "Intimidation", "Navigation éthérée"],
     "Herboriste": ["Herboristerie", "Savoirs théoriques", "Investigation", "Médecine", "Négoce (entre pros)"],
-    "Éclaireur": ["Chasse/Pistage", "Discrétion", "Orientation", "Survie", "Armes de jet"],
+    "Eclaireur": ["Chasse/Pistage", "Discrétion", "Orientation", "Survie", "Armes de jet"],
     "Palefrenier": ["Équitation", "Dressage", "Soins Vétérinaires", "Observation", "Baratin"],
     "Ingénieur militaire": ["Génie/Fortifications", "Bricolage", "Artisanat", "Stratégie militaire", "Observation"],
     "Marin": ["Navigation maritime", "Natation", "Armes de jet", "Orientation", "Baratin"],
-    "Assassin": ["Discrétion", "Herboristerie", "Crochetage", "Armes de jet", "Bluff"]
+    "Assassin": ["Discrétion", "Herboristerie", "Crochetage", "Armes de jet", "Bluff"],
+    "Politicien": ["Étiquette", "Baratin", "Bluff", "Discrétion", "Radio couloir"]
   };
 
   // Compétences de combat comptant dans le calcul des Points de Santé.
   const COMBAT_SKILLS = ["Armes de Mêlée à une main", "Armes de mêlée à 2 mains", "Armes de jet", "Armes de Lancer", "Arts Martiaux"];
 
   const TABLES = {
-    metier: ["Forgeron", "Marchand", "Officier", "Sous-Officier", "Soldat de ligne", "Soldat de tir", "Garde du corps", "Voleur", "Aubergiste", "Serveur", "Ménestrel", "Danseur", "Mendiant", "Haut Mage", "Prêtre", "Médecin", "Artisan", "Soldat terrien", "Capitaine éthéré", "Ingénieur éthéré", "Marin éthéré", "Canonnier éthéré", "Herboriste", "Éclaireur", "Palefrenier", "Ingénieur militaire", "Marin", "Assassin"],
-    trait: [
-      "Cicatrice au visage", "Borgne", "Tatouages tribaux", "Boiteux", "Voix rauque",
-      "Très grand pour sa race", "Très petit pour sa race", "Mains calleuses", "Yeux vairons",
-      "Dents en or", "Piercings multiples", "Crâne rasé", "Peau tachetée", "Doigts manquants",
-      "Brûlures anciennes", "Superstitieux", "Paranoïaque", "Mémoire eidétique", "Insomniaque",
-      "Kleptomane", "Peur des hauteurs", "Peur de l'eau", "Obsédé du détail", "Rêveur distrait",
-      "Calculateur froid", "Empathique à l'excès", "Nostalgique du passé", "Fataliste",
-      "Perfectionniste", "Impulsif", "Bègue", "Rit nerveusement", "Toujours ivre",
-      "Parle tout seul", "Jure constamment", "Mâchouille quelque chose en permanence",
-      "Collectionneur compulsif", "Toujours en retard", "Hyperactif", "Économe à l'excès",
-      "Généreux à l'excès", "Menteur compulsif", "Direct jusqu'à la brutalité", "Flatteur",
-      "Craint l'autorité", "Provocateur", "Taciturne", "Bavard incorrigible",
-      "Rituel superstitieux (sel, portes...)", "Fume la pipe sans arrêt",
-      "Aucun"
-    ],
-    disposition: [
-      "Amical", "Chaleureux", "Enjoué", "Serviable", "Bavard", "Curieux",
-      "Neutre", "Indifférent", "Réservé", "Distant", "Nerveux", "Craintif",
-      "Méfiant", "Froid", "Condescendant", "Autoritaire", "Manipulateur",
-      "Flatteur", "Mélancolique", "Hostile", "Agressif"
-    ]
+    metier: ['Artisan', 'Assassin', 'Aubergiste', 'Canonnier éthéré', 'Capitaine éthéré', 'Danseur', 'Eclaireur', 'Forgeron', 'Garde du corps', 'Haut Mage',
+	'Herboriste', 'Ingénieur militaire', 'Ingénieur éthéré', 'Marchand', 'Marin', 'Marin éthéré', 'Mendiant', 'Médecin', 'Ménestrel', 'Officier', 'Palefrenier',
+	'Politicien', 'Prêtre', 'Serveur', 'Soldat de ligne', 'Soldat de tir', 'Soldat terrien', 'Sous-Officier', 'Voleur'],
+    trait: ['Aucun', 'Bavard incorrigible', 'Boiteux', 'Borgne', 'Brûlures anciennes', 'Bègue', 'Calculateur froid', 'Cicatrice au visage',
+	'Collectionneur compulsif', "Craint l'autorité", 'Crâne rasé', 'Dents en or', "Direct jusqu'à la brutalité", 'Doigts manquants', "Econome à l'excès",
+	"Empathique à l'excès", 'Fataliste', 'Flatteur', 'Fume la pipe sans arrêt', "Généreux à l'excès", 'Hyperactif', 'Impulsif', 'Insomniaque',
+	'Jure constamment', 'Kleptomane', 'Mains calleuses', 'Menteur compulsif', 'Mâchouille quelque chose en permanence', 'Mémoire eidétique',
+	'Nostalgique du passé', 'Obsédé du détail', 'Paranoïaque', 'Parle tout seul', 'Peau tachetée', 'Perfectionniste', "Peur de l'eau",
+	'Peur des hauteurs', 'Piercings multiples', 'Provocateur', 'Rit nerveusement', 'Rituel superstitieux (sel, portes...)', 'Rêveur distrait',
+	'Superstitieux', 'Taciturne', 'Tatouages tribaux', 'Toujours en retard', 'Toujours ivre', 'Très grand pour sa race', 'Très petit pour sa race',
+	'Voix rauque', 'Yeux vairons'],
+    disposition: ['Agressif', 'Amical', 'Autoritaire', 'Bavard', 'Chaleureux', 'Condescendant', 'Craintif', 'Curieux', 'Distant', 'Enjoué',
+	'Flatteur', 'Froid', 'Hostile', 'Indifférent', 'Manipulateur', 'Méfiant', 'Mélancolique', 'Nerveux', 'Neutre', 'Réservé', 'Serviable']
   };
   // --- Génération de noms par famille de sonorités ---
   // Chaque race est rattachée à une famille phonétique (regroupement thématique, pas lié à
@@ -1955,7 +1947,7 @@ window.addEventListener('error', function (e) {
   // Tout ce qui se règle à la main est regroupé ici : style, descriptions par famille et par race.
 
   // Style général, placé en tête du prompt.
-  const PORTRAIT_STYLE = "Portrait en buste d'un personnage de fantasy médiévale, illustration au crayons de couleur à la main, plutôt réaliste, fond de texture parchemin sombre, sans texte ni cadre.";
+  const PORTRAIT_STYLE = "Portrait en buste d’un personnage de fantasy médiévale, illustration aux crayons de couleur dessinée à la main, hachures visibles, plutôt réaliste, couleurs riches et saturées, pigments éclatants, palette variée avec des accents vifs (émeraude, rubis, bleu profond, or), pas de sépia ni de teintes ternes, fond de texture papier parchemin vieilli, sans texte ni cadre.";
 
   // Description visuelle de base selon la famille de sonorités de la race (voir NAME_FAMILIES).
   const PORTRAIT_FAMILY_LOOKS = {
