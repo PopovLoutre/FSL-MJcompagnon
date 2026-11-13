@@ -2765,25 +2765,54 @@ window.addEventListener('error', function (e) {
   }
 
 
-  // Effets non chiffrés (capacités spéciales), avec un niveau fixé "à dire d'expert" en attendant
-  // la vraie table de Haute Magie. Échelle calibrée sur les 4 exemples donnés (bougie=1, vêtement
-  // toujours sec=4, marche sur l'air=6, téléportation=10).
+  // Effets non chiffrés (capacités spéciales), avec un niveau fixé selon la table de Haute Magie.
   const SPECIAL_ENCHANTMENTS = [
-    { name: "Finition raffinée (effet mineur)", niveau: 1, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
-    { name: "Bougie magique (lumière permanente)", niveau: 1, categories: ["Utilitaire", "Bijou"] },
-    { name: "Réchaud de poche (chaleur à la demande)", niveau: 1, categories: ["Vêtement", "Utilitaire"] },
-    { name: "Vision nocturne", niveau: 2, categories: ["Bijou", "Vêtement", "Utilitaire"] },
-    { name: "Vêtement toujours sec (imperméabilité totale)", niveau: 4, categories: ["Vêtement"] },
-    { name: "Résistance au feu", niveau: 5, categories: ["Armure", "Vêtement"] },
-    { name: "Respiration aquatique", niveau: 5, categories: ["Vêtement", "Bijou"] },
-    { name: "Bottes pour marcher sur l'air (lévitation basse)", niveau: 6, categories: ["Vêtement"] },
-    { name: "Communication télépathique (courte portée)", niveau: 7, categories: ["Bijou", "Utilitaire"] },
-    { name: "Illusion (dissimule la nature magique de l'objet)", niveau: 8, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
-    { name: "Régénération lente des blessures", niveau: 9, categories: ["Bijou", "Armure"] },
-    { name: "Invisibilité temporaire", niveau: 9, categories: ["Vêtement", "Bijou"] },
-    { name: "Téléportation courte distance", niveau: 10, categories: ["Bijou", "Vêtement"] },
-    { name: "Contrôle du temps local (petite zone)", niveau: 12, categories: ["Utilitaire", "Bijou"] },
-    { name: "Résurrection d'urgence (usage unique)", niveau: 14, categories: ["Bijou"] }
+    { name: "Finition raffinée (incassable)", niveau: 1, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Apparence mystique (illusion mineure)", niveau: 1, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Bougie magique (3mR)", niveau: 2, categories: ["ArmeMêlée", "Utilitaire", "Bijou"] },
+    { name: "Briquet", niveau: 2, categories: ["Utilitaire", "Bijou"] },
+    { name: "+1 Armure", niveau: 2, categories: ["Armure", "Bijou", "Vêtement"] },
+    { name: "Annulation de la douleur (permanent)", niveau: 2, categories: ["Armure", "Bijou", "Vêtement"] },
+	{ name: "Vêtement toujours sec (imperméabilité totale)", niveau: 2, categories: ["Vêtement"] },
+    { name: "Illusion (dissimule la nature magique de l'objet)", niveau: 2, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
+	{ name: "Chaufferette de poche", niveau: 2, categories: ["Vêtement", "Utilitaire"] },
+    { name: "Vision nocturne (à la demande)", niveau: 3, categories: ["Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Aura de bienveillance (3mR)", niveau: 3, categories: ["Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Détection mineure (3mR)", niveau: 3, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "+2 Armure", niveau: 4, categories: ["Armure", "Bijou", "Vêtement"] },
+    { name: "Anti-toxine (Sauv. +2)", niveau: 4, categories: ["Utilitaire", "Bijou", "Vêtement"] },
+	{ name: "Lanterne magique (à la demande, 10m)", niveau: 4, categories: ["ArmeMêlée", "Utilitaire", "Bijou"] },
+    { name: "Perce-murs", niveau: 4, categories: ["Utilitaire"] },
+    { name: "Passe-partout", niveau: 5, categories: ["Utilitaire"] },
+    { name: "Bottes de 7 lieues (à la demande, mvt x2)", niveau: 5, categories: ["Vêtement"] },
+    { name: "Respiration aquatique (à la demande)", niveau: 5, categories: ["Vêtement", "Bijou"] },
+    { name: "Résistance au feu (+2 Sauv. FOR)", niveau: 5, categories: ["Armure", "Vêtement"] },
+	{ name: "Régénération lente des blessures (1 Bl. / nuit)", niveau: 5, categories: ["Bijou", "Armure", "Vêtement"] },
+    { name: "Aura de distraction (à la demande, 10mR)", niveau: 5, categories: ["Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Invisibilité (à la demande, visuelle uniqu.)", niveau: 5, categories: ["Vêtement", "Bijou"] },
+    { name: "Anti-poison (Sauv. +3)", niveau: 6, categories: ["Utilitaire", "Bijou", "Vêtement"] },
+    { name: "+3 Armure", niveau: 6, categories: ["Armure", "Bijou", "Vêtement"] },
+    { name: "Marcher sur l'eau", niveau: 6, categories: ["Vêtement"] },
+    { name: "Projection d'un sens (à la demande, 10m)", niveau: 6, categories: ["Vêtement", "Utilitaire", "Bijou"] },
+    { name: "Détection du mensonge (3mR)", niveau: 7, categories: ["Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Changement d'apparence (à la demande, avec vêtements, 2 sens)", niveau: 7, categories: ["Armure", "Bijou", "Vêtement"] },
+    { name: "Parler aux animaux (à la demande)", niveau: 7, categories: ["Vêtement", "Bijou", "Utilitaire", "Armure"] },
+    { name: "Marcher sur l'air (à la demande)", niveau: 7, categories: ["Vêtement"] },
+    { name: "Réchaud de poche (à la demande)", niveau: 7, categories: ["Utilitaire"] },
+    { name: "Actions rapides (+1 Action)", niveau: 7, categories: ["Vêtement", "Bijou"] },
+    { name: "Zone de ralentissement (à la demande, vit. x1/2, 10mR)", niveau: 7, categories: ["Utilitaire", "Bijou"] },
+    { name: "+4 Armure", niveau: 8, categories: ["Armure", "Bijou", "Vêtement"] },
+    { name: "Communication télépathique (100m avec 1 pers.)", niveau: 8, categories: ["Bijou", "Utilitaire"] },
+    { name: "Sac sans fond", niveau: 8, categories: ["Utilitaire"] },
+    { name: "Boule de feu (100m, D8 dmg)", niveau: 8, categories: ["ArmeMêlée", "ArmeJetLancer", "Bijou", "Utilitaire"] },
+    { name: "Mur d'eau (taille d'une porte)", niveau: 9, categories: ["Vêtement", "Bijou", "Utilitaire"] },
+    { name: "Métamorphose (à la demande)", niveau: 9, categories: ["Armure", "Bijou", "Vêtement"] },
+    { name: "+5 Armure", niveau: 10, categories: ["Armure", "Bijou", "Vêtement"] },
+    { name: "Objet qui revient (télékinésie à 10m)", niveau: 10, categories: ["Utilitaire", "Bijou"] },
+    { name: "Menotes à distance (Immobiliser, 10m, 1 pers.)", niveau: 10, categories: ["Vêtement", "Bijou", "Utilitaire"] },
+    { name: "Actions éclairs (+2 Actions)", niveau: 11, categories: ["Vêtement", "Bijou"] },
+    { name: "Résurrection d'urgence (automatique)", niveau: 11, categories: ["Bijou"] },
+    { name: "Téléportation courte distance (sur soi, 10m)", niveau: 12, categories: ["Bijou", "Vêtement"] }
   ];
 
   const MATERIALS = ["or", "argent", "mythril", "bronze"];
