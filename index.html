@@ -2707,7 +2707,7 @@ window.addEventListener('error', function (e) {
 	{ name: "Capuche", category: "Vêtement" },{ name: "Chapeau", category: "Vêtement" },{ name: "Béret", category: "Vêtement" },{ name: "Chainse", category: "Vêtement" },{ name: "Tunique", category: "Vêtement" },{ name: "Braies", category: "Vêtement" },{ name: "Chausses", category: "Vêtement" },{ name: "Culotte", category: "Vêtement" },{ name: "Robe", category: "Vêtement" },{ name: "Jupe", category: "Vêtement" },{ name: "Bandeau", category: "Vêtement" },{ name: "Ceinture", category: "Vêtement" },{ name: "Surcôt", category: "Vêtement" },
     { name: "Torche", category: "Utilitaire" },{ name: "Chandelle", category: "Utilitaire" },{ name: "Lanterne", category: "Utilitaire" },{ name: "Besace", category: "Utilitaire" },{ name: "Bourse", category: "Utilitaire" },{ name: "Sac", category: "Utilitaire" },{ name: "Gourde", category: "Utilitaire" },{ name: "Outre", category: "Utilitaire" },
 	{ name: "Mouchoir", category: "Utilitaire" },{ name: "Briquet", category: "Utilitaire" },{ name: "Timbale", category: "Utilitaire" },{ name: "Couverture", category: "Utilitaire" },{ name: "Pierre à aiguiser", category: "Utilitaire" },{ name: "Écritoire", category: "Utilitaire" },{ name: "Plume", category: "Utilitaire" },{ name: "Encrier", category: "Utilitaire" },
-	{ name: "Siflet", category: "Utilitaire" },{ name: "Fiole de...", category: "Utilitaire" },{ name: "Miroir", category: "Utilitaire" },{ name: "Coutelas", category: "Utilitaire" },{ name: "Lunettes", category: "Utilitaire" },{ name: "Longue-vue", category: "Utilitaire" },{ name: "Boussole", category: "Utilitaire" },{ name: "Pansement de premiers secours", category: "Utilitaire" },
+	{ name: "Siflet", category: "Utilitaire" },{ name: "Fiole de...", category: "Utilitaire" },{ name: "Miroir", category: "Utilitaire" },{ name: "Coutelas", category: "Utilitaire" },{ name: "Lunettes", category: "Utilitaire" },{ name: "Longue-vue", category: "Utilitaire" },{ name: "Loupe", category: "Utilitaire" },{ name: "Gamelle", category: "Utilitaire" },{ name: "Boussole", category: "Utilitaire" },{ name: "Pansement de premiers secours", category: "Utilitaire" },
     { name: "Flûte", category: "Instrument" },{ name: "Pipeau", category: "Instrument" },{ name: "Luth", category: "Instrument" },{ name: "Mandoline", category: "Instrument" },{ name: "Guimbarde", category: "Instrument" },
   ];
 
@@ -2766,19 +2766,21 @@ window.addEventListener('error', function (e) {
 
 
   // Effets non chiffrés (capacités spéciales), avec un niveau fixé selon la table de Haute Magie.
+  // Champ optionnel "types" : l'effet n'est proposé que pour ces types d'objets précis (nom sans le
+  // suffixe entre parenthèses) ; la catégorie de l'objet doit aussi figurer dans "categories".
   const SPECIAL_ENCHANTMENTS = [
-    { name: "Finition raffinée (incassable)", niveau: 1, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
-    { name: "Apparence mystique (illusion mineure)", niveau: 1, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Finition raffinée (incassable)", niveau: 1, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire", "Instrument"] },
+    { name: "Apparence mystique (illusion mineure)", niveau: 1, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire", "Instrument"] },
     { name: "Bougie magique (3mR)", niveau: 2, categories: ["ArmeMêlée", "Utilitaire", "Bijou"] },
     { name: "Briquet", niveau: 2, categories: ["Utilitaire", "Bijou"] },
     { name: "+1 Armure", niveau: 2, categories: ["Armure", "Bijou", "Vêtement"] },
     { name: "Annulation de la douleur (permanent)", niveau: 2, categories: ["Armure", "Bijou", "Vêtement"] },
 	{ name: "Vêtement toujours sec (imperméabilité totale)", niveau: 2, categories: ["Vêtement"] },
-    { name: "Illusion (dissimule la nature magique de l'objet)", niveau: 2, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Illusion (dissimule la nature magique de l'objet)", niveau: 2, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire", "Instrument"] },
 	{ name: "Chaufferette de poche", niveau: 2, categories: ["Vêtement", "Utilitaire"] },
     { name: "Vision nocturne (à la demande)", niveau: 3, categories: ["Bijou", "Vêtement", "Utilitaire"] },
-    { name: "Aura de bienveillance (3mR)", niveau: 3, categories: ["Armure", "Bijou", "Vêtement", "Utilitaire"] },
-    { name: "Détection mineure (3mR)", niveau: 3, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Aura de bienveillance (3mR)", niveau: 3, categories: ["Armure", "Bijou", "Vêtement", "Utilitaire", "Instrument"] },
+    { name: "Détection mineure (3mR)", niveau: 3, categories: ["ArmeMêlée", "ArmeJetLancer", "Armure", "Bijou", "Vêtement", "Utilitaire", "Instrument"] },
     { name: "+2 Armure", niveau: 4, categories: ["Armure", "Bijou", "Vêtement"] },
     { name: "Anti-toxine (Sauv. +2)", niveau: 4, categories: ["Utilitaire", "Bijou", "Vêtement"] },
 	{ name: "Lanterne magique (à la demande, 10m)", niveau: 4, categories: ["ArmeMêlée", "Utilitaire", "Bijou"] },
@@ -2788,7 +2790,7 @@ window.addEventListener('error', function (e) {
     { name: "Respiration aquatique (à la demande)", niveau: 5, categories: ["Vêtement", "Bijou"] },
     { name: "Résistance au feu (+2 Sauv. FOR)", niveau: 5, categories: ["Armure", "Vêtement"] },
 	{ name: "Régénération lente des blessures (1 Bl. / nuit)", niveau: 5, categories: ["Bijou", "Armure", "Vêtement"] },
-    { name: "Aura de distraction (à la demande, 10mR)", niveau: 5, categories: ["Armure", "Bijou", "Vêtement", "Utilitaire"] },
+    { name: "Aura de distraction (à la demande, 10mR)", niveau: 5, categories: ["Armure", "Bijou", "Vêtement", "Utilitaire", "Instrument"] },
     { name: "Invisibilité (à la demande, visuelle uniqu.)", niveau: 5, categories: ["Vêtement", "Bijou"] },
     { name: "Anti-poison (Sauv. +3)", niveau: 6, categories: ["Utilitaire", "Bijou", "Vêtement"] },
     { name: "+3 Armure", niveau: 6, categories: ["Armure", "Bijou", "Vêtement"] },
@@ -2796,13 +2798,13 @@ window.addEventListener('error', function (e) {
     { name: "Projection d'un sens (à la demande, 10m)", niveau: 6, categories: ["Vêtement", "Utilitaire", "Bijou"] },
     { name: "Détection du mensonge (3mR)", niveau: 7, categories: ["Armure", "Bijou", "Vêtement", "Utilitaire"] },
     { name: "Changement d'apparence (à la demande, avec vêtements, 2 sens)", niveau: 7, categories: ["Armure", "Bijou", "Vêtement"] },
-    { name: "Parler aux animaux (à la demande)", niveau: 7, categories: ["Vêtement", "Bijou", "Utilitaire", "Armure"] },
+    { name: "Parler aux animaux (à la demande)", niveau: 7, categories: ["Vêtement", "Bijou", "Utilitaire", "Armure", "Instrument"] },
     { name: "Marcher sur l'air (à la demande)", niveau: 7, categories: ["Vêtement"] },
     { name: "Réchaud de poche (à la demande)", niveau: 7, categories: ["Utilitaire"] },
     { name: "Actions rapides (+1 Action)", niveau: 7, categories: ["Vêtement", "Bijou"] },
-    { name: "Zone de ralentissement (à la demande, vit. x1/2, 10mR)", niveau: 7, categories: ["Utilitaire", "Bijou"] },
+    { name: "Zone de ralentissement (à la demande, vit. x1/2, 10mR)", niveau: 7, categories: ["Utilitaire", "Bijou", "Instrument"] },
     { name: "+4 Armure", niveau: 8, categories: ["Armure", "Bijou", "Vêtement"] },
-    { name: "Communication télépathique (100m avec 1 pers.)", niveau: 8, categories: ["Bijou", "Utilitaire"] },
+    { name: "Communication télépathique (100m avec 1 pers.)", niveau: 8, categories: ["Bijou", "Utilitaire", "Instrument"] },
     { name: "Sac sans fond", niveau: 8, categories: ["Utilitaire"] },
     { name: "Boule de feu (100m, D8 dmg)", niveau: 8, categories: ["ArmeMêlée", "ArmeJetLancer", "Bijou", "Utilitaire"] },
     { name: "Mur d'eau (taille d'une porte)", niveau: 9, categories: ["Vêtement", "Bijou", "Utilitaire"] },
@@ -2812,6 +2814,27 @@ window.addEventListener('error', function (e) {
     { name: "Menotes à distance (Immobiliser, 10m, 1 pers.)", niveau: 10, categories: ["Vêtement", "Bijou", "Utilitaire"] },
     { name: "Actions éclairs (+2 Actions)", niveau: 11, categories: ["Vêtement", "Bijou"] },
     { name: "Résurrection d'urgence (automatique)", niveau: 11, categories: ["Bijou"] },
+    { name: "Accord parfait (ne se désaccorde jamais)", niveau: 1, categories: ["Instrument"] },
+    { name: "Portée sonore (audible à 100m, à la demande)", niveau: 3, categories: ["Instrument"] },
+    { name: "Mélodie apaisante (10mR, calme les esprits)", niveau: 4, categories: ["Instrument"] },
+    { name: "Notes lumineuses (à la demande, +1 Musique)", niveau: 3, categories: ["Instrument"] },
+    { name: "Silence magique (à la demande, zone sans son, 3mR)", niveau: 5, categories: ["Instrument"] },
+    { name: "Hymne de courage (10mR, Sauv. +2 MAI)", niveau: 6, categories: ["Instrument"] },
+    { name: "Berceuse (à la demande, 3mR, endort)", niveau: 8, categories: ["Instrument"] },
+    { name: "Message musical (transmet un court message à 1 pers., 1km)", niveau: 6, categories: ["Instrument"] },
+    { name: "Cacophonie (à la demande, 10mR, confusion)", niveau: 7, categories: ["Instrument"] },
+    { name: "Danse irrésistible (à la demande, 10m, 1 pers.)", niveau: 8, categories: ["Instrument"] },
+    { name: "Encre éternelle (ne s'efface jamais, ne tarit jamais)", niveau: 1, categories: ["Utilitaire"], types: ["Plume", "Encrier", "Écritoire"] },
+    { name: "Écriture sous dictée (à la demande, note ce qu'on dit)", niveau: 4, categories: ["Utilitaire"], types: ["Plume"] },
+    { name: "Encre secrète (texte visible seulement par son propriétaire)", niveau: 6, categories: ["Utilitaire"], types: ["Encrier"] },
+    { name: "Copie parfaite (à la demande, duplique un document)", niveau: 7, categories: ["Utilitaire"], types: ["Plume", "Écritoire"] },
+    { name: "Courrier jumeau (le texte écrit apparaît sur un papier lié, 1km)", niveau: 7, categories: ["Utilitaire"], types: ["Écritoire"] },
+    { name: "Vue lointaine (zoom x10)", niveau: 4, categories: ["Utilitaire", "Vêtement"], types: ["Longue-vue", "Lunettes", "Bandeau"] },
+    { name: "Détection de la magie (à la demande, 10m)", niveau: 4, categories: ["Utilitaire", "Vêtement"], types: ["Lunettes", "Loupe", "Longue-vue", "Bandeau"] },
+    { name: "Vision des illusions (10mR)", niveau: 8, categories: ["Utilitaire", "Vêtement"], types: ["Lunettes", "Loupe", "Bandeau"] },
+    { name: "Eau pure (purifie le contenu, 1 litre)", niveau: 2, categories: ["Utilitaire"], types: ["Gourde", "Outre", "Timbale"] },
+    { name: "Contenu à bonne température (à la demande, chaud ou froid)", niveau: 3, categories: ["Utilitaire"], types: ["Gourde", "Outre", "Timbale", "Gamelle"] },
+    { name: "Détecteur de poison (change de couleur si le contenu est empoisonné)", niveau: 4, categories: ["Utilitaire"], types: ["Timbale", "Gamelle"] },
     { name: "Téléportation courte distance (sur soi, 10m)", niveau: 12, categories: ["Bijou", "Vêtement"] }
   ];
 
@@ -2834,7 +2857,8 @@ window.addEventListener('error', function (e) {
     return !allowed || allowed.includes(category);
   }
 
-  function fillEnchantments(category, budget, forcedSkillName, excludeSkillNames) {
+  function fillEnchantments(category, budget, forcedSkillName, excludeSkillNames, typeName) {
+    const baseType = String(typeName || '').replace(/\s*\(.*\)\s*$/, '').trim();
     const enchantements = [];
     let remaining = budget;
     const maxSlots = 3;
@@ -2849,7 +2873,7 @@ window.addEventListener('error', function (e) {
         ? ALL_SKILLS.filter(s => s.name === forcedSkillName)
         : ALL_SKILLS.filter(s => s.trait && compatibleTraits.includes(s.trait) && isSkillAllowedForCategory(s.name, category));
       const compatibleSkills = skillPool.filter(s => !usedSkillNames.has(s.name));
-      const specialOptions = SPECIAL_ENCHANTMENTS.filter(s => s.categories.includes(category) && s.niveau <= remaining && !usedSpecialNames.has(s.name));
+      const specialOptions = SPECIAL_ENCHANTMENTS.filter(s => s.categories.includes(category) && (!s.types || s.types.includes(baseType)) && s.niveau <= remaining && !usedSpecialNames.has(s.name));
       const canBonus = remaining >= 2 && compatibleSkills.length > 0;
       const canSpecial = specialOptions.length > 0;
       if (!canBonus && !canSpecial) break;
@@ -2995,11 +3019,11 @@ window.addEventListener('error', function (e) {
         const niveau = magnitude * 2;
         const primary = { type: "bonus", name: primarySkillName, trait: skillObj.trait, magnitude, niveau };
         const remaining = Math.max(0, budget - niveau);
-        const extra = remaining > 0 ? fillEnchantments(category, remaining, requiredSkill, [primarySkillName]) : [];
+        const extra = remaining > 0 ? fillEnchantments(category, remaining, requiredSkill, [primarySkillName], type.name) : [];
         enchantements = [primary, ...extra];
       }
     } else {
-      enchantements = fillEnchantments(category, budget, requiredSkill);
+      enchantements = fillEnchantments(category, budget, requiredSkill, undefined, type.name);
     }
 
     enchantements = ensureWithinRarete(enchantements, category, requiredSkill, rarete);
