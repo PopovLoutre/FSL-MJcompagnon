@@ -836,8 +836,8 @@
 
   /* Mode Lecture : Traits en ronds, Sauvegarde en petite pastille secondaire */
   .traits-grid.ro {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px 8px;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 2px;
   }
   .trait-ro {
     display: flex;
@@ -847,20 +847,20 @@
   }
   .trait-ro .tname {
     font-family: 'Cinzel', serif;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.04em;
     color: var(--brass-bright);
   }
   .trait-ro .tval {
-    width: 46px;
-    height: 46px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Cinzel', serif;
-    font-size: 21px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--parchment);
     border: 2px solid var(--brass);
@@ -869,14 +869,17 @@
   }
   .trait-ro .tval.pos { color: #9fd49a; border-color: #6f9a6b; }
   .trait-ro .tval.neg { color: #d58a8a; border-color: #9a5a5a; }
-  .trait-ro .trace { font-size: 10px; color: var(--parchment-dim); }
+  .trait-ro .trace { font-size: 9px; white-space: nowrap; color: var(--parchment-dim); }
+  .trait-ro .slabel { display: none; }
   .trait-ro .tsauv {
+    min-width: 30px;
+    text-align: center;
     font-size: 13px;
     color: var(--brass-bright);
     background: rgba(0,0,0,0.3);
     border: 1px solid var(--line);
     border-radius: 10px;
-    padding: 1px 9px;
+    padding: 1px 6px;
   }
 
   /* Bouton "Affichage de combat" (écran Mes PNJ) */
@@ -1947,13 +1950,16 @@ window.addEventListener('error', function (e) {
   // Tout ce qui se règle à la main est regroupé ici : style, descriptions par famille et par race.
 
   // Style général, placé en tête du prompt.
-  const PORTRAIT_STYLE = "Portrait en buste d’un personnage de fantasy médiévale, illustration aux crayons de couleur dessinée à la main, hachures visibles, plutôt réaliste, couleurs riches et saturées, pigments éclatants, palette variée avec des accents vifs (émeraude, rubis, bleu profond, or), pas de sépia ni de teintes ternes, fond de texture papier parchemin vieilli, sans texte ni cadre.";
+  const PORTRAIT_STYLE = "Portrait en buste d'un personnage de fantasy médiévale, illustration aux crayons de couleur dessinée à la main, hachures visibles, plutôt réaliste, couleurs riches et saturées, pigments éclatants, palette variée avec des accents vifs (émeraude, rubis, bleu profond, or), pas de sépia ni de teintes ternes, fond de texture papier parchemin vieilli, sans texte ni cadre.";
+
+  // Format de l'image : ajouté en dernière ligne du prompt.
+  const PORTRAIT_FORMAT = "Format vertical 3:4 (portrait), plus haut que large.";
 
   // Description visuelle de base selon la famille de sonorités de la race (voir NAME_FAMILIES).
   const PORTRAIT_FAMILY_LOOKS = {
     Elfique: "type elfique : oreilles pointues, traits fins et élancés",
     Naine: "type nain : trapu, robuste, traits marqués",
-    Orque: "type orque : peau grise ou verdâtre, mâchoire puissante, petites défenses",
+    Orque: "type orque : peau grise ou verdâtre, mâchoire puissante, petites défenses inférieures, oreilles arrondies",
     Gobeline: "type gobelin : petit, grandes oreilles pointues, peau verdâtre, traits anguleux",
     Maritime: "type aquatique : teint pâle aux reflets bleutés, peau nacrée avec de fines écailles",
     Nordique: "type nordique : carrure imposante, traits rudes, peau claire",
@@ -1979,7 +1985,7 @@ window.addEventListener('error', function (e) {
 
   // Détails visuels déduits des particularités raciales (mots-clés du champ "special").
   const PORTRAIT_SPECIAL_LOOKS = [
-    ["Cornes", "cornes sur le front"],
+    ["Cornes", "cornes sur les tempes"],
     ["Queue", "queue préhensile visible"],
     ["Amphibien", "peau d'amphibien, humide"],
     ["Aveugle", "yeux voilés, sans pupilles"],
@@ -2037,6 +2043,7 @@ window.addEventListener('error', function (e) {
       lines.push(`Équipement : ${items.join(' ; ')}.`);
       lines.push('Les métaux et gemmes sont décoratifs et donnent un aspect magique aux équipements.');
     }
+    lines.push(PORTRAIT_FORMAT);
     return lines.join('\n');
   }
 
