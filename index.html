@@ -588,6 +588,8 @@
     -moz-appearance: textfield;
   }
 
+  .comp-row.comp-row-2 .score-input { width: 40px; }
+  .comp-row.comp-row-2 span .score-input { width: 36px; }
   .comp-row .score-input:focus { outline: none; border-bottom-color: var(--brass-bright); }
 
   .mark-check { accent-color: var(--brass-bright); margin-right: 2px; }
@@ -948,9 +950,7 @@
   .portrait-remove { right:4px; }
   #mespnjResults.combat-view .card.mode-read .portrait-box { display:none; }
   #portraitViewer { position:fixed; inset:0; z-index:9999; background:rgba(8,5,3,.94); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:16px; cursor:zoom-out; }
-  #portraitViewer img { max-width:100%; max-height:calc(100% - 48px); object-fit:contain; border-radius:6px; }
-  #portraitViewer .pv-cap { color:var(--parchment); font-family:'Inter',sans-serif; font-size:15px; }
-  #portraitViewer .pv-cap span { color:var(--parchment-dim); }
+  #portraitViewer img { max-width:100%; max-height:100%; object-fit:contain; border-radius:6px; }
 
   /* --- Synchronisation GitHub / export sélectif --- */
   .panel input[type="password"] { width:100%; background:var(--ink); border:1px solid var(--line); color:var(--parchment); border-radius:8px; padding:11px 12px; font-size:15px; font-family:'Inter',sans-serif; appearance:none; -webkit-appearance:none; }
@@ -975,6 +975,17 @@
   .sel-row input { margin-top:2px; flex:0 0 auto; }
   .sel-row .sel-sub { color:var(--parchment-dim); font-size:12px; }
   .sel-del { display:flex; align-items:center; gap:8px; margin:12px 0 0; font-size:13px; color:var(--parchment-dim); }
+
+  /* --- Notes --- */
+  .btn-notes { flex:0 0 auto; position:relative; width:38px; height:34px; padding:0; background:transparent; border:1px solid var(--brass); border-radius:8px; color:var(--brass-bright); font-size:17px; line-height:1; cursor:pointer; margin-bottom:2px; }
+  .btn-notes.active { background:linear-gradient(180deg, var(--wax-bright), var(--wax)); border-color:var(--wax-bright); color:#f4e9dc; }
+  .btn-notes.has-notes::after { content:''; position:absolute; top:3px; right:3px; width:8px; height:8px; border-radius:50%; background:var(--brass-bright); box-shadow:0 0 0 1px var(--ink); }
+  .notes-zone { display:none; margin:10px 0 6px; }
+  .notes-zone.open { display:block; }
+  .notes-input { display:block; width:100%; min-height:90px; resize:vertical; background:var(--ink); border:1px solid var(--line); border-radius:8px; color:var(--parchment); padding:10px 12px; font-family:'Inter',sans-serif; font-size:14px; line-height:1.45; }
+  .notes-input:focus { outline:none; border-color:var(--brass-bright); }
+  .notes-input::placeholder { color:var(--parchment-dim); opacity:.7; }
+  #mespnjResults.combat-view .card.mode-read .notes-zone { display:none; }
 </style>
 <script>
 /* Diagnostic : affiche une erreur JavaScript à l'écran (utile sur téléphone, sans console). */
@@ -1928,7 +1939,7 @@ window.addEventListener('error', function (e) {
       const trait = skillTrait(name);
       const composante = isFirstOfCategory ? level.points : Math.max(0, level.points - 1);
       const score = composante + (trait ? totals[trait] : 0);
-      return { name, trait, mastered, composante, score, calc: defaultCalcFor(name) };
+      return { name, trait, mastered, composante, score, bonus: 0, calc: defaultCalcFor(name) };
     };
     const competences = [
       ...maitriseesNames.map((n, idx) => build(n, true, idx === 0)),
@@ -2010,6 +2021,7 @@ window.addEventListener('error', function (e) {
     (pnj.competences || []).forEach(c => {
       if (typeof c.name === 'string') c.name = c.name.replace(/\s*\(\s*\d+\s*PC\s*\)\s*$/i, '');
       if (c.calc === undefined) c.calc = defaultCalcFor(c.name);
+      if (c.bonus === undefined) c.bonus = 0;
     });
     if (pnj.calcSig === undefined || !String(pnj.calcSig).startsWith('["v2",')) pnj.calcSig = calcSignature(pnj);
   }
@@ -2246,6 +2258,7 @@ window.addEventListener('error', function (e) {
     const saved = opts.saved || false;
     const mode = opts.mode || (saved ? 'read' : 'edit');
     const ro = mode === 'read';
+    const notesOpen = !!opts.notesOpen;
     const id = pnj.id;
     const { fText, fNum, fLive, fSel } = makeFieldHelpers(id, ro);
 
@@ -2301,7 +2314,7 @@ window.addEventListener('error', function (e) {
         ${mark}
         ${fText('comp-name-input', label, `comp.${c.idx}.name`)}
         ${fSel('comp-trait-select', compTraitOptions(c.trait), c.trait || '—', `comp.${c.idx}.trait`)}
-        ${fNum('score-input', c.score, `comp.${c.idx}.score`)}
+        ${fNum('score-input', (Number(c.score) || 0) + (Number(c.bonus) || 0), `comp.${c.idx}.score`)}
       </div>`;
       }
       // Édition : 2 lignes (nom + suppression, puis Trait / score / marquage PS-PM).
@@ -2312,10 +2325,11 @@ window.addEventListener('error', function (e) {
           ${fText('comp-name-input', c.name, `comp.${c.idx}.name`)}
           <button type="button" class="btn-row-del" data-kind="comp" data-id="${id}" data-idx="${c.idx}" title="Supprimer cette compétence" style="flex:0 0 auto;margin-left:14px;width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--parchment-dim);font-size:12px;line-height:1;cursor:pointer;padding:0;">✕</button>
         </div>
-        <div class="comp-row" style="padding-left:24px;gap:12px;">
+        <div class="comp-row comp-row-2" style="padding-left:16px;gap:6px;">
           ${fSel('comp-trait-select', compTraitOptions(c.trait), c.trait || '—', `comp.${c.idx}.trait`)}
           ${fNum('score-input', c.score, `comp.${c.idx}.score`)}
           <select class="comp-trait-select" title="Compte dans le calcul des PS ou des PM" data-id="${id}" data-field="comp.${c.idx}.calc">${calcOptions(c.calc)}</select>
+          <span style="display:inline-flex;align-items:center;gap:4px;flex:0 0 auto;"><span style="font-size:10px;color:var(--parchment-dim);">Bonus</span>${ro ? '' : `<input class="score-input" style="width:36px;" type="number" value="${Number(c.bonus) || 0}" data-id="${id}" data-field="comp.${c.idx}.bonus" aria-label="Bonus">`}</span>
         </div>
       </div>`;
     }).join('');
@@ -2367,7 +2381,7 @@ window.addEventListener('error', function (e) {
         : `<button class="btn-save" data-id="${id}">Enregistrer</button>`);
 
     return `
-      <div class="card${ro ? ' mode-read' : ''}" data-card-id="${id}" data-saved="${saved ? 1 : 0}" data-mode="${mode}"${opts.instant ? ' style="animation:none"' : ''}>
+      <div class="card${ro ? ' mode-read' : ''}" data-card-id="${id}" data-saved="${saved ? 1 : 0}" data-mode="${mode}" data-notes="${notesOpen ? 1 : 0}"${opts.instant ? ' style="animation:none"' : ''}>
         <div class="card-top">
           <div class="card-top-info">
             ${fText('name-input', pnj.prenom, 'prenom')}
@@ -2405,8 +2419,16 @@ window.addEventListener('error', function (e) {
           </div>
         </div>
         <div class="field-inline tp-block">
-          <label>Trait(s) particulier(s)</label>
-          ${fText('mini-text', pnj.trait, 'trait')}
+          <div style="display:flex;gap:10px;align-items:flex-end;">
+            <div style="flex:1;min-width:0;">
+              <label>Trait(s) particulier(s)</label>
+              ${fText('mini-text', pnj.trait, 'trait')}
+            </div>
+            <button type="button" class="btn-notes${notesOpen ? ' active' : ''}${pnj.notes ? ' has-notes' : ''}" data-id="${id}" aria-label="Notes" title="Notes">📝</button>
+          </div>
+        </div>
+        <div class="notes-zone${notesOpen ? ' open' : ''}">
+          <textarea class="notes-input" rows="4" placeholder="Notes (histoire, secrets, relations…)" data-id="${id}" data-field="notes">${escHtml(pnj.notes || '')}</textarea>
         </div>
         ${pnj.race.special ? `<div class="racial-special">${pnj.race.special}</div>` : ""}
         <div class="traits-grid${ro ? ' ro' : ''}">${traitsHtml}</div>
@@ -2467,7 +2489,7 @@ window.addEventListener('error', function (e) {
     const trait = skill.trait;
     const composante = Math.max(0, pnj.level.points - 1);
     const score = composante + (trait ? (pnj.traits[trait] || 0) : 0);
-    return { name: skill.name, trait, mastered: false, composante, score, calc: defaultCalcFor(skill.name) };
+    return { name: skill.name, trait, mastered: false, composante, score, bonus: 0, calc: defaultCalcFor(skill.name) };
   }
 
   // Tire une Rareté cohérente avec le Niveau du PNJ, en réutilisant la même table que pour
@@ -2486,7 +2508,7 @@ window.addEventListener('error', function (e) {
     if (!cardEl) return;
     const saved = over.saved !== undefined ? over.saved : cardEl.dataset.saved === '1';
     const mode = over.mode || cardEl.dataset.mode || (saved ? 'read' : 'edit');
-    cardEl.outerHTML = renderCard(pnj, { saved, mode, instant: true });
+    cardEl.outerHTML = renderCard(pnj, { saved, mode, instant: true, notesOpen: cardEl.dataset.notes === '1' });
   }
 
   // --- Portrait : import (redimensionné + JPEG pour rester léger dans le stockage local) et plein écran ---
@@ -2528,7 +2550,7 @@ window.addEventListener('error', function (e) {
     if (old) old.remove();
     const ov = document.createElement('div');
     ov.id = 'portraitViewer';
-    ov.innerHTML = `<img src="${pnj.portrait}" alt=""><div class="pv-cap">${escHtml(pnj.prenom)} <span>· ${escHtml(pnj.race.name.replace(/\s*\(.*?\)\s*/g, ' ').trim())}</span></div>`;
+    ov.innerHTML = `<img src="${pnj.portrait}" alt="">`;
     const close = () => { ov.remove(); document.removeEventListener('keydown', onKey); };
     const onKey = (ev) => { if (ev.key === 'Escape') close(); };
     ov.addEventListener('click', close);
@@ -2549,6 +2571,10 @@ window.addEventListener('error', function (e) {
       if (el.type === 'number') value = value === '' ? 0 : Number(value);
       if (el.type === 'checkbox') value = el.checked;
       setDeep(pnj, field, value);
+      if (field === 'notes') {
+        const nb = el.closest('.card') && el.closest('.card').querySelector('.btn-notes');
+        if (nb) nb.classList.toggle('has-notes', String(value).trim() !== '');
+      }
 
       // La couleur des scores de Trait (vert >=0 / rouge <0) doit suivre la valeur en direct.
       if (field.startsWith('traits.') && el.classList.contains('v-input')) {
@@ -2558,12 +2584,35 @@ window.addEventListener('error', function (e) {
     });
     container.addEventListener('change', (e) => {
       const el = e.target;
+      // Notes modifiées en mode Lecture sur une fiche enregistrée : enregistrées tout de suite
+      // (il n'y a pas de bouton Enregistrer dans ce mode).
+      if (el.tagName === 'TEXTAREA' && el.dataset.field === 'notes') {
+        const card = el.closest('.card');
+        if (card && card.dataset.mode === 'read' && card.dataset.saved === '1') {
+          const stored = PNJStore.load(el.dataset.id);
+          if (stored) {
+            stored.notes = el.value;
+            if (!PNJStore.save(stored)) alert("Notes non enregistrées : le stockage du navigateur est plein ou indisponible.");
+          }
+        }
+        return;
+      }
       if (el.type === 'checkbox' && el.dataset.field) {
         const pnj = PNJ_REGISTRY.get(el.dataset.id);
         if (pnj) setDeep(pnj, el.dataset.field, el.checked);
       }
     });
     container.addEventListener('click', (e) => {
+      const notesBtn = e.target.closest('.btn-notes');
+      if (notesBtn) {
+        const card = notesBtn.closest('.card');
+        const zone = card.querySelector('.notes-zone');
+        const open = zone.classList.toggle('open');
+        card.dataset.notes = open ? '1' : '0';
+        notesBtn.classList.toggle('active', open);
+        if (open) { const ta = zone.querySelector('textarea'); if (ta) ta.focus(); }
+        return;
+      }
       const thumb = e.target.closest('.portrait-thumb');
       if (thumb) {
         const pnj = PNJ_REGISTRY.get(thumb.dataset.id);
