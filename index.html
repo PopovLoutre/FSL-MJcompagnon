@@ -986,6 +986,19 @@
   .notes-input:focus { outline:none; border-color:var(--brass-bright); }
   .notes-input::placeholder { color:var(--parchment-dim); opacity:.7; }
   #mespnjResults.combat-view .card.mode-read .notes-zone { display:none; }
+
+  /* --- Groupes --- */
+  .grp-row { border:1px solid var(--line); border-radius:10px; padding:10px; margin-bottom:8px; background:rgba(0,0,0,.14); }
+  .grp-row select, .grp-row input { width:100%; background:var(--ink); border:1px solid var(--line); color:var(--parchment); border-radius:8px; padding:9px 10px; font-size:14px; font-family:'Inter',sans-serif; appearance:none; -webkit-appearance:none; }
+  .grp-row2 { display:flex; align-items:center; gap:8px; margin-top:8px; }
+  .grp-row2 select { flex:1 1 auto; min-width:0; }
+  .grp-row2 .grp-x { color:var(--parchment-dim); font-size:14px; }
+  .grp-row2 input.grp-qty { width:64px; flex:0 0 auto; text-align:center; }
+  .grp-row2 .grp-del { flex:0 0 auto; width:34px; height:34px; border-radius:8px; border:1px solid var(--line); background:transparent; color:var(--parchment-dim); cursor:pointer; padding:0; }
+  .grp-add { width:100%; background:transparent; border:1px dashed var(--line); color:var(--brass-bright); border-radius:8px; padding:9px; font-family:'Inter',sans-serif; font-size:12px; letter-spacing:.03em; cursor:pointer; }
+  .group-banner { display:flex; align-items:center; gap:10px; margin:0 0 12px; padding:10px 12px; border:1px solid var(--brass); border-radius:10px; background:rgba(0,0,0,.2); color:var(--parchment); font-size:13px; line-height:1.4; }
+  .group-banner .gb-text { flex:1 1 auto; }
+  .group-banner button { flex:0 0 auto; border:none; border-radius:8px; padding:9px 12px; background:linear-gradient(180deg, var(--wax-bright), var(--wax)); color:#f4e9dc; font-family:'Cinzel',serif; font-size:12px; letter-spacing:.05em; cursor:pointer; }
 </style>
 <script>
 /* Diagnostic : affiche une erreur JavaScript à l'écran (utile sur téléphone, sans console). */
@@ -1063,6 +1076,24 @@ window.addEventListener('error', function (e) {
       <button class="generate" id="btnGenerate">Générer</button>
     </div>
 
+
+    <div class="panel" id="panelGroupe">
+      <h2>Groupe</h2>
+      <p class="panel-text">Génère plusieurs PNJ d'un coup selon une composition. Les races suivent les filtres du panneau Tirage ci-dessus (Race / Époque) ; le nom du groupe est inscrit dans « Groupe / Tags » de chaque PNJ.</p>
+      <div class="field">
+        <label for="grpName">Nom du groupe</label>
+        <input type="text" id="grpName" placeholder="ex. Auberge du Cerf">
+      </div>
+      <div class="field">
+        <label for="grpTemplate">Modèle de départ</label>
+        <select id="grpTemplate"><option value="">Composition libre</option></select>
+      </div>
+      <div id="grpRows"></div>
+      <button type="button" class="grp-add" id="grpAddRow">+ Ajouter une ligne</button>
+      <p class="panel-text" id="grpTotal" style="margin:10px 0 0;"></p>
+      <button class="generate" id="btnGenGroup" style="margin-top:12px;">Générer le groupe</button>
+    </div>
+
     <div class="panel">
       <h2>Résultats</h2>
       <div id="results">
@@ -1081,6 +1112,12 @@ window.addEventListener('error', function (e) {
           <input type="text" id="searchPnj" placeholder="ex. Voleur, Terrien, Taverne du Cerf..." style="flex:1;min-width:0;">
           <button type="button" class="combat-toggle" id="btnCombatView" aria-pressed="false" aria-label="Affichage de combat" title="Affichage de combat">⚔</button>
         </div>
+      </div>
+    </div>
+    <div class="panel" style="padding-top:12px;padding-bottom:12px;">
+      <div class="field" style="margin-bottom:0;">
+        <label for="filterGroupe">Groupe</label>
+        <select id="filterGroupe"><option value="">Tous les groupes</option></select>
       </div>
     </div>
     <div id="mespnjResults"></div>
@@ -1738,6 +1775,16 @@ window.addEventListener('error', function (e) {
     metierSelect.appendChild(opt);
   });
 
+  // --- Suggestions pour le champ "Disposition" (texte libre, ces valeurs sont proposées en saisie) ---
+  const dispoDatalist = document.createElement('datalist');
+  dispoDatalist.id = 'dispoList';
+  TABLES.disposition.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d;
+    dispoDatalist.appendChild(opt);
+  });
+  document.body.appendChild(dispoDatalist);
+
   // --- Peuplement du menu "Trait particulier" ---
   const traitSelect = document.getElementById('trait');
   TABLES.trait.forEach(t => {
@@ -2339,7 +2386,6 @@ window.addEventListener('error', function (e) {
 
     const metierOptions = TABLES.metier.map(m => `<option value="${m}" ${m === pnj.metier ? 'selected' : ''}>${m}</option>`).join('');
     const sexeOptions = ['', 'Homme', 'Femme'].map(x => `<option value="${x}" ${x === (pnj.physique.sexe || '') ? 'selected' : ''}>${x || '—'}</option>`).join('');
-    const dispoOptions = TABLES.disposition.map(d => `<option value="${d}" ${d === pnj.disposition ? 'selected' : ''}>${d}</option>`).join('');
 
     const equipList = pnj.equipement || [];
     const equipHtml = equipList.length
@@ -2380,7 +2426,8 @@ window.addEventListener('error', function (e) {
         ? `<button class="btn-save" data-id="${id}" style="flex:1 1 45%;">Mettre à jour</button>
           <button class="btn-delete btn-cancel" data-id="${id}" style="flex:1 1 45%;">Annuler</button>
           <button class="btn-delete" data-id="${id}" style="flex:1 1 100%;">Supprimer</button>`
-        : `<button class="btn-save" data-id="${id}">Enregistrer</button>`);
+        : `<button class="btn-save" data-id="${id}" style="flex:1 1 60%;">Enregistrer</button>
+          <button class="btn-delete btn-discard" data-id="${id}" style="flex:1 1 35%;">Défausser</button>`);
 
     return `
       <div class="card${ro ? ' mode-read' : ''}" data-card-id="${id}" data-saved="${saved ? 1 : 0}" data-mode="${mode}" data-notes="${notesOpen ? 1 : 0}"${opts.instant ? ' style="animation:none"' : ''}>
@@ -2397,7 +2444,7 @@ window.addEventListener('error', function (e) {
             ${fSel('mini-select', metierOptions, pnj.metier, 'metier')}
           </div>
           <div><div class="k">Disposition</div>
-            ${fSel('mini-select', dispoOptions, pnj.disposition, 'disposition')}
+            ${ro ? fText('mini-text', pnj.disposition, 'disposition') : `<input type="text" class="mini-text" list="dispoList" value="${escHtml(pnj.disposition)}" placeholder="ex. Méfiant" autocomplete="off" data-id="${id}" data-field="disposition">`}
           </div>
         </div>
         </div>
@@ -2652,6 +2699,16 @@ window.addEventListener('error', function (e) {
         }
         return;
       }
+      // Fiche générée mais pas enregistrée : on la retire simplement de l'écran (rien n'est stocké).
+      const discardBtn = e.target.closest('.btn-discard');
+      if (discardBtn) {
+        PNJ_REGISTRY.delete(discardBtn.dataset.id);
+        discardBtn.closest('.card').remove();
+        if (!container.querySelector('.card')) {
+          container.innerHTML = `<div class="empty-state">Aucun PNJ généré pour l'instant.<br>Choisis tes options et lance le tirage.</div>`;
+        }
+        return;
+      }
       const editBtn = e.target.closest('.btn-edit');
       if (editBtn) {
         const pnj = PNJ_REGISTRY.get(editBtn.dataset.id);
@@ -2790,10 +2847,39 @@ window.addEventListener('error', function (e) {
     return haystack.includes(q.toLowerCase());
   }
 
+  // Un "groupe" = un tag du champ "Groupe / Tags" (plusieurs tags possibles, séparés par des virgules ;
+  // sans tenir compte des majuscules ni des espaces autour).
+  function groupTags(pnj) {
+    return String(pnj.groupe || '').split(',').map(t => t.trim()).filter(Boolean);
+  }
+
+  function refreshGroupFilter(all) {
+    const sel = document.getElementById('filterGroupe');
+    const groups = new Map(); // clé minuscule -> { label, count }
+    all.forEach(p => {
+      const seen = new Set();
+      groupTags(p).forEach(tag => {
+        const k = tag.toLowerCase();
+        if (seen.has(k)) return;
+        seen.add(k);
+        if (!groups.has(k)) groups.set(k, { label: tag, count: 0 });
+        groups.get(k).count++;
+      });
+    });
+    const current = sel.value;
+    const entries = Array.from(groups.entries()).sort((a, b) => a[1].label.localeCompare(b[1].label, 'fr'));
+    sel.innerHTML = '<option value="">Tous les groupes</option>' +
+      entries.map(([k, g]) => `<option value="${escHtml(k)}">${escHtml(g.label)} (${g.count})</option>`).join('');
+    sel.value = groups.has(current) ? current : '';
+  }
+
   function renderMesPnj() {
     const all = PNJStore.loadAll();
+    refreshGroupFilter(all);
     const q = document.getElementById('searchPnj').value.trim();
-    const filtered = all.filter(pnj => matchesSearch(pnj, q));
+    const groupKey = document.getElementById('filterGroupe').value;
+    const filtered = all.filter(pnj => matchesSearch(pnj, q) &&
+      (!groupKey || groupTags(pnj).some(t => t.toLowerCase() === groupKey)));
 
     if (all.length === 0) {
       mespnjResults.innerHTML = `<div class="panel"><div class="empty-state">Aucun PNJ enregistré pour l'instant.<br>Enregistre une fiche depuis l'écran "Créer" pour la retrouver ici.</div></div>`;
@@ -2807,6 +2893,7 @@ window.addEventListener('error', function (e) {
   }
 
   document.getElementById('searchPnj').addEventListener('input', renderMesPnj);
+  document.getElementById('filterGroupe').addEventListener('change', renderMesPnj);
   // ============================================================
   // OBJETS MAGIQUES
   // ============================================================
@@ -3331,7 +3418,8 @@ window.addEventListener('error', function (e) {
         ? `<button class="btn-save" data-id="${id}" style="flex:1 1 45%;">Mettre à jour</button>
           <button class="btn-delete btn-cancel" data-id="${id}" style="flex:1 1 45%;">Annuler</button>
           <button class="btn-delete" data-id="${id}" style="flex:1 1 100%;">Supprimer</button>`
-        : `<button class="btn-save" data-id="${id}">Enregistrer</button>`);
+        : `<button class="btn-save" data-id="${id}" style="flex:1 1 60%;">Enregistrer</button>
+          <button class="btn-delete btn-discard" data-id="${id}" style="flex:1 1 35%;">Défausser</button>`);
 
     return `
       <div class="card${ro ? ' mode-read' : ''}" data-card-id="${id}" data-saved="${saved ? 1 : 0}" data-mode="${mode}"${opts.instant ? ' style="animation:none"' : ''}>
@@ -3424,6 +3512,16 @@ window.addEventListener('error', function (e) {
       setDeepObj(obj, field, value);
     });
     container.addEventListener('click', (e) => {
+      // Fiche générée mais pas enregistrée : on la retire simplement de l'écran (rien n'est stocké).
+      const discardBtn = e.target.closest('.btn-discard');
+      if (discardBtn) {
+        OBJ_REGISTRY.delete(discardBtn.dataset.id);
+        discardBtn.closest('.card').remove();
+        if (!container.querySelector('.card')) {
+          container.innerHTML = `<div class="empty-state">Aucun objet généré pour l'instant.<br>Choisis tes options et lance le tirage.</div>`;
+        }
+        return;
+      }
       const editBtn = e.target.closest('.btn-edit');
       if (editBtn) {
         const obj = OBJ_REGISTRY.get(editBtn.dataset.id);
@@ -3948,6 +4046,152 @@ window.addEventListener('error', function (e) {
       const pnj = generatePNJ(options, counter, levelAssignments[i]);
       resultsEl.insertAdjacentHTML('beforeend', renderCard(pnj));
     }
+  });
+
+  // ============================================================
+  // GÉNÉRATEUR DE GROUPE
+  // ============================================================
+  // Modèles de groupes (à modifier / compléter librement). Chaque ligne : métier (voir TABLES.metier),
+  // niveau (nom d'un Niveau de LEVELS) et quantité : un nombre, ou [min, max] tiré au hasard lors du
+  // choix du modèle. Une fois le modèle chargé, tout reste modifiable ligne par ligne.
+  const GROUP_TEMPLATES = {
+    "Personnel d'auberge": [
+      { metier: "Aubergiste", niveau: "Pro", qty: 1 },
+      { metier: "Serveur", niveau: "Novice", qty: [2, 3] },
+      { metier: "Ménestrel", niveau: "Novice", qty: [0, 1] }
+    ],
+    "Patrouille de ville": [
+      { metier: "Sous-Officier", niveau: "Expert", qty: 1 },
+      { metier: "Soldat de ligne", niveau: "Novice", qty: [2, 4] },
+      { metier: "Soldat de tir", niveau: "Novice", qty: 1 }
+    ],
+    "Bande de brigands": [
+      { metier: "Voleur", niveau: "Compagnon", qty: 1 },
+      { metier: "Voleur", niveau: "Novice", qty: [3, 5] },
+      { metier: "Soldat de tir", niveau: "Novice", qty: 1 },
+      { metier: "Assassin", niveau: "Pro", qty: [0, 1] }
+    ],
+    "Caravane marchande": [
+      { metier: "Marchand", niveau: "Pro", qty: 1 },
+      { metier: "Garde du corps", niveau: "Novice", qty: [2, 3] },
+      { metier: "Palefrenier", niveau: "Apprenti", qty: 1 },
+      { metier: "Éclaireur", niveau: "Pro", qty: 1 }
+    ],
+    "Équipage de navire": [
+      { metier: "Officier", niveau: "Expert", qty: 1 },
+      { metier: "Marin", niveau: "Pro", qty: [1, 2] },
+      { metier: "Marin", niveau: "Novice", qty: [3, 4] }
+    ],
+    "Temple": [
+      { metier: "Prêtre", niveau: "Expert", qty: 1 },
+      { metier: "Prêtre", niveau: "Novice", qty: [1, 3] },
+      { metier: "Médecin", niveau: "Novice", qty: 1 }
+    ],
+    "Laboratoire de Haut Mage": [
+      { metier: "Haut Mage", niveau: "Maître", qty: 1 },
+      { metier: "Herboriste", niveau: "Novice", qty: 1 },
+      { metier: "Artisan", niveau: "Apprenti", qty: [1, 2] }
+    ]
+  };
+  const GROUP_MAX_TOTAL = 30;
+  const GROUP_ROWS_KEY = 'ui:groupRows';
+
+  let grpRows = [];
+  try { grpRows = JSON.parse(localStorage.getItem(GROUP_ROWS_KEY) || '[]') || []; } catch (e) { grpRows = []; }
+  grpRows = grpRows.filter(r => r && LEVELS.some(l => l.name === r.niveau) && (r.metier === 'alea' || TABLES.metier.includes(r.metier)));
+  if (!grpRows.length) grpRows = [{ metier: 'alea', niveau: 'Novice', qty: 3 }];
+
+  function saveGrpRows() { try { localStorage.setItem(GROUP_ROWS_KEY, JSON.stringify(grpRows)); } catch (e) { /* ignoré */ } }
+
+  const grpTemplateSel = document.getElementById('grpTemplate');
+  Object.keys(GROUP_TEMPLATES).forEach(name => {
+    const o = document.createElement('option'); o.value = name; o.textContent = name; grpTemplateSel.appendChild(o);
+  });
+
+  function renderGrpRows() {
+    const metierOpts = (cur) => `<option value="alea" ${cur === 'alea' ? 'selected' : ''}>Métier aléatoire</option>` +
+      TABLES.metier.map(m => `<option value="${escHtml(m)}" ${m === cur ? 'selected' : ''}>${escHtml(m)}</option>`).join('');
+    const levelOpts = (cur) => LEVELS.map(l => `<option value="${l.name}" ${l.name === cur ? 'selected' : ''}>${l.name}</option>`).join('');
+    document.getElementById('grpRows').innerHTML = grpRows.map((r, i) => `
+      <div class="grp-row" data-i="${i}">
+        <select class="grp-metier" aria-label="Métier">${metierOpts(r.metier)}</select>
+        <div class="grp-row2">
+          <select class="grp-niveau" aria-label="Niveau">${levelOpts(r.niveau)}</select>
+          <span class="grp-x">×</span>
+          <input type="number" class="grp-qty" min="1" max="${GROUP_MAX_TOTAL}" value="${r.qty}" aria-label="Quantité">
+          <button type="button" class="grp-del" title="Supprimer cette ligne">✕</button>
+        </div>
+      </div>`).join('');
+    const total = grpRows.reduce((n, r) => n + (Number(r.qty) || 0), 0);
+    document.getElementById('grpTotal').textContent = `${total} PNJ au total${total > GROUP_MAX_TOTAL ? ` (maximum ${GROUP_MAX_TOTAL})` : ''}.`;
+  }
+
+  document.getElementById('grpRows').addEventListener('change', (e) => {
+    const row = e.target.closest('.grp-row'); if (!row) return;
+    const r = grpRows[Number(row.dataset.i)]; if (!r) return;
+    if (e.target.classList.contains('grp-metier')) r.metier = e.target.value;
+    if (e.target.classList.contains('grp-niveau')) r.niveau = e.target.value;
+    if (e.target.classList.contains('grp-qty')) r.qty = Math.max(1, Math.min(GROUP_MAX_TOTAL, parseInt(e.target.value, 10) || 1));
+    saveGrpRows(); renderGrpRows();
+  });
+  document.getElementById('grpRows').addEventListener('click', (e) => {
+    const del = e.target.closest('.grp-del'); if (!del) return;
+    grpRows.splice(Number(del.closest('.grp-row').dataset.i), 1);
+    saveGrpRows(); renderGrpRows();
+  });
+  document.getElementById('grpAddRow').addEventListener('click', () => {
+    grpRows.push({ metier: 'alea', niveau: 'Novice', qty: 1 });
+    saveGrpRows(); renderGrpRows();
+  });
+  grpTemplateSel.addEventListener('change', () => {
+    const tpl = GROUP_TEMPLATES[grpTemplateSel.value];
+    if (!tpl) return;
+    grpRows = tpl.map(r => ({
+      metier: r.metier, niveau: r.niveau,
+      qty: Array.isArray(r.qty) ? r.qty[0] + Math.floor(Math.random() * (r.qty[1] - r.qty[0] + 1)) : r.qty
+    })).filter(r => r.qty > 0);
+    saveGrpRows(); renderGrpRows();
+  });
+  renderGrpRows();
+
+  document.getElementById('btnGenGroup').addEventListener('click', () => {
+    const total = grpRows.reduce((n, r) => n + (Number(r.qty) || 0), 0);
+    if (total < 1) { alert('Ajoute au moins une ligne avec une quantité.'); return; }
+    if (total > GROUP_MAX_TOTAL) { alert(`Maximum ${GROUP_MAX_TOTAL} PNJ par groupe : réduis les quantités.`); return; }
+    const groupName = document.getElementById('grpName').value.trim();
+    const traitChoice = document.getElementById('trait').value;
+    const resultsEl = document.getElementById('results');
+    resultsEl.innerHTML = '';
+    grpRows.forEach(r => {
+      const level = LEVELS.find(l => l.name === r.niveau);
+      for (let i = 0; i < r.qty; i++) {
+        counter++;
+        const pnj = generatePNJ({ raceMode: raceModeSelect.value, metier: r.metier, trait: traitChoice }, counter, level);
+        pnj.groupe = groupName;
+        resultsEl.insertAdjacentHTML('beforeend', renderCard(pnj));
+      }
+    });
+    resultsEl.insertAdjacentHTML('afterbegin', `
+      <div class="group-banner" id="grpBanner">
+        <div class="gb-text">${total} PNJ générés${groupName ? ` pour « ${escHtml(groupName)} »` : ''}. Ils ne sont enregistrés qu'après validation.</div>
+        <button type="button" id="btnSaveGroup">Tout enregistrer</button>
+      </div>`);
+    document.getElementById('btnSaveGroup').addEventListener('click', () => {
+      const cards = Array.from(resultsEl.querySelectorAll('.card[data-saved="0"]'));
+      let ok = 0, failed = 0;
+      cards.forEach(card => {
+        const pnj = PNJ_REGISTRY.get(card.dataset.cardId);
+        if (!pnj) return;
+        recalcPsPmIfNeeded(pnj);
+        if (PNJStore.save({ ...pnj, psActuel: pnj.ps, pmActuel: pnj.pm })) { ok++; refreshCard(pnj, card, { saved: true, mode: 'read' }); }
+        else failed++;
+      });
+      const txt = document.querySelector('#grpBanner .gb-text');
+      if (txt) txt.textContent = failed ? `${ok} PNJ enregistrés, ${failed} en échec (stockage plein).` : `${ok} PNJ enregistrés.`;
+      if (failed) alert("Certaines fiches n'ont PAS été enregistrées : le stockage du navigateur est plein ou indisponible. Libère de la place (exporte puis supprime des fiches) et réessaie.");
+      if (!failed) document.getElementById('btnSaveGroup').remove();
+    });
+    window.scrollTo(0, document.getElementById('results').getBoundingClientRect().top + window.scrollY - 70);
   });
 
 </script>
