@@ -2022,6 +2022,8 @@ window.addEventListener('error', function (e) {
       if (typeof c.name === 'string') c.name = c.name.replace(/\s*\(\s*\d+\s*PC\s*\)\s*$/i, '');
       if (c.calc === undefined) c.calc = defaultCalcFor(c.name);
       if (c.bonus === undefined) c.bonus = 0;
+      // Niveau de la compétence (hors Trait lié) : toujours déduit du score et du Trait.
+      c.composante = (Number(c.score) || 0) - (c.trait ? (Number(pnj.traits && pnj.traits[c.trait]) || 0) : 0);
     });
     if (pnj.calcSig === undefined || !String(pnj.calcSig).startsWith('["v2",')) pnj.calcSig = calcSignature(pnj);
   }
@@ -2308,7 +2310,7 @@ window.addEventListener('error', function (e) {
     const compsHtml = compsSorted.map(c => {
       if (ro) {
         const mark = c.mastered ? '<span class="mark">◆</span>' : '<span class="mark" style="display:inline-block;width:7px;"></span>';
-        const label = c.mastered ? `${c.name} (${pnj.level.points}PC)` : c.name;
+        const label = c.mastered ? `${c.name} (${c.composante}PC)` : c.name;
         return `
       <div class="comp-row">
         ${mark}
@@ -2327,7 +2329,7 @@ window.addEventListener('error', function (e) {
         </div>
         <div class="comp-row comp-row-2" style="padding-left:16px;gap:6px;">
           ${fSel('comp-trait-select', compTraitOptions(c.trait), c.trait || '—', `comp.${c.idx}.trait`)}
-          ${fNum('score-input', c.score, `comp.${c.idx}.score`)}
+          <input class="score-input" type="number" value="${c.composante}" title="Niveau de la compétence (sans le Trait lié)" aria-label="Niveau" data-id="${id}" data-field="comp.${c.idx}.composante">
           <select class="comp-trait-select" title="Compte dans le calcul des PS ou des PM" data-id="${id}" data-field="comp.${c.idx}.calc">${calcOptions(c.calc)}</select>
           <span style="display:inline-flex;align-items:center;gap:4px;flex:0 0 auto;"><span style="font-size:10px;color:var(--parchment-dim);">Bonus</span>${ro ? '' : `<input class="score-input" style="width:36px;" type="number" value="${Number(c.bonus) || 0}" data-id="${id}" data-field="comp.${c.idx}.bonus" aria-label="Bonus">`}</span>
         </div>
@@ -2448,7 +2450,7 @@ window.addEventListener('error', function (e) {
         </div>
         <div class="competences">
           <div class="k">Compétences (◆ maîtrisée)</div>
-          ${ro ? '' : '<div style="font-size:11px;color:var(--parchment-dim);margin:-2px 0 6px;">Menu PS / PM : la compétence compte dans le calcul des PS ou des PM.</div>'}
+          ${ro ? '' : '<div style="font-size:11px;color:var(--parchment-dim);margin:-2px 0 6px;">Le nombre est le niveau de la compétence (sans le Trait lié) ; en Lecture, le score affiché = niveau + Trait + Bonus. Menu PS / PM : la compétence compte dans le calcul des PS ou des PM.</div>'}
           ${compsHtml}
           ${compAddHtml}
         </div>
@@ -2570,7 +2572,22 @@ window.addEventListener('error', function (e) {
       let value = el.value;
       if (el.type === 'number') value = value === '' ? 0 : Number(value);
       if (el.type === 'checkbox') value = el.checked;
+      const traitVal = (k) => (k ? (Number(pnj.traits[k]) || 0) : 0);
+      const oldTraitValue = field.startsWith('traits.') ? (Number(pnj.traits[field.slice(7)]) || 0) : 0;
       setDeep(pnj, field, value);
+
+      // Score d'une compétence = niveau (composante) + valeur du Trait lié. Le niveau reste la
+      // référence : si on change le niveau, le Trait lié, ou la valeur d'un Trait, le score suit.
+      let m;
+      if ((m = field.match(/^comp\.(\d+)\.(composante|trait)$/))) {
+        const c = pnj.competences[Number(m[1])];
+        if (c) c.score = (Number(c.composante) || 0) + traitVal(c.trait);
+      } else if (field.startsWith('traits.')) {
+        const k = field.slice(7);
+        pnj.competences.forEach(c => {
+          if (c.trait === k) c.score = (Number(c.score) || 0) - oldTraitValue + traitVal(k);
+        });
+      }
       if (field === 'notes') {
         const nb = el.closest('.card') && el.closest('.card').querySelector('.btn-notes');
         if (nb) nb.classList.toggle('has-notes', String(value).trim() !== '');
@@ -3849,7 +3866,17 @@ window.addEventListener('error', function (e) {
       }
 
       const added = mp.added + mo.added, updated = mp.updated + mo.updated, removed = mp.toRemove.length + mo.toRemove.length;
-      let msg = `Récupération : ${added} ajoutée(s), ${updated} mise(s) à jour, ${removed} supprimée(s) sur cet appareil.`;
+      const recvMsg = `${added} ajoutée(s), ${updated} mise(s) à jour, ${removed} supprimée(s) sur cet appareil.`;
+      let msg = `Récupération : ${recvMsg}`;
+      // Différences entre le contenu de GitHub avant l'envoi et le contenu fusionné qui va être envoyé.
+      const diffKind = (remoteArr, mergedArr) => {
+        const rm = new Map(remoteArr.map(x => [x.id, x.updatedAt || 0]));
+        const mm = new Map(mergedArr.map(x => [x.id, x.updatedAt || 0]));
+        let a = 0, u = 0, r = 0;
+        mm.forEach((ts, id) => { if (!rm.has(id)) a++; else if (rm.get(id) !== ts) u++; });
+        rm.forEach((ts, id) => { if (!mm.has(id)) r++; });
+        return { a, u, r };
+      };
       const remoteSig = stateSignature(remote.pnjs, remote.objets, remote.deleted || {});
       const mergedSig = stateSignature(mp.result, mo.result, deleted);
       const inSync = file.exists && remoteSig === mergedSig;
@@ -3869,9 +3896,13 @@ window.addEventListener('error', function (e) {
         }
         if (!put.ok) throw syncHttpError(put.status);
         pushedOk = true;
-        msg += ' Envoi : terminé.';
+        const dp = diffKind(remote.pnjs, mp.result), dobj = diffKind(remote.objets, mo.result);
+        msg = `Envoi : ${dp.a + dobj.a} ajoutée(s), ${dp.u + dobj.u} modifiée(s), ${dp.r + dobj.r} supprimée(s) sur GitHub.`;
+        if (added + updated + removed > 0) msg += `\nRéception : ${recvMsg}`;
       } else if (push) {
-        msg += ' Envoi : GitHub était déjà à jour.';
+        msg = added + updated + removed > 0
+          ? `Envoi : rien à envoyer, GitHub était déjà à jour.\nRéception : ${recvMsg}`
+          : "Envoi : rien à envoyer, GitHub était déjà à jour.";
       }
       if (pushedOk || inSync) SyncMeta.resetDirty();
       cfg.lastSync = Date.now();
