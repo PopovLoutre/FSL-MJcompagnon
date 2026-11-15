@@ -1265,7 +1265,13 @@ window.addEventListener('error', function (e) {
 <script>
   // Table des races extraite du document "Evolution des races du Tri-Obole".
   // Chaque race porte ses modificateurs raciaux aux 6 Traits (valeur de base = 0).
-  const RACES = [{"name": "Sindars (Ht-Elfe)", "era": "Originelles", "FOR": -1, "AGI": 3, "INT": 0, "PER": 2, "MAI": -1, "CHA": 3, "special": "Jets magie & Mana +3"}, {"name": "Khuzdûl", "era": "Originelles", "FOR": 3, "AGI": 0, "INT": 1, "PER": -1, "MAI": 3, "CHA": 0, "special": "Rés.magique 50%"}, {"name": "Hobbits", "era": "Originelles", "FOR": 0, "AGI": 0, "INT": 3, "PER": 3, "MAI": 1, "CHA": 0, "special": "Perception de la magie"}, {"name": "Eldars (purs)", "era": "Antédiluviennes", "FOR": -1, "AGI": 2, "INT": 0, "PER": 1, "MAI": -1, "CHA": 3, "special": "Mana +2 / niveau"}, {"name": "Sirlings (exilés)", "era": "Antédiluviennes", "FOR": -1, "AGI": 3, "INT": 2, "PER": 0, "MAI": 0, "CHA": 0, "special": "Jets magie +2"}, {"name": "Gobelach (arboric)", "era": "Vénérables", "FOR": 0, "AGI": 2, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": "Queue préhensile"}, {"name": "Ishtar (maléf.)", "era": "Antédiluviennes", "FOR": -1, "AGI": 3, "INT": 0, "PER": 2, "MAI": -1, "CHA": 1, "special": "Mana +2 / niveau"}, {"name": "Rasha (tigres)", "era": "Antédiluviennes", "FOR": 0, "AGI": 2, "INT": 0, "PER": 2, "MAI": 0, "CHA": 1, "special": "Griffes rétractiles"}, {"name": "Khuzun (monta.)", "era": "Antédiluviennes", "FOR": 3, "AGI": 0, "INT": 1, "PER": -1, "MAI": 2, "CHA": 0, "special": "Rés. magique 30%"}, {"name": "Troll", "era": "Antédiluviennes", "FOR": 3, "AGI": -1, "INT": -1, "PER": 1, "MAI": 1, "CHA": 0, "special": "Armure 2 naturelle"}, {"name": "Khuzdâal", "era": "Antédiluviennes", "FOR": 2, "AGI": -1, "INT": 1, "PER": 0, "MAI": 3, "CHA": 0, "special": "Rés. Magique 30%"}, {"name": "Gnome (villes)", "era": "Antédiluviennes", "FOR": -1, "AGI": 1, "INT": 3, "PER": 2, "MAI": -1, "CHA": 0, "special": "Jets enchantement +2"}, {"name": "Pied-velu (comté)", "era": "Antédiluviennes", "FOR": 0, "AGI": 0, "INT": 0, "PER": 3, "MAI": 2, "CHA": -1, "special": "Perception de la magie"}, {"name": "Halfling (marchand)", "era": "Anciennes", "FOR": 1, "AGI": 0, "INT": 0, "PER": 1, "MAI": 1, "CHA": -1, "special": ""}, {"name": "Ogre", "era": "Antédiluviennes", "FOR": 3, "AGI": 0, "INT": 1, "PER": 0, "MAI": 1, "CHA": -1, "special": "Rés. magique 20%"}, {"name": "Fyloadaele (eau)", "era": "Vénérables", "FOR": -1, "AGI": 2, "INT": 1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Amphibien"}, {"name": "Sylvaele (forêts)", "era": "Vénérables", "FOR": -1, "AGI": 2, "INT": 0, "PER": 1, "MAI": -1, "CHA": 1, "special": "Mana +1/niveau"}, {"name": "Illithid", "era": "Antédiluviennes", "FOR": -1, "AGI": 1, "INT": 3, "PER": 0, "MAI": 0, "CHA": 0, "special": "Contrôle mental"}, {"name": "Méduses (eau)", "era": "Anciennes", "FOR": -1, "AGI": 0, "INT": 2, "PER": -1, "MAI": 0, "CHA": 1, "special": "Regard paralysant"}, {"name": "Varegh (vikings)", "era": "Anciennes", "FOR": 0, "AGI": 2, "INT": -1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Amphibiens"}, {"name": "Sirènes (eau)", "era": "Semi-humaines", "FOR": -1, "AGI": 0, "INT": 1, "PER": -1, "MAI": 0, "CHA": 2, "special": "Amphibien"}, {"name": "Elfaele (bois)", "era": "Anciennes", "FOR": -1, "AGI": 2, "INT": 0, "PER": 0, "MAI": 0, "CHA": 1, "special": ""}, {"name": "Elf gris (voyageurs)", "era": "Anciennes", "FOR": -1, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 2, "special": "Vision nocturne"}, {"name": "Elfant (commun)", "era": "Anciennes", "FOR": 0, "AGI": 1, "INT": 0, "PER": 0, "MAI": 0, "CHA": 1, "special": "Mana +1/niveau"}, {"name": "Grob (nomades)", "era": "Anciennes", "FOR": 0, "AGI": 2, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "1 mois sans boire"}, {"name": "Gobelin (pillards)", "era": "Semi-humaines", "FOR": -1, "AGI": 1, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "Résist. poison&maladie"}, {"name": "Khuzdin (monta.)", "era": "Vénérables", "FOR": 2, "AGI": 0, "INT": 1, "PER": -1, "MAI": 1, "CHA": 0, "special": "Rés. magique 20%"}, {"name": "Nain gris (cités)", "era": "Anciennes", "FOR": 2, "AGI": 0, "INT": 0, "PER": -1, "MAI": 1, "CHA": 0, "special": "Rés. magique 10%"}, {"name": "Minathros", "era": "Vénérables", "FOR": 2, "AGI": -1, "INT": 0, "PER": 1, "MAI": 1, "CHA": 0, "special": "Cornes"}, {"name": "Varach (dominat.)", "era": "Vénérables", "FOR": 1, "AGI": 1, "INT": -1, "PER": 2, "MAI": 0, "CHA": 0, "special": "Rés. Chaud/froid"}, {"name": "Tsrang (voyages)", "era": "Anciennes", "FOR": 1, "AGI": 1, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "Rés. Chaud/froid"}, {"name": "H.-lézard (désert)", "era": "Semi-humaines", "FOR": 1, "AGI": 0, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "Rés. Chaud/froid"}, {"name": "Gnomer (grottes)", "era": "Vénérables", "FOR": 0, "AGI": -1, "INT": 2, "PER": 0, "MAI": 1, "CHA": 0, "special": "Infravision"}, {"name": "Minautore (merc.)", "era": "Anciennes", "FOR": 2, "AGI": -1, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": "Cornes"}, {"name": "Dotrak", "era": "Humaines", "FOR": 1, "AGI": 0, "INT": -1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Nomades du désert"}, {"name": "Alorien", "era": "Humaines", "FOR": -1, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 1, "special": "Commun des cités"}, {"name": "Cheresque", "era": "Humaines", "FOR": 0, "AGI": 1, "INT": -1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Marins"}, {"name": "Ergegh (orc marais)", "era": "Vénérables", "FOR": 1, "AGI": 0, "INT": 1, "PER": -1, "MAI": 2, "CHA": 0, "special": "Rés. maladies"}, {"name": "Sharkar (maléf.)", "era": "Vénérables", "FOR": 2, "AGI": 0, "INT": 1, "PER": -1, "MAI": 1, "CHA": -1, "special": "Rés. maladies"}, {"name": "Urkur (esclavage)", "era": "Anciennes", "FOR": 2, "AGI": 0, "INT": 1, "PER": 0, "MAI": 0, "CHA": -1, "special": ""}, {"name": "Noriog", "era": "Humaines", "FOR": 1, "AGI": 0, "INT": 1, "PER": 0, "MAI": -1, "CHA": -1, "special": "Dominateurs, guerriers"}, {"name": "Keldrun (bâtisseur)", "era": "Semi-humaines", "FOR": 1, "AGI": 0, "INT": 0, "PER": -1, "MAI": 1, "CHA": 0, "special": "Petits, costauds"}, {"name": "Orc commun", "era": "Anciennes", "FOR": 2, "AGI": 0, "INT": -1, "PER": -1, "MAI": 1, "CHA": 0, "special": "Vision nocturne"}, {"name": "Homme-chat", "era": "Anciennes", "FOR": -1, "AGI": 2, "INT": 0, "PER": 1, "MAI": -1, "CHA": 0, "special": "Vision nocturne, griffes"}, {"name": "Felas (voleurs)", "era": "Semi-humaines", "FOR": -1, "AGI": 1, "INT": 0, "PER": 1, "MAI": -1, "CHA": 0, "special": "Vision nocturne"}, {"name": "Souatar", "era": "Semi-humaines", "FOR": 0, "AGI": -1, "INT": 1, "PER": 0, "MAI": 1, "CHA": 0, "special": "Aveugles, sonar"}, {"name": "Gnolain (Paysan)", "era": "Vénérables", "FOR": 1, "AGI": 0, "INT": 0, "PER": 1, "MAI": 2, "CHA": -1, "special": ""}, {"name": "Gehanga", "era": "Anciennes", "FOR": -1, "AGI": -1, "INT": 2, "PER": 1, "MAI": 0, "CHA": 0, "special": "Télé-empathie"}, {"name": "Kobold (cupide)", "era": "Vénérables", "FOR": -1, "AGI": 1, "INT": 2, "PER": 1, "MAI": -1, "CHA": 0, "special": "Télépathie animale"}, {"name": "Lutin (farceurs)", "era": "Anciennes", "FOR": -1, "AGI": 1, "INT": 2, "PER": 0, "MAI": -1, "CHA": 0, "special": "Lancer de sorts +1"}, {"name": "Arcanes (march.)", "era": "Vénérables", "FOR": 0, "AGI": -1, "INT": 2, "PER": 1, "MAI": 0, "CHA": 0, "special": "Télé-empathie"}, {"name": "Drasniens", "era": "Humaines", "FOR": -1, "AGI": 0, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": "Petits, menus, voleurs"}, {"name": "Sendar", "era": "Humaines", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 1, "CHA": -1, "special": "Pacifistes, plutôt petits"}, {"name": "Terrien", "era": "Humaines", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 0, "special": ""}, {"name": "Elohim", "era": "Anciennes", "FOR": 0, "AGI": 2, "INT": 0, "PER": 0, "MAI": -1, "CHA": 1, "special": "Att. psy, Télépathie"}];
+  const RACES = [{"name": "Sindars (Ht-Elfe)", "era": "Originelles", "FOR": -1, "AGI": 3, "INT": 0, "PER": 2, "MAI": -1, "CHA": 3, "special": "Jets magie & Mana +3"}, {"name": "Khuzdûl", "era": "Originelles", "FOR": 3, "AGI": 0, "INT": 1, "PER": -1, "MAI": 3, "CHA": 0, "special": "Rés.magique 50%"}, {"name": "Hobbits", "era": "Originelles", "FOR": 0, "AGI": 0, "INT": 3, "PER": 3, "MAI": 1, "CHA": 0, "special": "Perception de la magie"}, {"name": "Eldars (purs)", "era": "Antédiluviennes", "FOR": -1, "AGI": 2, "INT": 0, "PER": 1, "MAI": -1, "CHA": 3, "special": "Mana +2 / niveau"}, {"name": "Sirlings (exilés)", "era": "Antédiluviennes", "FOR": -1, "AGI": 3, "INT": 2, "PER": 0, "MAI": 0, "CHA": 0, "special": "Jets magie +2"}, {"name": "Gobelach (arboric)", "era": "Vénérables", "FOR": 0, "AGI": 2, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": "Queue préhensile"}, {"name": "Ishtar (maléf.)", "era": "Antédiluviennes", "FOR": -1, "AGI": 3, "INT": 0, "PER": 2, "MAI": -1, "CHA": 1, "special": "Mana +2 / niveau"}, {"name": "Rasha (tigres)", "era": "Antédiluviennes", "FOR": 0, "AGI": 2, "INT": 0, "PER": 2, "MAI": 0, "CHA": 1, "special": "Griffes rétractiles"}, {"name": "Khuzun (monta.)", "era": "Antédiluviennes", "FOR": 3, "AGI": 0, "INT": 1, "PER": -1, "MAI": 2, "CHA": 0, "special": "Rés. magique 30%"}, {"name": "Troll", "era": "Antédiluviennes", "FOR": 3, "AGI": -1, "INT": -1, "PER": 1, "MAI": 1, "CHA": 0, "special": "Armure 2 naturelle"}, {"name": "Khuzdâal", "era": "Antédiluviennes", "FOR": 2, "AGI": -1, "INT": 1, "PER": 0, "MAI": 3, "CHA": 0, "special": "Rés. Magique 30%"}, {"name": "Gnome (villes)", "era": "Antédiluviennes", "FOR": -1, "AGI": 1, "INT": 3, "PER": 2, "MAI": -1, "CHA": 0, "special": "Jets enchantement +2"}, {"name": "Pied-velu (comté)", "era": "Antédiluviennes", "FOR": 0, "AGI": 0, "INT": 0, "PER": 3, "MAI": 2, "CHA": -1, "special": "Perception de la magie"}, {"name": "Halfling (marchand)", "era": "Anciennes", "FOR": 1, "AGI": 0, "INT": 0, "PER": 1, "MAI": 1, "CHA": -1, "special": ""}, {"name": "Ogre", "era": "Antédiluviennes", "FOR": 3, "AGI": 0, "INT": 1, "PER": 0, "MAI": 1, "CHA": -1, "special": "Rés. magique 20%"}, {"name": "Fyloadaele (eau)", "era": "Vénérables", "FOR": -1, "AGI": 2, "INT": 1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Amphibien"}, {"name": "Sylvaele (forêts)", "era": "Vénérables", "FOR": -1, "AGI": 2, "INT": 0, "PER": 1, "MAI": -1, "CHA": 1, "special": "Mana +1/niveau"}, {"name": "Illithid", "era": "Antédiluviennes", "FOR": -1, "AGI": 1, "INT": 3, "PER": 0, "MAI": 0, "CHA": 0, "special": "Contrôle mental"}, {"name": "Méduses (eau)", "era": "Anciennes", "FOR": -1, "AGI": 0, "INT": 2, "PER": -1, "MAI": 0, "CHA": 1, "special": "Regard paralysant"}, {"name": "Varegh (vikings)", "era": "Anciennes", "FOR": 0, "AGI": 2, "INT": -1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Amphibiens"}, {"name": "Sirènes (eau)", "era": "Semi-humaines", "FOR": -1, "AGI": 0, "INT": 1, "PER": -1, "MAI": 0, "CHA": 2, "special": "Amphibien"}, {"name": "Elfaele (bois)", "era": "Anciennes", "FOR": -1, "AGI": 2, "INT": 0, "PER": 0, "MAI": 0, "CHA": 1, "special": ""}, {"name": "Elf gris (voyageurs)", "era": "Anciennes", "FOR": -1, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 2, "special": "Vision nocturne"}, {"name": "Elfant (commun)", "era": "Anciennes", "FOR": 0, "AGI": 1, "INT": 0, "PER": 0, "MAI": 0, "CHA": 1, "special": "Mana +1/niveau"}, {"name": "Grob (nomades)", "era": "Anciennes", "FOR": 0, "AGI": 2, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "1 mois sans boire"}, {"name": "Gobelin (pillards)", "era": "Semi-humaines", "FOR": -1, "AGI": 1, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "Résist. poison&maladie"}, {"name": "Khuzdin (monta.)", "era": "Vénérables", "FOR": 2, "AGI": 0, "INT": 1, "PER": -1, "MAI": 1, "CHA": 0, "special": "Rés. magique 20%"}, {"name": "Nain gris (cités)", "era": "Anciennes", "FOR": 2, "AGI": 0, "INT": 0, "PER": -1, "MAI": 1, "CHA": 0, "special": "Rés. magique 10%"}, {"name": "Minathros", "era": "Vénérables", "FOR": 2, "AGI": -1, "INT": 0, "PER": 1, "MAI": 1, "CHA": 0, "special": "Cornes"}, {"name": "Varach (dominat.)", "era": "Vénérables", "FOR": 1, "AGI": 1, "INT": -1, "PER": 2, "MAI": 0, "CHA": 0, "special": "Rés. Chaud/froid"}, {"name": "Tsrang (voyages)", "era": "Anciennes", "FOR": 1, "AGI": 1, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "Rés. Chaud/froid"}, {"name": "H.-lézard (désert)", "era": "Semi-humaines", "FOR": 1, "AGI": 0, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "Rés. Chaud/froid"}, {"name": "Gnomer (grottes)", "era": "Vénérables", "FOR": 0, "AGI": -1, "INT": 2, "PER": 0, "MAI": 1, "CHA": 0, "special": "Infravision"}, {"name": "Minautore (merc.)", "era": "Anciennes", "FOR": 2, "AGI": -1, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": "Cornes"}, {"name": "Dotrak", "era": "Humaines", "FOR": 1, "AGI": 0, "INT": -1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Nomades du désert"}, {"name": "Alorien", "era": "Humaines", "FOR": -1, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 1, "special": "Commun des cités"}, {"name": "Cheresque", "era": "Humaines", "FOR": 0, "AGI": 1, "INT": -1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Marins"}, {"name": "Ergegh (orc marais)", "era": "Vénérables", "FOR": 1, "AGI": 0, "INT": 1, "PER": -1, "MAI": 2, "CHA": 0, "special": "Rés. maladies"}, {"name": "Sharkar (maléf.)", "era": "Vénérables", "FOR": 2, "AGI": 0, "INT": 1, "PER": -1, "MAI": 1, "CHA": -1, "special": "Rés. maladies"}, {"name": "Urkur (esclavage)", "era": "Anciennes", "FOR": 2, "AGI": 0, "INT": 1, "PER": 0, "MAI": 0, "CHA": -1, "special": ""}, {"name": "Noriog", "era": "Humaines", "FOR": 1, "AGI": 0, "INT": 1, "PER": 0, "MAI": -1, "CHA": -1, "special": "Dominateurs, guerriers"}, {"name": "Keldrun (bâtisseur)", "era": "Semi-humaines", "FOR": 1, "AGI": 0, "INT": 0, "PER": -1, "MAI": 1, "CHA": 0, "special": "Petits, costauds"}, {"name": "Orc commun", "era": "Anciennes", "FOR": 2, "AGI": 0, "INT": -1, "PER": -1, "MAI": 1, "CHA": 0, "special": "Vision nocturne"}, {"name": "Homme-chat", "era": "Anciennes", "FOR": -1, "AGI": 2, "INT": 0, "PER": 1, "MAI": -1, "CHA": 0, "special": "Vision nocturne, griffes"}, {"name": "Felas (voleurs)", "era": "Semi-humaines", "FOR": -1, "AGI": 1, "INT": 0, "PER": 1, "MAI": -1, "CHA": 0, "special": "Vision nocturne"}, {"name": "Souatar", "era": "Semi-humaines", "FOR": 0, "AGI": -1, "INT": 1, "PER": 0, "MAI": 1, "CHA": 0, "special": "Aveugles, sonar"}, {"name": "Gnolain (Paysan)", "era": "Vénérables", "FOR": 1, "AGI": 0, "INT": 0, "PER": 1, "MAI": 2, "CHA": -1, "special": ""}, {"name": "Gehanga", "era": "Anciennes", "FOR": -1, "AGI": -1, "INT": 2, "PER": 1, "MAI": 0, "CHA": 0, "special": "Télé-empathie"}, {"name": "Kobold (cupide)", "era": "Vénérables", "FOR": -1, "AGI": 1, "INT": 2, "PER": 1, "MAI": -1, "CHA": 0, "special": "Télépathie animale"}, {"name": "Lutin (farceurs)", "era": "Anciennes", "FOR": -1, "AGI": 1, "INT": 2, "PER": 0, "MAI": -1, "CHA": 0, "special": "Lancer de sorts +1"}, {"name": "Arcanes (march.)", "era": "Vénérables", "FOR": 0, "AGI": -1, "INT": 2, "PER": 1, "MAI": 0, "CHA": 0, "special": "Télé-empathie"}, {"name": "Drasniens", "era": "Humaines", "FOR": -1, "AGI": 0, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": "Petits, menus, voleurs"}, {"name": "Sendar", "era": "Humaines", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 1, "CHA": -1, "special": "Pacifistes, plutôt petits"}, {"name": "Terrien", "era": "Humaines", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 0, "special": ""}, {"name": "Elohim", "era": "Anciennes", "FOR": 0, "AGI": 2, "INT": 0, "PER": 0, "MAI": -1, "CHA": 1, "special": "Att. psy, Télépathie"},
+    // --- ajouts depuis src/races-extra.json ---
+    {"name": "Conjuration de feu", "era": "Créatures conjurées", "FOR": 1, "AGI": 1, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": ""},
+    {"name": "Conjuration de lune", "era": "Créatures conjurées", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 0, "special": ""},
+    {"name": "Conjuration de soleil", "era": "Créatures conjurées", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 0, "special": ""},
+    {"name": "Conjuration de magique", "era": "Créatures conjurées", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 0, "special": ""}
+  ];
 
   // Probabilités de croisement par époque à l'époque actuelle du jeu.
   // "Originelles" est éteinte : absente du tirage pondéré, mais reste sélectionnable en tirage manuel.
@@ -1277,7 +1283,11 @@ window.addEventListener('error', function (e) {
     "Antédiluviennes": 0.01
   };
 
-  const ALL_ERAS = ["Humaines", "Semi-humaines", "Anciennes", "Vénérables", "Antédiluviennes", "Originelles"];
+  const ALL_ERAS = ["Humaines", "Semi-humaines", "Anciennes", "Vénérables", "Antédiluviennes", "Originelles",
+    // --- ajouts depuis src/races-extra.json ---
+    "Créatures conjurées",
+    "Créatures divines"
+  ];
 
   // Niveaux d'expérience : chaque niveau donne un bonus total de points à répartir sur les 6 Traits,
   // sans jamais dépasser (valeur raciale + 2) sur un même Trait. Détermine aussi le nombre de
@@ -1351,31 +1361,43 @@ window.addEventListener('error', function (e) {
     "Marin éthéré": ["Navigation éthérée", "Escalade", "Armes de jet", "Baratin", "Jeu", "Artillerie éthérée"],
     "Canonnier éthéré": ["Artillerie éthérée", "Observation", "Systèmes éthérés", "Intimidation", "Navigation éthérée"],
     "Herboriste": ["Herboristerie", "Savoirs théoriques", "Investigation", "Médecine", "Négoce (entre pros)"],
-    "Eclaireur": ["Chasse/Pistage", "Discrétion", "Orientation", "Survie", "Armes de jet"],
+    "Éclaireur": ["Chasse/Pistage", "Discrétion", "Orientation", "Survie", "Armes de jet"],
     "Palefrenier": ["Équitation", "Dressage", "Soins Vétérinaires", "Observation", "Baratin"],
     "Ingénieur militaire": ["Génie/Fortifications", "Bricolage", "Artisanat", "Stratégie militaire", "Observation"],
     "Marin": ["Navigation maritime", "Natation", "Armes de jet", "Orientation", "Baratin"],
     "Assassin": ["Discrétion", "Herboristerie", "Crochetage", "Armes de jet", "Bluff"],
-    "Politicien": ["Étiquette", "Baratin", "Bluff", "Discrétion", "Radio couloir"]
+    // --- ajouts depuis src/metiers-extra.json ---
+    "Apprenti": ["Artisanat", "Savoirs théoriques", "Bricolage"],
+    "Cuisinier": ["Cuisine", "Savoirs théoriques", "Négoce (entre pros)", "Commandement"]
   };
 
   // Compétences de combat comptant dans le calcul des Points de Santé.
   const COMBAT_SKILLS = ["Armes de Mêlée à une main", "Armes de mêlée à 2 mains", "Armes de jet", "Armes de Lancer", "Arts Martiaux"];
 
   const TABLES = {
-    metier: ['Artisan', 'Assassin', 'Aubergiste', 'Canonnier éthéré', 'Capitaine éthéré', 'Danseur', 'Eclaireur', 'Forgeron', 'Garde du corps', 'Haut Mage',
-	'Herboriste', 'Ingénieur militaire', 'Ingénieur éthéré', 'Marchand', 'Marin', 'Marin éthéré', 'Mendiant', 'Médecin', 'Ménestrel', 'Officier', 'Palefrenier',
-	'Politicien', 'Prêtre', 'Serveur', 'Soldat de ligne', 'Soldat de tir', 'Soldat terrien', 'Sous-Officier', 'Voleur'],
-    trait: ['Aucun', 'Bavard incorrigible', 'Boiteux', 'Borgne', 'Brûlures anciennes', 'Bègue', 'Calculateur froid', 'Cicatrice au visage',
-	'Collectionneur compulsif', "Craint l'autorité", 'Crâne rasé', 'Dents en or', "Direct jusqu'à la brutalité", 'Doigts manquants', "Econome à l'excès",
-	"Empathique à l'excès", 'Fataliste', 'Flatteur', 'Fume la pipe sans arrêt', "Généreux à l'excès", 'Hyperactif', 'Impulsif', 'Insomniaque',
-	'Jure constamment', 'Kleptomane', 'Mains calleuses', 'Menteur compulsif', 'Mâchouille quelque chose en permanence', 'Mémoire eidétique',
-	'Nostalgique du passé', 'Obsédé du détail', 'Paranoïaque', 'Parle tout seul', 'Peau tachetée', 'Perfectionniste', "Peur de l'eau",
-	'Peur des hauteurs', 'Piercings multiples', 'Provocateur', 'Rit nerveusement', 'Rituel superstitieux (sel, portes...)', 'Rêveur distrait',
-	'Superstitieux', 'Taciturne', 'Tatouages tribaux', 'Toujours en retard', 'Toujours ivre', 'Très grand pour sa race', 'Très petit pour sa race',
-	'Voix rauque', 'Yeux vairons'],
-    disposition: ['Agressif', 'Amical', 'Autoritaire', 'Bavard', 'Chaleureux', 'Condescendant', 'Craintif', 'Curieux', 'Distant', 'Enjoué',
-	'Flatteur', 'Froid', 'Hostile', 'Indifférent', 'Manipulateur', 'Méfiant', 'Mélancolique', 'Nerveux', 'Neutre', 'Réservé', 'Serviable']
+    // Liste des Métiers : déduite des clés de METIER_SKILLS (un seul endroit à compléter), triée A→Z.
+    metier: Object.keys(METIER_SKILLS).sort((a, b) => a.localeCompare(b, 'fr')),
+    trait: [
+      "Cicatrice au visage", "Borgne", "Tatouages tribaux", "Boiteux", "Voix rauque",
+      "Très grand pour sa race", "Très petit pour sa race", "Mains calleuses", "Yeux vairons",
+      "Dents en or", "Piercings multiples", "Crâne rasé", "Peau tachetée", "Doigts manquants",
+      "Brûlures anciennes", "Superstitieux", "Paranoïaque", "Mémoire eidétique", "Insomniaque",
+      "Kleptomane", "Peur des hauteurs", "Peur de l'eau", "Obsédé du détail", "Rêveur distrait",
+      "Calculateur froid", "Empathique à l'excès", "Nostalgique du passé", "Fataliste",
+      "Perfectionniste", "Impulsif", "Bègue", "Rit nerveusement", "Toujours ivre",
+      "Parle tout seul", "Jure constamment", "Mâchouille quelque chose en permanence",
+      "Collectionneur compulsif", "Toujours en retard", "Hyperactif", "Économe à l'excès",
+      "Généreux à l'excès", "Menteur compulsif", "Direct jusqu'à la brutalité", "Flatteur",
+      "Craint l'autorité", "Provocateur", "Taciturne", "Bavard incorrigible",
+      "Rituel superstitieux (sel, portes...)", "Fume la pipe sans arrêt",
+      "Aucun"
+    ],
+    disposition: [
+      "Amical", "Chaleureux", "Enjoué", "Serviable", "Bavard", "Curieux",
+      "Neutre", "Indifférent", "Réservé", "Distant", "Nerveux", "Craintif",
+      "Méfiant", "Froid", "Condescendant", "Autoritaire", "Manipulateur",
+      "Flatteur", "Mélancolique", "Hostile", "Agressif"
+    ]
   };
   // --- Génération de noms par famille de sonorités ---
   // Chaque race est rattachée à une famille phonétique (regroupement thématique, pas lié à
@@ -1414,7 +1436,12 @@ window.addEventListener('error', function (e) {
     // Terrienne (technologique)
     "Terrien": "Terrienne",
     // Commune (humains et apparentés au parler familier)
-    "Sendar": "Commune", "Dotrak": "Commune", "Alorien": "Commune", "Felas (voleurs)": "Commune"
+    "Sendar": "Commune", "Dotrak": "Commune", "Alorien": "Commune", "Felas (voleurs)": "Commune",
+    // --- ajouts depuis src/races-extra.json ---
+    "Conjuration de feu": "Conjuree",
+    "Conjuration de lune": "Conjuree",
+    "Conjuration de soleil": "Conjuree",
+    "Conjuration de magique": "Conjuree"
   };
 
   const FAMILY_SYLLABLES = {
@@ -1478,7 +1505,9 @@ window.addEventListener('error', function (e) {
     "Palefrenier": ["Bride-Douce", "l'Ami-des-Bêtes", "Main-Calme", "la Patiente", "Sabot-Sûr", "le Soigneux", "Crinière-Brossée", "la Douce"],
     "Ingénieur militaire": ["Pierre-Angulaire", "le Bâtisseur", "Plan-Précis", "la Rigoureuse", "Mur-Solide", "l'Architecte", "Poutre-Sûre", "la Constructrice"],
     "Marin": ["Sel-aux-Yeux", "le Loup-de-Mer", "Vent-Debout", "la Tempétueuse", "Corde-Rêche", "l'Increvable", "Horizon-Lointain", "la Marinière"],
-    "Assassin": ["Silence-Mortel", "la Lame-Discrète", "Pas-Feutré", "l'Invisible", "Poison-Doux", "la Furtive", "Ombre-Silencieuse", "le Sans-Nom"]
+    "Assassin": ["Silence-Mortel", "la Lame-Discrète", "Pas-Feutré", "l'Invisible", "Poison-Doux", "la Furtive", "Ombre-Silencieuse", "le Sans-Nom"],
+    // --- ajouts depuis src/metiers-extra.json ---
+    "Cuisinier": ["Pot-au-feu", "Bonne-pâte", "Gamelle", "Tambouille"]
   };
 
   // Familles où le nom de famille est un patronyme : un prénom (re-tiré indépendamment) + un
@@ -1558,7 +1587,17 @@ window.addEventListener('error', function (e) {
     return capitalize(generateMarkovWord(model, MARKOV_ORDER, 4, 10));
   }
 
+  // Races dont le nom est tiré dans une liste fixe (ex. « Conjuration de feu ») au lieu d'être
+  // fabriqué par syllabes. Rempli par le bloc généré par build.py depuis races-extra.json.
+  const RACE_NOM_MODELES = {  // ajouts depuis src/races-extra.json
+    "Conjuration de feu": ["Conjuration de feu"],
+    "Conjuration de lune": ["Conjuration de lune"],
+    "Conjuration de soleil": ["Conjuration de soleil"],
+    "Conjuration de magique": ["Conjuration magique"]
+  };
+
   function generateNom(race, metier) {
+    if (RACE_NOM_MODELES[race.name]) return pick(RACE_NOM_MODELES[race.name]);
     const family = NAME_FAMILIES[race.name] || "Commune";
     const prenom = generatePrenomLike(family);
     const suffix = PATRONYMIC_SUFFIX[family];
@@ -1700,18 +1739,53 @@ window.addEventListener('error', function (e) {
     return Math.max(Math.round(mu + sd * gaussSample()), Math.round(lo * 0.6), 20);
   }
 
+  // --- Races « sur mesure » (créatures conjurées, divines…) : tables remplies par le bloc généré
+  // par build.py depuis races-extra.json. Vides tant qu'aucune race supplémentaire n'est déclarée.
+  const SANS_AGE_ERAS = new Set(["Créatures conjurées", "Créatures divines"]);   // époques dont les races n'ont pas d'âge
+  const RACE_PHYSIQUE = {  // ajouts depuis src/races-extra.json
+    "Conjuration de feu": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveux": ["A modifier manuellement"]},
+    "Conjuration de lune": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveux": ["A modifier manuellement"]},
+    "Conjuration de soleil": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveux": ["A modifier manuellement"]},
+    "Conjuration de magique": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveux": ["A modifier manuellement"]}
+  };          // nom de race -> { taille:[min,max], corpulence:[textes], cheveux:[textes] }
+  const RACE_ASPECTS = {  // ajouts depuis src/races-extra.json
+    "Conjuration de feu": "créature conjurée de feu, silhouette de flammes vives, braises et lueur orangée, forme changeante",
+    "Conjuration de lune": "créature conjurée de lune, silhouette argentée et translucide, lueur laiteuse, forme changeante",
+    "Conjuration de soleil": "créature conjurée de soleil, silhouette dorée et éblouissante, rayons de lumière, forme changeante",
+    "Conjuration de magique": "créature conjurée magique, forme étrange et fantaisiste au choix du conjurateur, runes lumineuses, aspect surnaturel"
+  };           // nom de race -> phrase d'aspect pour le prompt de portrait
+
+  function raceSansAge(race) {
+    return !!(race && (race.sans_age || SANS_AGE_ERAS.has(race.era)));
+  }
+
+  // Fourchette de taille [min, max] de la race (surcharge propre à la race, sinon celle de sa famille).
+  function racePlageTaille(race) {
+    const ov = RACE_PHYSIQUE[race.name];
+    if (ov && ov.taille) return ov.taille;
+    const family = NAME_FAMILIES[race.name] || "Commune";
+    return (PHYSICAL_ARCHETYPES[family] || PHYSICAL_ARCHETYPES.Commune).taille;
+  }
+
   function generatePhysique(race, level, sexe) {
     sexe = sexe || pick(['Homme', 'Femme']);
     const family = NAME_FAMILIES[race.name] || "Commune";
-    const archetype = PHYSICAL_ARCHETYPES[family];
-    const age = generateAge(race, level);
+    const archetype = PHYSICAL_ARCHETYPES[family] || PHYSICAL_ARCHETYPES.Commune;
+    const ov = RACE_PHYSIQUE[race.name] || {};
+    const age = raceSansAge(race) ? null : generateAge(race, level);
 
-    const taille = generateTaille(archetype.taille[0], archetype.taille[1], sexe);
-    const corpulence = pick(archetype.corpulence);
-    const couleur = pick(archetype.cheveuxCouleur);
-    const style = pick(archetype.cheveuxStyle);
-    const aBarbe = sexe === 'Homme' ? Math.random() < archetype.barbeProb : family === 'Naine';
-    const cheveux = aBarbe ? `${couleur}, ${style}, barbe ${pick(BARBE_TYPES)}` : `${couleur}, ${style}`;
+    const plage = racePlageTaille(race);
+    const taille = generateTaille(plage[0], plage[1], sexe);
+    const corpulence = pick(ov.corpulence || archetype.corpulence);
+    let cheveux;
+    if (ov.cheveux) {
+      cheveux = pick(ov.cheveux);
+    } else {
+      const couleur = pick(archetype.cheveuxCouleur);
+      const style = pick(archetype.cheveuxStyle);
+      const aBarbe = sexe === 'Homme' ? Math.random() < archetype.barbeProb : family === 'Naine';
+      cheveux = aBarbe ? `${couleur}, ${style}, barbe ${pick(BARBE_TYPES)}` : `${couleur}, ${style}`;
+    }
 
     return { sexe, age, taille, corpulence, cheveux };
   }
@@ -1796,7 +1870,7 @@ window.addEventListener('error', function (e) {
 
   // --- Construction des cases à cocher (Époque et Race) ---
   const epoqueChecks = document.getElementById('epoqueChecks');
-  ALL_ERAS.forEach(era => {
+  ALL_ERAS.filter(era => racesByEra(era).length > 0).forEach(era => {
     const label = document.createElement('label');
     label.className = 'chip';
     label.innerHTML = `<input type="checkbox" value="${era}"> ${era === "Originelles" ? "Originelles (éteinte)" : era}`;
@@ -1806,7 +1880,7 @@ window.addEventListener('error', function (e) {
   });
 
   const raceChecks = document.getElementById('raceChecks');
-  ALL_ERAS.forEach(era => {
+  ALL_ERAS.filter(era => racesByEra(era).length > 0).forEach(era => {
     const group = document.createElement('div');
     group.className = 'era-group';
     const title = document.createElement('div');
@@ -1857,7 +1931,7 @@ window.addEventListener('error', function (e) {
     if (mode === 'epoque') {
       const chosen = getChecked(epoqueChecks);
       const pool = chosen.length ? RACES.filter(r => chosen.includes(r.era)) : RACES;
-      return pick(pool);
+      return pick(pool.length ? pool : RACES);
     }
     // pondéré par époque
     const era = pickWeighted(ERA_WEIGHTS);
@@ -1918,7 +1992,7 @@ window.addEventListener('error', function (e) {
 
   // Poids favorisant un nombre restreint de scores "ciblés" (regroupement des points), sans
   // jamais l'imposer strictement — un tirage occasionnel peut viser les 6 sauvegardes à la fois.
-  const SAUVEGARDE_FOCUS_WEIGHTS = [30, 25, 18, 13, 9, 5]; // poids pour k = 1..6 scores ciblés
+  const SAUVEGARDE_FOCUS_WEIGHTS = [30, 25, 17, 13, 10, 5]; // poids pour k = 1..6 scores ciblés
 
   // Partitionne `total` en `k` parts entières positives, de tailles inégales (tirage par
   // "points de coupure" aléatoires), pour éviter une répartition mécaniquement égale.
@@ -2150,7 +2224,7 @@ window.addEventListener('error', function (e) {
   function buildPortraitPrompt(pnj) {
     const family = NAME_FAMILIES[pnj.race.name] || 'Commune';
     const baseName = pnj.race.name.replace(/\s*\(.*?\)\s*/g, ' ').trim();
-    const look = PORTRAIT_RACE_LOOKS[pnj.race.name] || PORTRAIT_FAMILY_LOOKS[family] || 'humain';
+    const look = RACE_ASPECTS[pnj.race.name] || PORTRAIT_RACE_LOOKS[pnj.race.name] || PORTRAIT_FAMILY_LOOKS[family] || 'humain';
     const specials = PORTRAIT_SPECIAL_LOOKS
       .filter(([kw]) => (pnj.race.special || '').includes(kw))
       .map(([, txt]) => txt);
@@ -2161,7 +2235,7 @@ window.addEventListener('error', function (e) {
     const lines = [PORTRAIT_STYLE.replace("d'un personnage", sujet)];
     lines.push(`Race : ${baseName} (${look}${specials.length ? ', ' + specials.join(', ') : ''}).`);
     if (pnj.physique.sexe) lines.push(`Sexe : ${pnj.physique.sexe === 'Femme' ? 'féminin (femme)' : 'masculin (homme)'}.`);
-    lines.push(`Âge apparent : ${portraitAgeLabel(pnj)}.`);
+    if (!raceSansAge(pnj.race) && pnj.physique.age != null) lines.push(`Âge apparent : ${portraitAgeLabel(pnj)}.`);
     lines.push(`Corpulence : ${String(pnj.physique.corpulence).toLowerCase()}.`);
     lines.push(`Chevelure : ${pnj.physique.cheveux}.`);
     if (marks.length) lines.push(`Signes distinctifs : ${marks.join(', ').toLowerCase()}.`);
@@ -2340,11 +2414,15 @@ window.addEventListener('error', function (e) {
 
     // Repères propres à la race : fourchette de taille (Édition seulement) et espérance de vie.
     const family = NAME_FAMILIES[pnj.race.name] || 'Commune';
-    const archetype = PHYSICAL_ARCHETYPES[family] || PHYSICAL_ARCHETYPES.Commune;
+    const sansAge = raceSansAge(pnj.race);
+    const plageTaille = racePlageTaille(pnj.race);
     const lifespan = (AGE_RANGES_BY_ERA[pnj.race.era] || [])[1];
     const hintStyle = 'text-transform:none;letter-spacing:0;';
     const ageHint = lifespan ? ` <span style="${hintStyle}">(Esp. ${lifespan} ans)</span>` : '';
-    const tailleHint = ro ? '' : ` <span style="${hintStyle}">(${archetype.taille[0]}–${archetype.taille[1]} cm)</span>`;
+    const tailleHint = ro ? '' : ` <span style="${hintStyle}">(${plageTaille[0]}–${plageTaille[1]} cm)</span>`;
+    const ageCell = sansAge ? '' : `<div><div class="k">Âge${ageHint}</div>
+            <span class="unit-field">${fNum('mini-number-sm', pnj.physique.age, 'physique.age')} <span class="unit">ans</span></span>
+          </div>`;
 
     const compsSorted = pnj.competences.map((c, idx) => ({ ...c, idx }))
       .sort((a, b) => (b.mastered - a.mastered));
@@ -2454,9 +2532,7 @@ window.addEventListener('error', function (e) {
           <div><div class="k">Sexe</div>
             ${fSel('mini-select', sexeOptions, pnj.physique.sexe || '—', 'physique.sexe')}
           </div>
-          <div><div class="k">Âge${ageHint}</div>
-            <span class="unit-field">${fNum('mini-number-sm', pnj.physique.age, 'physique.age')} <span class="unit">ans</span></span>
-          </div>
+          ${ageCell}
           <div><div class="k">Taille${tailleHint}</div>
             <span class="unit-field">${fNum('mini-number-sm', pnj.physique.taille, 'physique.taille')} <span class="unit">cm</span></span>
           </div>
@@ -3015,7 +3091,10 @@ window.addEventListener('error', function (e) {
     "Palefrenier": ["Vêtement", "Utilitaire"],
     "Ingénieur militaire": ["Utilitaire", "Armure"],
     "Marin": ["Vêtement", "Utilitaire"],
-    "Assassin": ["Arme", "Vêtement", "Bijou"]
+    "Assassin": ["Arme", "Vêtement", "Bijou"],
+    // --- ajouts depuis src/metiers-extra.json ---
+    "Apprenti": ["Utilitaire", "Vêtement"],
+    "Cuisinier": ["Utilitaire", "Vêtement", "Bijou"]
   };
 
   // Résout la catégorie technique réelle à partir d'une entrée de METIER_CATEGORIES
