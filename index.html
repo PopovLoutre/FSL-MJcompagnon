@@ -948,7 +948,6 @@
   .portrait-btn { position:absolute; bottom:4px; width:22px; height:22px; border-radius:50%; border:1px solid var(--line); background:rgba(20,14,9,.85); color:var(--parchment); font-size:11px; line-height:1; cursor:pointer; padding:0; }
   .portrait-change.portrait-btn { left:4px; }
   .portrait-remove { right:4px; }
-  #mespnjResults.combat-view .card.mode-read .portrait-box { display:none; }
   #portraitViewer { position:fixed; inset:0; z-index:9999; background:rgba(8,5,3,.94); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:16px; cursor:zoom-out; }
   #portraitViewer img { max-width:100%; max-height:100%; object-fit:contain; border-radius:6px; }
 
@@ -1268,9 +1267,10 @@ window.addEventListener('error', function (e) {
   const RACES = [{"name": "Sindars (Ht-Elfe)", "era": "Originelles", "FOR": -1, "AGI": 3, "INT": 0, "PER": 2, "MAI": -1, "CHA": 3, "special": "Jets magie & Mana +3"}, {"name": "Khuzdûl", "era": "Originelles", "FOR": 3, "AGI": 0, "INT": 1, "PER": -1, "MAI": 3, "CHA": 0, "special": "Rés.magique 50%"}, {"name": "Hobbits", "era": "Originelles", "FOR": 0, "AGI": 0, "INT": 3, "PER": 3, "MAI": 1, "CHA": 0, "special": "Perception de la magie"}, {"name": "Eldars (purs)", "era": "Antédiluviennes", "FOR": -1, "AGI": 2, "INT": 0, "PER": 1, "MAI": -1, "CHA": 3, "special": "Mana +2 / niveau"}, {"name": "Sirlings (exilés)", "era": "Antédiluviennes", "FOR": -1, "AGI": 3, "INT": 2, "PER": 0, "MAI": 0, "CHA": 0, "special": "Jets magie +2"}, {"name": "Gobelach (arboric)", "era": "Vénérables", "FOR": 0, "AGI": 2, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": "Queue préhensile"}, {"name": "Ishtar (maléf.)", "era": "Antédiluviennes", "FOR": -1, "AGI": 3, "INT": 0, "PER": 2, "MAI": -1, "CHA": 1, "special": "Mana +2 / niveau"}, {"name": "Rasha (tigres)", "era": "Antédiluviennes", "FOR": 0, "AGI": 2, "INT": 0, "PER": 2, "MAI": 0, "CHA": 1, "special": "Griffes rétractiles"}, {"name": "Khuzun (monta.)", "era": "Antédiluviennes", "FOR": 3, "AGI": 0, "INT": 1, "PER": -1, "MAI": 2, "CHA": 0, "special": "Rés. magique 30%"}, {"name": "Troll", "era": "Antédiluviennes", "FOR": 3, "AGI": -1, "INT": -1, "PER": 1, "MAI": 1, "CHA": 0, "special": "Armure 2 naturelle"}, {"name": "Khuzdâal", "era": "Antédiluviennes", "FOR": 2, "AGI": -1, "INT": 1, "PER": 0, "MAI": 3, "CHA": 0, "special": "Rés. Magique 30%"}, {"name": "Gnome (villes)", "era": "Antédiluviennes", "FOR": -1, "AGI": 1, "INT": 3, "PER": 2, "MAI": -1, "CHA": 0, "special": "Jets enchantement +2"}, {"name": "Pied-velu (comté)", "era": "Antédiluviennes", "FOR": 0, "AGI": 0, "INT": 0, "PER": 3, "MAI": 2, "CHA": -1, "special": "Perception de la magie"}, {"name": "Halfling (marchand)", "era": "Anciennes", "FOR": 1, "AGI": 0, "INT": 0, "PER": 1, "MAI": 1, "CHA": -1, "special": ""}, {"name": "Ogre", "era": "Antédiluviennes", "FOR": 3, "AGI": 0, "INT": 1, "PER": 0, "MAI": 1, "CHA": -1, "special": "Rés. magique 20%"}, {"name": "Fyloadaele (eau)", "era": "Vénérables", "FOR": -1, "AGI": 2, "INT": 1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Amphibien"}, {"name": "Sylvaele (forêts)", "era": "Vénérables", "FOR": -1, "AGI": 2, "INT": 0, "PER": 1, "MAI": -1, "CHA": 1, "special": "Mana +1/niveau"}, {"name": "Illithid", "era": "Antédiluviennes", "FOR": -1, "AGI": 1, "INT": 3, "PER": 0, "MAI": 0, "CHA": 0, "special": "Contrôle mental"}, {"name": "Méduses (eau)", "era": "Anciennes", "FOR": -1, "AGI": 0, "INT": 2, "PER": -1, "MAI": 0, "CHA": 1, "special": "Regard paralysant"}, {"name": "Varegh (vikings)", "era": "Anciennes", "FOR": 0, "AGI": 2, "INT": -1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Amphibiens"}, {"name": "Sirènes (eau)", "era": "Semi-humaines", "FOR": -1, "AGI": 0, "INT": 1, "PER": -1, "MAI": 0, "CHA": 2, "special": "Amphibien"}, {"name": "Elfaele (bois)", "era": "Anciennes", "FOR": -1, "AGI": 2, "INT": 0, "PER": 0, "MAI": 0, "CHA": 1, "special": ""}, {"name": "Elf gris (voyageurs)", "era": "Anciennes", "FOR": -1, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 2, "special": "Vision nocturne"}, {"name": "Elfant (commun)", "era": "Anciennes", "FOR": 0, "AGI": 1, "INT": 0, "PER": 0, "MAI": 0, "CHA": 1, "special": "Mana +1/niveau"}, {"name": "Grob (nomades)", "era": "Anciennes", "FOR": 0, "AGI": 2, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "1 mois sans boire"}, {"name": "Gobelin (pillards)", "era": "Semi-humaines", "FOR": -1, "AGI": 1, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "Résist. poison&maladie"}, {"name": "Khuzdin (monta.)", "era": "Vénérables", "FOR": 2, "AGI": 0, "INT": 1, "PER": -1, "MAI": 1, "CHA": 0, "special": "Rés. magique 20%"}, {"name": "Nain gris (cités)", "era": "Anciennes", "FOR": 2, "AGI": 0, "INT": 0, "PER": -1, "MAI": 1, "CHA": 0, "special": "Rés. magique 10%"}, {"name": "Minathros", "era": "Vénérables", "FOR": 2, "AGI": -1, "INT": 0, "PER": 1, "MAI": 1, "CHA": 0, "special": "Cornes"}, {"name": "Varach (dominat.)", "era": "Vénérables", "FOR": 1, "AGI": 1, "INT": -1, "PER": 2, "MAI": 0, "CHA": 0, "special": "Rés. Chaud/froid"}, {"name": "Tsrang (voyages)", "era": "Anciennes", "FOR": 1, "AGI": 1, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "Rés. Chaud/froid"}, {"name": "H.-lézard (désert)", "era": "Semi-humaines", "FOR": 1, "AGI": 0, "INT": -1, "PER": 1, "MAI": 0, "CHA": 0, "special": "Rés. Chaud/froid"}, {"name": "Gnomer (grottes)", "era": "Vénérables", "FOR": 0, "AGI": -1, "INT": 2, "PER": 0, "MAI": 1, "CHA": 0, "special": "Infravision"}, {"name": "Minautore (merc.)", "era": "Anciennes", "FOR": 2, "AGI": -1, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": "Cornes"}, {"name": "Dotrak", "era": "Humaines", "FOR": 1, "AGI": 0, "INT": -1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Nomades du désert"}, {"name": "Alorien", "era": "Humaines", "FOR": -1, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 1, "special": "Commun des cités"}, {"name": "Cheresque", "era": "Humaines", "FOR": 0, "AGI": 1, "INT": -1, "PER": 0, "MAI": 0, "CHA": 0, "special": "Marins"}, {"name": "Ergegh (orc marais)", "era": "Vénérables", "FOR": 1, "AGI": 0, "INT": 1, "PER": -1, "MAI": 2, "CHA": 0, "special": "Rés. maladies"}, {"name": "Sharkar (maléf.)", "era": "Vénérables", "FOR": 2, "AGI": 0, "INT": 1, "PER": -1, "MAI": 1, "CHA": -1, "special": "Rés. maladies"}, {"name": "Urkur (esclavage)", "era": "Anciennes", "FOR": 2, "AGI": 0, "INT": 1, "PER": 0, "MAI": 0, "CHA": -1, "special": ""}, {"name": "Noriog", "era": "Humaines", "FOR": 1, "AGI": 0, "INT": 1, "PER": 0, "MAI": -1, "CHA": -1, "special": "Dominateurs, guerriers"}, {"name": "Keldrun (bâtisseur)", "era": "Semi-humaines", "FOR": 1, "AGI": 0, "INT": 0, "PER": -1, "MAI": 1, "CHA": 0, "special": "Petits, costauds"}, {"name": "Orc commun", "era": "Anciennes", "FOR": 2, "AGI": 0, "INT": -1, "PER": -1, "MAI": 1, "CHA": 0, "special": "Vision nocturne"}, {"name": "Homme-chat", "era": "Anciennes", "FOR": -1, "AGI": 2, "INT": 0, "PER": 1, "MAI": -1, "CHA": 0, "special": "Vision nocturne, griffes"}, {"name": "Felas (voleurs)", "era": "Semi-humaines", "FOR": -1, "AGI": 1, "INT": 0, "PER": 1, "MAI": -1, "CHA": 0, "special": "Vision nocturne"}, {"name": "Souatar", "era": "Semi-humaines", "FOR": 0, "AGI": -1, "INT": 1, "PER": 0, "MAI": 1, "CHA": 0, "special": "Aveugles, sonar"}, {"name": "Gnolain (Paysan)", "era": "Vénérables", "FOR": 1, "AGI": 0, "INT": 0, "PER": 1, "MAI": 2, "CHA": -1, "special": ""}, {"name": "Gehanga", "era": "Anciennes", "FOR": -1, "AGI": -1, "INT": 2, "PER": 1, "MAI": 0, "CHA": 0, "special": "Télé-empathie"}, {"name": "Kobold (cupide)", "era": "Vénérables", "FOR": -1, "AGI": 1, "INT": 2, "PER": 1, "MAI": -1, "CHA": 0, "special": "Télépathie animale"}, {"name": "Lutin (farceurs)", "era": "Anciennes", "FOR": -1, "AGI": 1, "INT": 2, "PER": 0, "MAI": -1, "CHA": 0, "special": "Lancer de sorts +1"}, {"name": "Arcanes (march.)", "era": "Vénérables", "FOR": 0, "AGI": -1, "INT": 2, "PER": 1, "MAI": 0, "CHA": 0, "special": "Télé-empathie"}, {"name": "Drasniens", "era": "Humaines", "FOR": -1, "AGI": 0, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": "Petits, menus, voleurs"}, {"name": "Sendar", "era": "Humaines", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 1, "CHA": -1, "special": "Pacifistes, plutôt petits"}, {"name": "Terrien", "era": "Humaines", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 0, "special": ""}, {"name": "Elohim", "era": "Anciennes", "FOR": 0, "AGI": 2, "INT": 0, "PER": 0, "MAI": -1, "CHA": 1, "special": "Att. psy, Télépathie"},
     // --- ajouts depuis src/races-extra.json ---
     {"name": "Conjuration de feu", "era": "Créatures conjurées", "FOR": 1, "AGI": 1, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": ""},
-    {"name": "Conjuration de lune", "era": "Créatures conjurées", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 0, "special": ""},
-    {"name": "Conjuration de soleil", "era": "Créatures conjurées", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 0, "special": ""},
-    {"name": "Conjuration de magique", "era": "Créatures conjurées", "FOR": 0, "AGI": 0, "INT": 0, "PER": 0, "MAI": 0, "CHA": 0, "special": ""}
+    {"name": "Conjuration de lune", "era": "Créatures conjurées", "FOR": 0, "AGI": 1, "INT": 0, "PER": 1, "MAI": 0, "CHA": 1, "special": ""},
+    {"name": "Conjuration de soleil", "era": "Créatures conjurées", "FOR": 1, "AGI": 0, "INT": 1, "PER": 0, "MAI": 1, "CHA": 0, "special": ""},
+    {"name": "Conjuration de magique", "era": "Créatures conjurées", "FOR": 0, "AGI": 0, "INT": 1, "PER": 0, "MAI": 1, "CHA": 1, "special": ""},
+    {"name": "Gorgalith", "era": "Antédiluviennes", "FOR": 2, "AGI": 2, "INT": 0, "PER": 2, "MAI": -1, "CHA": -1, "special": "Peau de pierre, incrustations de gemmes décoratives"}
   ];
 
   // Probabilités de croisement par époque à l'époque actuelle du jeu.
@@ -1441,7 +1441,8 @@ window.addEventListener('error', function (e) {
     "Conjuration de feu": "Conjuree",
     "Conjuration de lune": "Conjuree",
     "Conjuration de soleil": "Conjuree",
-    "Conjuration de magique": "Conjuree"
+    "Conjuration de magique": "Conjuree",
+    "Gorgalith": "Chtonienne"
   };
 
   const FAMILY_SYLLABLES = {
@@ -1507,7 +1508,7 @@ window.addEventListener('error', function (e) {
     "Marin": ["Sel-aux-Yeux", "le Loup-de-Mer", "Vent-Debout", "la Tempétueuse", "Corde-Rêche", "l'Increvable", "Horizon-Lointain", "la Marinière"],
     "Assassin": ["Silence-Mortel", "la Lame-Discrète", "Pas-Feutré", "l'Invisible", "Poison-Doux", "la Furtive", "Ombre-Silencieuse", "le Sans-Nom"],
     // --- ajouts depuis src/metiers-extra.json ---
-    "Cuisinier": ["Pot-au-feu", "Bonne-pâte", "Gamelle", "Tambouille"]
+    "Cuisinier": ["Pot-au-feu", "Bonne-pâte", "Gamelle", "Tambouille", "Brochette", "Pâté", "Demi-feu", "Tambouille"]
   };
 
   // Familles où le nom de famille est un patronyme : un prénom (re-tiré indépendamment) + un
@@ -1743,16 +1744,18 @@ window.addEventListener('error', function (e) {
   // par build.py depuis races-extra.json. Vides tant qu'aucune race supplémentaire n'est déclarée.
   const SANS_AGE_ERAS = new Set(["Créatures conjurées", "Créatures divines"]);   // époques dont les races n'ont pas d'âge
   const RACE_PHYSIQUE = {  // ajouts depuis src/races-extra.json
-    "Conjuration de feu": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveux": ["A modifier manuellement"]},
+    "Conjuration de feu": {"taille": [30, 220], "corpulence": ["A modifier"], "cheveux": ["A modifier"]},
     "Conjuration de lune": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveux": ["A modifier manuellement"]},
     "Conjuration de soleil": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveux": ["A modifier manuellement"]},
-    "Conjuration de magique": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveux": ["A modifier manuellement"]}
+    "Conjuration de magique": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveux": ["A modifier manuellement"]},
+    "Gorgalith": {"taille": [160, 220], "cheveux": ["Aucun"]}
   };          // nom de race -> { taille:[min,max], corpulence:[textes], cheveux:[textes] }
   const RACE_ASPECTS = {  // ajouts depuis src/races-extra.json
-    "Conjuration de feu": "créature conjurée de feu, silhouette de flammes vives, braises et lueur orangée, forme changeante",
-    "Conjuration de lune": "créature conjurée de lune, silhouette argentée et translucide, lueur laiteuse, forme changeante",
-    "Conjuration de soleil": "créature conjurée de soleil, silhouette dorée et éblouissante, rayons de lumière, forme changeante",
-    "Conjuration de magique": "créature conjurée magique, forme étrange et fantaisiste au choix du conjurateur, runes lumineuses, aspect surnaturel"
+    "Conjuration de feu": "créature conjurée de feu, de forme définie par le conjurateur (décrite dans la 'corpulence'), d'aspect visiblement surnaturel",
+    "Conjuration de lune": "créature conjurée de feu, de forme définie par le conjurateur (décrite dans la 'corpulence'), d'aspect visiblement surnaturel",
+    "Conjuration de soleil": "créature conjurée de feu, de forme définie par le conjurateur (décrite dans la 'corpulence'), d'aspect visiblement surnaturel",
+    "Conjuration de magique": "créature conjurée de feu, de forme définie par le conjurateur (décrite dans la 'corpulence'), d'aspect visiblement surnaturel",
+    "Gorgalith": "peau de pierre rugueuse (granit, basalte, grès, ardoise, stéatite), généralement incrustée de gemmes semi-précieuses ou précieuses en guise de décoration (à la place de tatouages ou de piercings)"
   };           // nom de race -> phrase d'aspect pour le prompt de portrait
 
   function raceSansAge(race) {
@@ -1992,7 +1995,7 @@ window.addEventListener('error', function (e) {
 
   // Poids favorisant un nombre restreint de scores "ciblés" (regroupement des points), sans
   // jamais l'imposer strictement — un tirage occasionnel peut viser les 6 sauvegardes à la fois.
-  const SAUVEGARDE_FOCUS_WEIGHTS = [30, 25, 17, 13, 10, 5]; // poids pour k = 1..6 scores ciblés
+  const SAUVEGARDE_FOCUS_WEIGHTS = [30, 25, 18, 13, 9, 5]; // poids pour k = 1..6 scores ciblés
 
   // Partitionne `total` en `k` parts entières positives, de tailles inégales (tirage par
   // "points de coupure" aléatoires), pour éviter une répartition mécaniquement égale.
@@ -2503,9 +2506,11 @@ window.addEventListener('error', function (e) {
       : (saved
         ? `<button class="btn-save" data-id="${id}" style="flex:1 1 45%;">Mettre à jour</button>
           <button class="btn-delete btn-cancel" data-id="${id}" style="flex:1 1 45%;">Annuler</button>
-          <button class="btn-delete" data-id="${id}" style="flex:1 1 100%;">Supprimer</button>`
+          <button class="btn-delete btn-dup" data-id="${id}" style="flex:1 1 45%;" title="Crée un double : nouveau nom, disposition, sexe, âge, taille, corpulence, chevelure et traits particuliers ; le reste est conservé">⎘ Dupliquer</button>
+          <button class="btn-delete" data-id="${id}" style="flex:1 1 45%;">Supprimer</button>`
         : `<button class="btn-save" data-id="${id}" style="flex:1 1 60%;">Enregistrer</button>
-          <button class="btn-delete btn-discard" data-id="${id}" style="flex:1 1 35%;">Défausser</button>`);
+          <button class="btn-delete btn-discard" data-id="${id}" style="flex:1 1 35%;">Défausser</button>
+          <button class="btn-delete btn-dup" data-id="${id}" style="flex:1 1 100%;" title="Crée un double : nouveau nom, disposition, sexe, âge, taille, corpulence, chevelure et traits particuliers ; le reste est conservé">⎘ Dupliquer</button>`);
 
     return `
       <div class="card${ro ? ' mode-read' : ''}" data-card-id="${id}" data-saved="${saved ? 1 : 0}" data-mode="${mode}" data-notes="${notesOpen ? 1 : 0}"${opts.instant ? ' style="animation:none"' : ''}>
@@ -2634,6 +2639,22 @@ window.addEventListener('error', function (e) {
     const saved = over.saved !== undefined ? over.saved : cardEl.dataset.saved === '1';
     const mode = over.mode || cardEl.dataset.mode || (saved ? 'read' : 'edit');
     cardEl.outerHTML = renderCard(pnj, { saved, mode, instant: true, notesOpen: cardEl.dataset.notes === '1' });
+  }
+
+  // --- Duplication : crée un double NON enregistré. Sont retirés au hasard : nom, disposition, sexe,
+  // âge, taille, corpulence, chevelure et traits particuliers. Sont conservés : Traits, Sauvegardes,
+  // Compétences (niveaux, bonus, PS/PM), objets magiques, Tags (groupe), race, métier et niveau.
+  // Le portrait et les notes ne sont pas copiés (ils appartiennent au personnage d'origine).
+  function duplicatePnj(src) {
+    const copy = JSON.parse(JSON.stringify(src));
+    copy.id = newId('pnj');
+    delete copy.portrait; delete copy.portraitPrompt; delete copy.notes; delete copy.updatedAt;
+    copy.prenom = generateNom(copy.race, copy.metier);
+    copy.disposition = pick(TABLES.disposition);
+    copy.physique = generatePhysique(copy.race, copy.level);
+    copy.trait = sampleWithoutReplacement(TABLES.trait.filter(t => t !== 'Aucun'), 2).join(', ');
+    copy.psActuel = copy.ps; copy.pmActuel = copy.pm;
+    return copy;
   }
 
   // --- Portrait : import (redimensionné + JPEG pour rester léger dans le stockage local) et plein écran ---
@@ -2773,6 +2794,17 @@ window.addEventListener('error', function (e) {
           delete pnj.portrait; delete pnj.portraitPrompt;
           refreshCard(pnj, pRemove.closest('.card'));
         }
+        return;
+      }
+      const dupBtn = e.target.closest('.btn-dup');
+      if (dupBtn) {
+        const src = PNJ_REGISTRY.get(dupBtn.dataset.id);
+        if (!src) return;
+        const card = dupBtn.closest('.card');
+        const copy = duplicatePnj(src);
+        card.insertAdjacentHTML('afterend', renderCard(copy, { saved: false, mode: 'edit' }));
+        const created = card.nextElementSibling;
+        if (created && created.scrollIntoView) created.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         return;
       }
       // Fiche générée mais pas enregistrée : on la retire simplement de l'écran (rien n'est stocké).
