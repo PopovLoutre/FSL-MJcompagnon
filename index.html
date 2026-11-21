@@ -998,6 +998,41 @@
   .group-banner { display:flex; align-items:center; gap:10px; margin:0 0 12px; padding:10px 12px; border:1px solid var(--brass); border-radius:10px; background:rgba(0,0,0,.2); color:var(--parchment); font-size:13px; line-height:1.4; }
   .group-banner .gb-text { flex:1 1 auto; }
   .group-banner button { flex:0 0 auto; border:none; border-radius:8px; padding:9px 12px; background:linear-gradient(180deg, var(--wax-bright), var(--wax)); color:#f4e9dc; font-family:'Cinzel',serif; font-size:12px; letter-spacing:.05em; cursor:pointer; }
+
+  /* ===== Classes utilitaires des fiches (remplacent d'anciens styles écrits dans le HTML généré par le code) ===== */
+  /* Champs en mode Lecture */
+  .card .ro-field { border-bottom-color: transparent; white-space: normal; overflow-wrap: anywhere; }
+  .hint { text-transform: none; letter-spacing: 0; }
+  .span-all { grid-column: 1 / -1; }
+  .grow-min0 { flex: 1; min-width: 0; }
+  .card.no-anim { animation: none; }
+  .race-line.race-line-tight { margin-bottom: 0; }
+  .meta-grid.phys-block { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .tp-row { display: flex; gap: 10px; align-items: flex-end; }
+  .comp-help { font-size: 11px; color: var(--parchment-dim); margin: -2px 0 6px; }
+  /* Compétences */
+  .comp-row .mark.mark-empty { display: inline-block; width: 7px; }
+  .comp-edit { padding: 5px 0 7px; }
+  .comp-row.comp-row-2 { padding-left: 16px; gap: 6px; }
+  .bonus-wrap { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; }
+  .bonus-label { font-size: 10px; color: var(--parchment-dim); }
+  .comp-row.comp-row-2 span .score-input.bonus-input { width: 36px; }
+  /* Équipement */
+  .equip-item.equip-item--ro { border-bottom: none; margin-bottom: 6px; padding-bottom: 0; }
+  .equip-item.equip-item--edit { display: flex; align-items: flex-start; gap: 8px; border-bottom: none; margin-bottom: 8px; padding-bottom: 0; }
+  /* Boutons de ligne (✕, + Ajouter) et bouton « Copier le prompt » */
+  button.btn-row-del { flex: 0 0 auto; width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--line); background: transparent; color: var(--parchment-dim); font-size: 12px; line-height: 1; cursor: pointer; padding: 0; }
+  .comp-row button.btn-row-del { margin-left: 14px; }
+  button.btn-row-add, button.btn-copy-prompt { width: 100%; background: transparent; border: 1px dashed var(--line); color: var(--brass-bright); border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 12px; letter-spacing: 0.03em; cursor: pointer; }
+  button.btn-row-add { margin-top: 8px; padding: 8px; }
+  button.btn-copy-prompt { margin-top: 12px; padding: 9px; }
+  textarea.portrait-prompt-out { display: block; width: 100%; margin-top: 8px; background: var(--ink); color: var(--parchment-dim); border: 1px solid var(--line); border-radius: 8px; padding: 8px; font-family: 'Inter', sans-serif; font-size: 12px; line-height: 1.4; resize: vertical; }
+  /* Boutons d'action du bas de fiche : largeurs relatives */
+  .card-actions { flex-wrap: wrap; }
+  .card-actions .act-35 { flex: 1 1 35%; }
+  .card-actions .act-45 { flex: 1 1 45%; }
+  .card-actions .act-60 { flex: 1 1 60%; }
+  .card-actions .act-100 { flex: 1 1 100%; }
 </style>
 <script>
 /* Diagnostic : affiche une erreur JavaScript à l'écran (utile sur téléphone, sans console). */
@@ -1017,7 +1052,7 @@ window.addEventListener('error', function (e) {
 <body>
 <div class="app">
   <header>
-    <div class="eyebrow">Outil de maître du jeu</div>
+    <div class="eyebrow">Outil de maître du jeu (v1.20)</div>
     <h1 id="screenTitle">Création de PNJ</h1>
   </header>
   <div class="sync-banner hidden" id="syncBanner">
@@ -1269,7 +1304,7 @@ window.addEventListener('error', function (e) {
     {"name": "Conjuration de feu", "era": "Créatures conjurées", "FOR": 1, "AGI": 1, "INT": 0, "PER": 1, "MAI": 0, "CHA": 0, "special": ""},
     {"name": "Conjuration de lune", "era": "Créatures conjurées", "FOR": 0, "AGI": 1, "INT": 0, "PER": 1, "MAI": 0, "CHA": 1, "special": ""},
     {"name": "Conjuration de soleil", "era": "Créatures conjurées", "FOR": 1, "AGI": 0, "INT": 1, "PER": 0, "MAI": 1, "CHA": 0, "special": ""},
-    {"name": "Conjuration de magique", "era": "Créatures conjurées", "FOR": 0, "AGI": 0, "INT": 1, "PER": 0, "MAI": 1, "CHA": 1, "special": ""},
+    {"name": "Conjuration de magie", "era": "Créatures conjurées", "FOR": 0, "AGI": 0, "INT": 1, "PER": 0, "MAI": 1, "CHA": 1, "special": ""},
     {"name": "Gorgalith", "era": "Antédiluviennes", "FOR": 2, "AGI": 2, "INT": 0, "PER": 2, "MAI": -1, "CHA": -1, "special": "Peau de pierre (armure 2)"}
   ];
 
@@ -1368,6 +1403,8 @@ window.addEventListener('error', function (e) {
     "Assassin": ["Discrétion", "Herboristerie", "Crochetage", "Armes de jet", "Bluff"],
     // --- ajouts depuis src/metiers-extra.json ---
     "Apprenti": ["Artisanat", "Savoirs théoriques", "Bricolage"],
+    "Sous-officier religieux": ["Foi", "Commandement", "Armes de Mêlée à une main", "Armes de jet", "Armes de mêlée à 2 mains"],
+    "Soldat religieux": ["Foi", "Armes de Mêlée à une main", "Armes de jet", "Armes de mêlée à 2 mains", "Armurerie"],
     "Cuisinier": ["Cuisine", "Savoirs théoriques", "Négoce (entre pros)", "Commandement"]
   };
 
@@ -1441,7 +1478,7 @@ window.addEventListener('error', function (e) {
     "Conjuration de feu": "Conjuree",
     "Conjuration de lune": "Conjuree",
     "Conjuration de soleil": "Conjuree",
-    "Conjuration de magique": "Conjuree",
+    "Conjuration de magie": "Conjuree",
     "Gorgalith": "Chtonienne"
   };
 
@@ -1508,6 +1545,8 @@ window.addEventListener('error', function (e) {
     "Marin": ["Sel-aux-Yeux", "le Loup-de-Mer", "Vent-Debout", "la Tempétueuse", "Corde-Rêche", "l'Increvable", "Horizon-Lointain", "la Marinière"],
     "Assassin": ["Silence-Mortel", "la Lame-Discrète", "Pas-Feutré", "l'Invisible", "Poison-Doux", "la Furtive", "Ombre-Silencieuse", "le Sans-Nom"],
     // --- ajouts depuis src/metiers-extra.json ---
+    "Sous-officier religieux": ["Pensée de...", "Volonté de..."],
+    "Soldat religieux": ["Poing de...", "Volonté de..."],
     "Cuisinier": ["Pot-au-feu", "Bonne-pâte", "Gamelle", "Tambouille", "Brochette", "Pâté", "Demi-feu", "Tambouille"]
   };
 
@@ -1594,7 +1633,7 @@ window.addEventListener('error', function (e) {
     "Conjuration de feu": ["Conjuration de feu"],
     "Conjuration de lune": ["Conjuration de lune"],
     "Conjuration de soleil": ["Conjuration de soleil"],
-    "Conjuration de magique": ["Conjuration magique"]
+    "Conjuration de magie": ["Conjuration magique"]
   };
 
   function generateNom(race, metier) {
@@ -1690,8 +1729,6 @@ window.addEventListener('error', function (e) {
     "Divin": [0.88, 1.00]
   };
 
-  function randInt(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
-
   // Tirage de l'âge : fourchette réelle selon l'Époque de la race, position dans cette fourchette
   // pondérée par le Niveau. Le tirage à l'intérieur de la fenêtre est "triangulaire" (moyenne de
   // 2 tirages) pour resserrer vers le centre de la fenêtre et rendre les bords rares plutôt qu'exclus.
@@ -1744,18 +1781,18 @@ window.addEventListener('error', function (e) {
   // par build.py depuis races-extra.json. Vides tant qu'aucune race supplémentaire n'est déclarée.
   const SANS_AGE_ERAS = new Set(["Créatures conjurées", "Créatures divines"]);   // époques dont les races n'ont pas d'âge
   const RACE_PHYSIQUE = {  // ajouts depuis src/races-extra.json
-    "Conjuration de feu": {"taille": [30, 220], "corpulence": ["A modifier"], "cheveux": ["A modifier"]},
-    "Conjuration de lune": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveux": ["A modifier manuellement"]},
-    "Conjuration de soleil": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveux": ["A modifier manuellement"]},
-    "Conjuration de magique": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveux": ["A modifier manuellement"]},
-    "Gorgalith": {"taille": [160, 220], "cheveux": ["Aucun"]}
-  };          // nom de race -> { taille:[min,max], corpulence:[textes], cheveux:[textes] }
+    "Conjuration de feu": {"taille": [30, 220], "corpulence": ["A modifier"], "cheveuxCouleur": ["A modifier"], "cheveuxStyle": ["A modifier"]},
+    "Conjuration de lune": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveuxCouleur": ["A modifier manuellement"], "cheveuxStyle": ["A modifier manuellement"]},
+    "Conjuration de soleil": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveuxCouleur": ["A modifier manuellement"], "cheveuxStyle": ["A modifier manuellement"]},
+    "Conjuration de magie": {"taille": [30, 220], "corpulence": ["A modifier manuellement"], "cheveuxCouleur": ["A modifier manuellement"], "cheveuxStyle": ["A modifier manuellement"]},
+    "Gorgalith": {"taille": [160, 220], "barbe": 0.5, "cheveuxCouleur": ["gris cendré", "gris argenté", "gris pierre", "gris clair", "gris sombre", "noir basaltique"], "cheveuxStyle": ["courts et hirsutes", "longs et fins", "mi-longs et ébouriffés", "mi-longs", "en catogan", "chauve"]}
+  };          // nom de race -> { taille:[min,max], corpulence:[textes], cheveuxCouleur:[textes], cheveuxStyle:[textes], barbe, barbe_femmes }
   const RACE_ASPECTS = {  // ajouts depuis src/races-extra.json
-    "Conjuration de feu": "créature conjurée de feu, de forme définie par le conjurateur (décrite dans la 'corpulence'), d'aspect visiblement surnaturel",
-    "Conjuration de lune": "créature conjurée de feu, de forme définie par le conjurateur (décrite dans la 'corpulence'), d'aspect visiblement surnaturel",
-    "Conjuration de soleil": "créature conjurée de feu, de forme définie par le conjurateur (décrite dans la 'corpulence'), d'aspect visiblement surnaturel",
-    "Conjuration de magique": "créature conjurée de feu, de forme définie par le conjurateur (décrite dans la 'corpulence'), d'aspect visiblement surnaturel",
-    "Gorgalith": "peau de pierre rugueuse (granit, basalte, grès, ardoise ou stéatite), généralement incrustée de gemmes semi-précieuses ou précieuses en guise de décoration (1-2 sortes de pierres à la place de tatouages ou de piercings), nez aplati"
+    "Conjuration de feu": "créature conjurée par la lumière du, de forme définie par le conjurateur (décrite dans la 'corpulence'), d'aspect visiblement surnaturel",
+    "Conjuration de lune": "créature conjurée par la lumière de la lune, de forme définie par le conjurateur (décrite dans la 'corpulence'), d'aspect visiblement surnaturel",
+    "Conjuration de soleil": "créature conjurée par la lumière du soleil, de forme définie par le conjurateur (décrite dans la 'corpulence'), d'aspect visiblement surnaturel",
+    "Conjuration de magie": "créature conjurée par lumière magique, de forme définie par le conjurateur (décrite dans la 'corpulence'), d'aspect visiblement surnaturel",
+    "Gorgalith": "humanoïde à la peau minérale : mate, dure et sèche comme de la roche, d'une couleur de roche, à choisir parmi : granit moucheté, basalte sombre, ardoise bleutée, grès ocre ou stéatite verdâtre, une seule roche par personnage, sans reflets, parcourue de fines fissures et craquelures comme une roche fendillée, sans rides de cuir ni écailles de reptile ; quelques gemmes taillées à facettes, 1 à 2 sortes seulement, plates et profondément incrustées dans la peau en losanges, diamant, carrés ou cabochons, à la place de tatouages; fins motifs géométriques gravés dans la pierre et soulignés de couleurs sobres; grandes oreilles pointues; nez court et épaté; traits du visage taillés à la serpe"
   };           // nom de race -> phrase d'aspect pour le prompt de portrait
 
   function raceSansAge(race) {
@@ -1780,19 +1817,19 @@ window.addEventListener('error', function (e) {
     const plage = racePlageTaille(race);
     const taille = generateTaille(plage[0], plage[1], sexe);
     const corpulence = pick(ov.corpulence || archetype.corpulence);
-    let cheveux;
-    if (ov.cheveux) {
-      cheveux = pick(ov.cheveux);
-    } else {
-      const couleur = pick(archetype.cheveuxCouleur);
-      const style = pick(archetype.cheveuxStyle);
-      const aBarbe = sexe === 'Homme' ? Math.random() < archetype.barbeProb : family === 'Naine';
-      cheveux = aBarbe ? `${couleur}, ${style}, barbe ${pick(BARBE_TYPES)}` : `${couleur}, ${style}`;
-    }
+    // Chevelure : couleur + coiffure, tirées dans les listes de la race si elle en fournit, sinon dans celles de sa famille.
+    const base = `${pick(ov.cheveuxCouleur || archetype.cheveuxCouleur)}, ${pick(ov.cheveuxStyle || archetype.cheveuxStyle)}`;
+    // Barbe : probabilité propre à la race (hommes : `barbe`, femmes : `barbe_femmes`), sinon celle de la famille.
+    const probHomme = ov.barbe !== undefined ? ov.barbe : archetype.barbeProb;
+    const probFemme = ov.barbe_femmes !== undefined ? ov.barbe_femmes : (family === 'Naine' ? 1 : 0);
+    const aBarbe = Math.random() < (sexe === 'Homme' ? probHomme : probFemme);
+    const cheveux = aBarbe ? `${base}, barbe ${pick(BARBE_TYPES)}` : base;
 
     return { sexe, age, taille, corpulence, cheveux };
   }
-  // --- Navigation entre écrans ---
+  // =========================
+  // NAVIGATION entre écrans
+  // =========================
   const screenTitles = { creer: "Recueil des PNJ", mespnj: "Mes PNJ", objets: "Objets magiques", mesobjets: "Mes Objets", sauvegarde: "Sauvegarde" };
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1924,7 +1961,36 @@ window.addEventListener('error', function (e) {
     wrapRace.classList.toggle('hidden', raceModeSelect.value !== 'race');
   });
 
-  // --- Génération ---
+  // Échappement HTML pour les valeurs injectées dans les attributs / le texte des fiches.
+  function escHtml(v) {
+    return String(v === undefined || v === null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // Les champs affichés en mode Lecture (texte simple, sans soulignement d'édition, retour à la ligne)
+  // portent la classe « ro-field » (voir template.html).
+
+  // Fabrique les générateurs de champs d'une fiche : en mode Édition ce sont des champs de saisie,
+  // en mode Lecture du texte figé. fLive reste toujours éditable (compteurs PS/PM actuels).
+  function makeFieldHelpers(id, ro) {
+    return {
+      fText: (cls, val, field, placeholder) => ro
+        ? `<div class="${cls} ro-field">${escHtml(val)}</div>`
+        : `<input type="text" class="${cls}" value="${escHtml(val)}"${placeholder ? ` placeholder="${escHtml(placeholder)}"` : ''} data-id="${id}" data-field="${field}">`,
+      fNum: (cls, val, field) => ro
+        ? `<div class="${cls} ro-field">${val}</div>`
+        : `<input class="${cls}" type="number" value="${val}" data-id="${id}" data-field="${field}">`,
+      fLive: (cls, val, field) =>
+        `<input class="${cls}" type="number" value="${val}" data-id="${id}" data-field="${field}">`,
+      fSel: (cls, optionsHtml, label, field) => ro
+        ? `<div class="${cls} ro-field">${escHtml(label)}</div>`
+        : `<select class="${cls}" data-id="${id}" data-field="${field}">${optionsHtml}</select>`
+    };
+  }
+  
+  // ====================
+  // GENERATION D'UN PNJ
+  // ====================
   function pickRace(mode) {
     if (mode === 'race') {
       const chosen = getChecked(raceChecks);
@@ -2084,7 +2150,9 @@ window.addEventListener('error', function (e) {
     return pnj;
   }
 
-  // --- Calcul des PS / PM selon le marquage de chaque Compétence ("PS", "PM" ou aucun) ---
+  // ===============================================================================
+  // CALCUL DES PS / PM selon le marquage de chaque Compétence ("PS", "PM" ou aucun)
+  // ===============================================================================
   // Marquage par défaut d'une Compétence (règles d'origine) : compétences de combat, Foi et
   // Magie Cyber comptent pour les PS ; les Hautes Magies comptent pour les PM.
   function normSkillName(name) { return String(name === undefined || name === null ? '' : name).trim().toLowerCase(); }
@@ -2158,7 +2226,7 @@ window.addEventListener('error', function (e) {
   // Tout ce qui se règle à la main est regroupé ici : style, descriptions par famille et par race.
 
   // Style général, placé en tête du prompt.
-  const PORTRAIT_STYLE = "Portrait en buste d'un personnage de fantasy médiévale, illustration aux crayons de couleur dessinée à la main, hachures visibles, plutôt réaliste, couleurs riches et saturées, pigments éclatants, palette variée avec des accents vifs (émeraude, rubis, bleu profond, or), pas de sépia ni de teintes ternes, fond de texture papier parchemin vieilli, sans texte ni cadre.";
+  const PORTRAIT_STYLE = "Portrait en buste d'un personnage de fantasy médiévale, illustration aux crayons de couleur dessinée à la main, hachures visibles, plutôt réaliste, couleurs riches et saturées, pigments éclatants, pas de sépia, couleurs des vêtements au libre choix dans toute la gamme (jaune, orange, rouge, rose, violet, brun, ocre, noir, blanc, bleu, vert…), tenue le plus souvent harmonieuse et cohérente, avec une ou deux teintes dominantes, fond de texture papier parchemin vieilli, sans texte ni cadre.";
 
   // Format de l'image : ajouté en dernière ligne du prompt.
   const PORTRAIT_FORMAT = "Format vertical 3:4 (portrait), plus haut que large.";
@@ -2259,7 +2327,9 @@ window.addEventListener('error', function (e) {
     return v > 0 ? `+${v}` : `${v}`;
   }
 
-  // --- Suivi de synchronisation : date de modification, suppressions à propager, compteur de rappel ---
+  // ============================================================================================
+  // SUIVI DE SYNCHRONISATION : date de modification, suppressions à propager, compteur de rappel
+  // ============================================================================================
   // "sync:deleted" garde la trace des fiches supprimées (identifiant -> date) pour que la suppression
   // se propage aux autres appareils. "sync:dirty" compte les modifications depuis la dernière
   // synchronisation réussie ; le rappel s'affiche à partir de SYNC_REMINDER_EVERY modifications.
@@ -2349,45 +2419,13 @@ window.addEventListener('error', function (e) {
     return (prefix || 'id') + '_' + Date.now().toString(36) + '_' + rand() + rand();
   }
 
-  // Échappement HTML pour les valeurs injectées dans les attributs / le texte des fiches.
-  function escHtml(v) {
-    return String(v === undefined || v === null ? '' : v)
-      .replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
+  // ========================
+  // AFFICHAGE CARTE PNJ
+  // ========================
+  // --- Morceaux de la fiche PNJ (utilisés par renderCard) ---
 
-  // Style des champs affichés en mode Lecture (texte simple, sans soulignement d'édition, retour à la ligne).
-  const RO_STYLE = 'border-bottom-color:transparent;white-space:normal;overflow-wrap:anywhere;';
-
-  // Fabrique les générateurs de champs d'une fiche : en mode Édition ce sont des champs de saisie,
-  // en mode Lecture du texte figé. fLive reste toujours éditable (compteurs PS/PM actuels).
-  function makeFieldHelpers(id, ro) {
-    return {
-      fText: (cls, val, field, placeholder) => ro
-        ? `<div class="${cls}" style="${RO_STYLE}">${escHtml(val)}</div>`
-        : `<input type="text" class="${cls}" value="${escHtml(val)}"${placeholder ? ` placeholder="${escHtml(placeholder)}"` : ''} data-id="${id}" data-field="${field}">`,
-      fNum: (cls, val, field) => ro
-        ? `<div class="${cls}" style="${RO_STYLE}">${val}</div>`
-        : `<input class="${cls}" type="number" value="${val}" data-id="${id}" data-field="${field}">`,
-      fLive: (cls, val, field) =>
-        `<input class="${cls}" type="number" value="${val}" data-id="${id}" data-field="${field}">`,
-      fSel: (cls, optionsHtml, label, field) => ro
-        ? `<div class="${cls}" style="${RO_STYLE}">${escHtml(label)}</div>`
-        : `<select class="${cls}" data-id="${id}" data-field="${field}">${optionsHtml}</select>`
-    };
-  }
-
-  // opts.saved : fiche déjà enregistrée ; opts.mode : 'read' (Lecture) ou 'edit' (Édition).
-  // Par défaut : une fiche enregistrée s'ouvre en Lecture, une fiche neuve en Édition.
-  function renderCard(pnj, opts = {}) {
-    PNJ_REGISTRY.set(pnj.id, pnj);
-    normalizePnj(pnj);
-    const saved = opts.saved || false;
-    const mode = opts.mode || (saved ? 'read' : 'edit');
-    const ro = mode === 'read';
-    const notesOpen = !!opts.notesOpen;
-    const id = pnj.id;
-    const { fText, fNum, fLive, fSel } = makeFieldHelpers(id, ro);
-
+  // Cases des 6 Traits : tableau compact en Lecture, champs de saisie (Trait + Sauvegarde) en Édition.
+  function renderTraitsHtml(pnj, ro, fNum) {
     const traitOrder = ['FOR', 'AGI', 'INT', 'PER', 'MAI', 'CHA'];
     const traitsHtml = traitOrder.map(k => {
       const v = pnj.traits[k];
@@ -2414,19 +2452,25 @@ window.addEventListener('error', function (e) {
           <div class="race-tag sauv-col">Sauv.</div>
         </div>`;
     }).join('');
+    return traitsHtml;
+  }
 
-    // Repères propres à la race : fourchette de taille (Édition seulement) et espérance de vie.
+  // Repères propres à la race : fourchette de taille (Édition), espérance de vie et case Âge (absente pour les races sans âge).
+  function renderPhysiqueHints(pnj, ro, fNum) {
     const family = NAME_FAMILIES[pnj.race.name] || 'Commune';
     const sansAge = raceSansAge(pnj.race);
     const plageTaille = racePlageTaille(pnj.race);
     const lifespan = (AGE_RANGES_BY_ERA[pnj.race.era] || [])[1];
-    const hintStyle = 'text-transform:none;letter-spacing:0;';
-    const ageHint = lifespan ? ` <span style="${hintStyle}">(Esp. ${lifespan} ans)</span>` : '';
-    const tailleHint = ro ? '' : ` <span style="${hintStyle}">(${plageTaille[0]}–${plageTaille[1]} cm)</span>`;
+    const ageHint = lifespan ? ` <span class="hint">(Esp. ${lifespan} ans)</span>` : '';
+    const tailleHint = ro ? '' : ` <span class="hint">(${plageTaille[0]}–${plageTaille[1]} cm)</span>`;
     const ageCell = sansAge ? '' : `<div><div class="k">Âge${ageHint}</div>
             <span class="unit-field">${fNum('mini-number-sm', pnj.physique.age, 'physique.age')} <span class="unit">ans</span></span>
           </div>`;
+    return { ageCell, tailleHint };
+  }
 
+  // Liste des Compétences : lignes compactes en Lecture, 2 lignes éditables par Compétence en Édition.
+  function renderCompetencesHtml(pnj, id, ro, { fText, fNum, fSel }) {
     const compsSorted = pnj.competences.map((c, idx) => ({ ...c, idx }))
       .sort((a, b) => (b.mastered - a.mastered));
     const compTraitOptions = (current) => ['FOR', 'AGI', 'INT', 'PER', 'MAI', 'CHA', ''].map(t =>
@@ -2437,7 +2481,7 @@ window.addEventListener('error', function (e) {
     ).join('');
     const compsHtml = compsSorted.map(c => {
       if (ro) {
-        const mark = c.mastered ? '<span class="mark">◆</span>' : '<span class="mark" style="display:inline-block;width:7px;"></span>';
+        const mark = c.mastered ? '<span class="mark">◆</span>' : '<span class="mark mark-empty"></span>';
         const label = c.mastered ? `${c.name} (${c.composante}PC)` : c.name;
         return `
       <div class="comp-row">
@@ -2449,50 +2493,49 @@ window.addEventListener('error', function (e) {
       }
       // Édition : 2 lignes (nom + suppression, puis Trait / score / marquage PS-PM).
       return `
-      <div style="padding:5px 0 7px;">
+      <div class="comp-edit">
         <div class="comp-row">
           <input type="checkbox" class="mark-check" ${c.mastered ? 'checked' : ''} data-id="${id}" data-field="comp.${c.idx}.mastered">
           ${fText('comp-name-input', c.name, `comp.${c.idx}.name`)}
-          <button type="button" class="btn-row-del" data-kind="comp" data-id="${id}" data-idx="${c.idx}" title="Supprimer cette compétence" style="flex:0 0 auto;margin-left:14px;width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--parchment-dim);font-size:12px;line-height:1;cursor:pointer;padding:0;">✕</button>
+          <button type="button" class="btn-row-del" data-kind="comp" data-id="${id}" data-idx="${c.idx}" title="Supprimer cette compétence">✕</button>
         </div>
-        <div class="comp-row comp-row-2" style="padding-left:16px;gap:6px;">
+        <div class="comp-row comp-row-2">
           ${fSel('comp-trait-select', compTraitOptions(c.trait), c.trait || '—', `comp.${c.idx}.trait`)}
           <input class="score-input" type="number" value="${c.composante}" title="Niveau de la compétence (sans le Trait lié)" aria-label="Niveau" data-id="${id}" data-field="comp.${c.idx}.composante">
           <select class="comp-trait-select" title="Compte dans le calcul des PS ou des PM" data-id="${id}" data-field="comp.${c.idx}.calc">${calcOptions(c.calc)}</select>
-          <span style="display:inline-flex;align-items:center;gap:4px;flex:0 0 auto;"><span style="font-size:10px;color:var(--parchment-dim);">Bonus</span>${ro ? '' : `<input class="score-input" style="width:36px;" type="number" value="${Number(c.bonus) || 0}" data-id="${id}" data-field="comp.${c.idx}.bonus" aria-label="Bonus">`}</span>
+          <span class="bonus-wrap"><span class="bonus-label">Bonus</span>${ro ? '' : `<input class="score-input bonus-input" type="number" value="${Number(c.bonus) || 0}" data-id="${id}" data-field="comp.${c.idx}.bonus" aria-label="Bonus">`}</span>
         </div>
       </div>`;
     }).join('');
-    const compAddHtml = ro ? '' : `<button type="button" class="btn-row-add" data-kind="comp" data-id="${id}" style="margin-top:8px;width:100%;background:transparent;border:1px dashed var(--line);color:var(--brass-bright);border-radius:8px;padding:8px;font-family:'Inter',sans-serif;font-size:12px;letter-spacing:0.03em;cursor:pointer;">+ Ajouter une compétence</button>`;
+    const compAddHtml = ro ? '' : `<button type="button" class="btn-row-add" data-kind="comp" data-id="${id}">+ Ajouter une compétence</button>`;
+    return { compsHtml, compAddHtml };
+  }
 
-    const metierOptions = TABLES.metier.map(m => `<option value="${m}" ${m === pnj.metier ? 'selected' : ''}>${m}</option>`).join('');
-    const sexeOptions = ['', 'Homme', 'Femme'].map(x => `<option value="${x}" ${x === (pnj.physique.sexe || '') ? 'selected' : ''}>${x || '—'}</option>`).join('');
-
+  // Liste de l'Équipement (objets magiques).
+  function renderEquipHtml(pnj, id, ro, fText) {
     const equipList = pnj.equipement || [];
     const equipHtml = equipList.length
       ? equipList.map((eq, idx) => ro
         ? `
-        <div class="equip-item" style="border-bottom:none;margin-bottom:6px;padding-bottom:0;">
+        <div class="equip-item equip-item--ro">
           ${fText('equip-line1', eq.ligne1, `equipement.${idx}.ligne1`)}
           ${eq.ligne2 ? fText('equip-line2', eq.ligne2, `equipement.${idx}.ligne2`) : ''}
         </div>`
         : `
-        <div class="equip-item" style="display:flex;align-items:flex-start;gap:8px;border-bottom:none;margin-bottom:8px;padding-bottom:0;">
-          <div style="flex:1;min-width:0;">
+        <div class="equip-item equip-item--edit">
+          <div class="grow-min0">
             ${fText('equip-line1', eq.ligne1, `equipement.${idx}.ligne1`)}
             ${fText('equip-line2', eq.ligne2, `equipement.${idx}.ligne2`)}
           </div>
-          <button type="button" class="btn-row-del" data-kind="equip" data-id="${id}" data-idx="${idx}" title="Supprimer cet équipement" style="flex:0 0 auto;width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--parchment-dim);font-size:12px;line-height:1;cursor:pointer;padding:0;">✕</button>
+          <button type="button" class="btn-row-del" data-kind="equip" data-id="${id}" data-idx="${idx}" title="Supprimer cet équipement">✕</button>
         </div>`).join('')
       : `<div class="equip-item"><span class="equip-empty">Aucun équipement</span></div>`;
-    const equipAddHtml = ro ? '' : `<button type="button" class="btn-row-add" data-kind="equip" data-id="${id}" style="margin-top:8px;width:100%;background:transparent;border:1px dashed var(--line);color:var(--brass-bright);border-radius:8px;padding:8px;font-family:'Inter',sans-serif;font-size:12px;letter-spacing:0.03em;cursor:pointer;">+ Ajouter un objet</button>`;
+    const equipAddHtml = ro ? '' : `<button type="button" class="btn-row-add" data-kind="equip" data-id="${id}">+ Ajouter un objet</button>`;
+    return { equipHtml, equipAddHtml };
+  }
 
-    const groupeHtml = (ro && !pnj.groupe) ? '' : `
-        <div class="field-inline tags-block">
-          <label>Groupe / Tags</label>
-          ${fText('mini-text', pnj.groupe || '', 'groupe', 'ex. Taverne du Cerf, quête principale')}
-        </div>`;
-
+  // Portrait : miniature cliquable ; boutons d'ajout / changement / retrait en Édition.
+  function renderPortraitHtml(pnj, id, ro) {
     const portraitHtml = pnj.portrait
       ? `<div class="portrait-box" data-id="${id}">
           <img class="portrait-thumb" src="${pnj.portrait}" alt="Portrait de ${escHtml(pnj.prenom)}" data-id="${id}">
@@ -2500,20 +2543,60 @@ window.addEventListener('error', function (e) {
           <button type="button" class="portrait-btn portrait-remove" data-id="${id}" title="Retirer le portrait">✕</button>`}
         </div>`
       : (ro ? '' : `<div class="portrait-box" data-id="${id}"><button type="button" class="portrait-empty portrait-change" data-id="${id}" title="Ajouter un portrait">＋<span>Portrait</span></button></div>`);
+    return portraitHtml;
+  }
 
+  // Boutons d'action du bas de fiche selon le mode : Lecture / Édition d'une fiche neuve / Édition d'une fiche enregistrée.
+  function renderActionsHtml(id, ro, saved) {
     const actionsHtml = ro
       ? `<button class="btn-save btn-edit" data-id="${id}">Modifier</button>`
       : (saved
-        ? `<button class="btn-save" data-id="${id}" style="flex:1 1 45%;">Mettre à jour</button>
-          <button class="btn-delete btn-cancel" data-id="${id}" style="flex:1 1 45%;">Annuler</button>
-          <button class="btn-delete btn-dup" data-id="${id}" style="flex:1 1 45%;" title="Crée un double : nouveau nom, disposition, sexe, âge, taille, corpulence, chevelure et traits particuliers ; le reste est conservé">⎘ Dupliquer</button>
-          <button class="btn-delete" data-id="${id}" style="flex:1 1 45%;">Supprimer</button>`
-        : `<button class="btn-save" data-id="${id}" style="flex:1 1 60%;">Enregistrer</button>
-          <button class="btn-delete btn-discard" data-id="${id}" style="flex:1 1 35%;">Défausser</button>
-          <button class="btn-delete btn-dup" data-id="${id}" style="flex:1 1 100%;" title="Crée un double : nouveau nom, disposition, sexe, âge, taille, corpulence, chevelure et traits particuliers ; le reste est conservé">⎘ Dupliquer</button>`);
+        ? `<button class="btn-save act-45" data-id="${id}">Mettre à jour</button>
+          <button class="btn-delete btn-cancel act-45" data-id="${id}">Annuler</button>
+          <button class="btn-delete btn-dup act-45" data-id="${id}" title="Crée un double : nouveau nom, disposition, sexe, âge, taille, corpulence, chevelure et traits particuliers ; le reste est conservé">⎘ Dupliquer</button>
+          <button class="btn-delete act-45" data-id="${id}">Supprimer</button>`
+        : `<button class="btn-save act-60" data-id="${id}">Enregistrer</button>
+          <button class="btn-delete btn-discard act-35" data-id="${id}">Défausser</button>
+          <button class="btn-delete btn-dup act-100" data-id="${id}" title="Crée un double : nouveau nom, disposition, sexe, âge, taille, corpulence, chevelure et traits particuliers ; le reste est conservé">⎘ Dupliquer</button>`);
+    return actionsHtml;
+  }
+
+  // opts.saved : fiche déjà enregistrée ; opts.mode : 'read' (Lecture) ou 'edit' (Édition).
+  // Par défaut : une fiche enregistrée s'ouvre en Lecture, une fiche neuve en Édition.
+  function renderCard(pnj, opts = {}) {
+    PNJ_REGISTRY.set(pnj.id, pnj);
+    normalizePnj(pnj);
+    const saved = opts.saved || false;
+    const mode = opts.mode || (saved ? 'read' : 'edit');
+    const ro = mode === 'read';
+    const notesOpen = !!opts.notesOpen;
+    const id = pnj.id;
+    const { fText, fNum, fLive, fSel } = makeFieldHelpers(id, ro);
+
+    const traitsHtml = renderTraitsHtml(pnj, ro, fNum);
+
+    // Repères propres à la race : indication de taille (Édition seulement) et case Âge.
+    const { ageCell, tailleHint } = renderPhysiqueHints(pnj, ro, fNum);
+
+    const { compsHtml, compAddHtml } = renderCompetencesHtml(pnj, id, ro, { fText, fNum, fSel });
+
+    const metierOptions = TABLES.metier.map(m => `<option value="${m}" ${m === pnj.metier ? 'selected' : ''}>${m}</option>`).join('');
+    const sexeOptions = ['', 'Homme', 'Femme'].map(x => `<option value="${x}" ${x === (pnj.physique.sexe || '') ? 'selected' : ''}>${x || '—'}</option>`).join('');
+
+    const { equipHtml, equipAddHtml } = renderEquipHtml(pnj, id, ro, fText);
+
+    const groupeHtml = (ro && !pnj.groupe) ? '' : `
+        <div class="field-inline tags-block">
+          <label>Groupe / Tags</label>
+          ${fText('mini-text', pnj.groupe || '', 'groupe', 'ex. Taverne du Cerf, quête principale')}
+        </div>`;
+
+    const portraitHtml = renderPortraitHtml(pnj, id, ro);
+
+    const actionsHtml = renderActionsHtml(id, ro, saved);
 
     return `
-      <div class="card${ro ? ' mode-read' : ''}" data-card-id="${id}" data-saved="${saved ? 1 : 0}" data-mode="${mode}" data-notes="${notesOpen ? 1 : 0}"${opts.instant ? ' style="animation:none"' : ''}>
+      <div class="card${ro ? ' mode-read' : ''}${opts.instant ? ' no-anim' : ''}" data-card-id="${id}" data-saved="${saved ? 1 : 0}" data-mode="${mode}" data-notes="${notesOpen ? 1 : 0}">
         <div class="card-top">
           <div class="card-top-info">
             ${fText('name-input', pnj.prenom, 'prenom')}
@@ -2521,7 +2604,7 @@ window.addEventListener('error', function (e) {
         </div>
         <div class="id-block">
         <div class="id-main">
-        <div class="race-line" style="margin-bottom:0;">${pnj.race.name} <span class="era">· ${pnj.race.era}</span> · Niveau ${pnj.level.name}</div>
+        <div class="race-line race-line-tight">${pnj.race.name} <span class="era">· ${pnj.race.era}</span> · Niveau ${pnj.level.name}</div>
         <div class="meta-grid">
           <div><div class="k">Métier</div>
             ${fSel('mini-select', metierOptions, pnj.metier, 'metier')}
@@ -2533,7 +2616,7 @@ window.addEventListener('error', function (e) {
         </div>
         ${portraitHtml}
         </div>
-        <div class="meta-grid phys-block" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line);">
+        <div class="meta-grid phys-block">
           <div><div class="k">Sexe</div>
             ${fSel('mini-select', sexeOptions, pnj.physique.sexe || '—', 'physique.sexe')}
           </div>
@@ -2544,13 +2627,13 @@ window.addEventListener('error', function (e) {
           <div><div class="k">Corpulence</div>
             ${fText('mini-text', pnj.physique.corpulence, 'physique.corpulence')}
           </div>
-          <div style="grid-column:1/-1"><div class="k">Chevelure</div>
+          <div class="span-all"><div class="k">Chevelure</div>
             ${fText('mini-text', pnj.physique.cheveux, 'physique.cheveux')}
           </div>
         </div>
         <div class="field-inline tp-block">
-          <div style="display:flex;gap:10px;align-items:flex-end;">
-            <div style="flex:1;min-width:0;">
+          <div class="tp-row">
+            <div class="grow-min0">
               <label>Trait(s) particulier(s)</label>
               ${fText('mini-text', pnj.trait, 'trait')}
             </div>
@@ -2578,7 +2661,7 @@ window.addEventListener('error', function (e) {
         </div>
         <div class="competences">
           <div class="k">Compétences (◆ maîtrisée)</div>
-          ${ro ? '' : '<div style="font-size:11px;color:var(--parchment-dim);margin:-2px 0 6px;">Le nombre est le niveau de la compétence (sans le Trait lié) ; en Lecture, le score affiché = niveau + Trait + Bonus. Menu PS / PM : la compétence compte dans le calcul des PS ou des PM.</div>'}
+          ${ro ? '' : '<div class="comp-help">Le nombre est le niveau de la compétence (sans le Trait lié) ; en Lecture, le score affiché = niveau + Trait + Bonus. Menu PS / PM : la compétence compte dans le calcul des PS ou des PM.</div>'}
           ${compsHtml}
           ${compAddHtml}
         </div>
@@ -2588,8 +2671,8 @@ window.addEventListener('error', function (e) {
           ${equipAddHtml}
         </div>
         ${groupeHtml}
-        ${ro ? '' : `<button type="button" class="btn-copy-prompt" data-id="${id}" style="margin-top:12px;width:100%;background:transparent;border:1px dashed var(--line);color:var(--brass-bright);border-radius:8px;padding:9px;font-family:'Inter',sans-serif;font-size:12px;letter-spacing:0.03em;cursor:pointer;">🎨 Copier le prompt du portrait</button>`}
-        <div class="card-actions" style="flex-wrap:wrap;">
+        ${ro ? '' : `<button type="button" class="btn-copy-prompt" data-id="${id}">🎨 Copier le prompt du portrait</button>`}
+        <div class="card-actions">
           ${actionsHtml}
         </div>
       </div>
@@ -2641,9 +2724,11 @@ window.addEventListener('error', function (e) {
     cardEl.outerHTML = renderCard(pnj, { saved, mode, instant: true, notesOpen: cardEl.dataset.notes === '1' });
   }
 
-  // --- Duplication : crée un double NON enregistré. Sont retirés au hasard : nom, disposition, sexe,
-  // âge, taille, corpulence, chevelure et traits particuliers. Sont conservés : Traits, Sauvegardes,
-  // Compétences (niveaux, bonus, PS/PM), objets magiques, Tags (groupe), race, métier et niveau.
+  // ===========================================
+  // DUPLICATION : crée un double NON enregistré
+  // ===========================================
+  // Sont retirés au hasard : nom, disposition, sexe, âge, taille, corpulence, chevelure et traits particuliers.
+  // Sont conservés : Traits, Sauvegardes, Compétences (niveaux, bonus, PS/PM), objets magiques, Tags (groupe), race, métier et niveau.
   // Le portrait et les notes ne sont pas copiés (ils appartiennent au personnage d'origine).
   function duplicatePnj(src) {
     const copy = JSON.parse(JSON.stringify(src));
@@ -2705,223 +2790,263 @@ window.addEventListener('error', function (e) {
   }
 
   // Délégation d'évènements : un seul écouteur gère tous les champs éditables de toutes les fiches.
-  function bindCardEvents(container) {
-    container.addEventListener('input', (e) => {
-      const el = e.target;
-      const id = el.dataset.id;
-      const field = el.dataset.field;
-      if (!id || !field) return;
-      const pnj = PNJ_REGISTRY.get(id);
-      if (!pnj) return;
-      let value = el.value;
-      if (el.type === 'number') value = value === '' ? 0 : Number(value);
-      if (el.type === 'checkbox') value = el.checked;
-      const traitVal = (k) => (k ? (Number(pnj.traits[k]) || 0) : 0);
-      const oldTraitValue = field.startsWith('traits.') ? (Number(pnj.traits[field.slice(7)]) || 0) : 0;
-      setDeep(pnj, field, value);
+  // Réaction aux saisies dans une fiche : met à jour l'objet PNJ en mémoire (Trait, Compétence, texte…).
+  function onCardInput(e) {
+    const el = e.target;
+    const id = el.dataset.id;
+    const field = el.dataset.field;
+    if (!id || !field) return;
+    const pnj = PNJ_REGISTRY.get(id);
+    if (!pnj) return;
+    let value = el.value;
+    if (el.type === 'number') value = value === '' ? 0 : Number(value);
+    if (el.type === 'checkbox') value = el.checked;
+    const traitVal = (k) => (k ? (Number(pnj.traits[k]) || 0) : 0);
+    const oldTraitValue = field.startsWith('traits.') ? (Number(pnj.traits[field.slice(7)]) || 0) : 0;
+    setDeep(pnj, field, value);
 
-      // Score d'une compétence = niveau (composante) + valeur du Trait lié. Le niveau reste la
-      // référence : si on change le niveau, le Trait lié, ou la valeur d'un Trait, le score suit.
-      let m;
-      if ((m = field.match(/^comp\.(\d+)\.(composante|trait)$/))) {
-        const c = pnj.competences[Number(m[1])];
-        if (c) c.score = (Number(c.composante) || 0) + traitVal(c.trait);
-      } else if (field.startsWith('traits.')) {
-        const k = field.slice(7);
-        pnj.competences.forEach(c => {
-          if (c.trait === k) c.score = (Number(c.score) || 0) - oldTraitValue + traitVal(k);
-        });
-      }
-      if (field === 'notes') {
-        const nb = el.closest('.card') && el.closest('.card').querySelector('.btn-notes');
-        if (nb) nb.classList.toggle('has-notes', String(value).trim() !== '');
-      }
+    // Score d'une compétence = niveau (composante) + valeur du Trait lié. Le niveau reste la
+    // référence : si on change le niveau, le Trait lié, ou la valeur d'un Trait, le score suit.
+    let m;
+    if ((m = field.match(/^comp\.(\d+)\.(composante|trait)$/))) {
+      const c = pnj.competences[Number(m[1])];
+      if (c) c.score = (Number(c.composante) || 0) + traitVal(c.trait);
+    } else if (field.startsWith('traits.')) {
+      const k = field.slice(7);
+      pnj.competences.forEach(c => {
+        if (c.trait === k) c.score = (Number(c.score) || 0) - oldTraitValue + traitVal(k);
+      });
+    }
+    if (field === 'notes') {
+      const nb = el.closest('.card') && el.closest('.card').querySelector('.btn-notes');
+      if (nb) nb.classList.toggle('has-notes', String(value).trim() !== '');
+    }
 
-      // La couleur des scores de Trait (vert >=0 / rouge <0) doit suivre la valeur en direct.
-      if (field.startsWith('traits.') && el.classList.contains('v-input')) {
-        el.classList.toggle('pos', value >= 0);
-        el.classList.toggle('neg', value < 0);
-      }
-    });
-    container.addEventListener('change', (e) => {
-      const el = e.target;
-      // Notes modifiées en mode Lecture sur une fiche enregistrée : enregistrées tout de suite
-      // (il n'y a pas de bouton Enregistrer dans ce mode).
-      if (el.tagName === 'TEXTAREA' && el.dataset.field === 'notes') {
-        const card = el.closest('.card');
-        if (card && card.dataset.mode === 'read' && card.dataset.saved === '1') {
-          const stored = PNJStore.load(el.dataset.id);
-          if (stored) {
-            stored.notes = el.value;
-            if (!PNJStore.save(stored)) alert("Notes non enregistrées : le stockage du navigateur est plein ou indisponible.");
-          }
-        }
-        return;
-      }
-      if (el.type === 'checkbox' && el.dataset.field) {
-        const pnj = PNJ_REGISTRY.get(el.dataset.id);
-        if (pnj) setDeep(pnj, el.dataset.field, el.checked);
-      }
-    });
-    container.addEventListener('click', (e) => {
-      const notesBtn = e.target.closest('.btn-notes');
-      if (notesBtn) {
-        const card = notesBtn.closest('.card');
-        const zone = card.querySelector('.notes-zone');
-        const open = zone.classList.toggle('open');
-        card.dataset.notes = open ? '1' : '0';
-        notesBtn.classList.toggle('active', open);
-        if (open) { const ta = zone.querySelector('textarea'); if (ta) ta.focus(); }
-        return;
-      }
-      const thumb = e.target.closest('.portrait-thumb');
-      if (thumb) {
-        const pnj = PNJ_REGISTRY.get(thumb.dataset.id);
-        if (pnj && pnj.portrait) openPortraitViewer(pnj);
-        return;
-      }
-      const pChange = e.target.closest('.portrait-change');
-      if (pChange) {
-        const pnj = PNJ_REGISTRY.get(pChange.dataset.id);
-        const cardEl = pChange.closest('.card');
-        if (pnj) pickPortraitFile(pnj, cardEl);
-        return;
-      }
-      const pRemove = e.target.closest('.portrait-remove');
-      if (pRemove) {
-        const pnj = PNJ_REGISTRY.get(pRemove.dataset.id);
-        if (pnj) {
-          delete pnj.portrait; delete pnj.portraitPrompt;
-          refreshCard(pnj, pRemove.closest('.card'));
-        }
-        return;
-      }
-      const dupBtn = e.target.closest('.btn-dup');
-      if (dupBtn) {
-        const src = PNJ_REGISTRY.get(dupBtn.dataset.id);
-        if (!src) return;
-        const card = dupBtn.closest('.card');
-        const copy = duplicatePnj(src);
-        card.insertAdjacentHTML('afterend', renderCard(copy, { saved: false, mode: 'edit' }));
-        const created = card.nextElementSibling;
-        if (created && created.scrollIntoView) created.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-        return;
-      }
-      // Fiche générée mais pas enregistrée : on la retire simplement de l'écran (rien n'est stocké).
-      const discardBtn = e.target.closest('.btn-discard');
-      if (discardBtn) {
-        PNJ_REGISTRY.delete(discardBtn.dataset.id);
-        discardBtn.closest('.card').remove();
-        if (!container.querySelector('.card')) {
-          container.innerHTML = `<div class="empty-state">Aucun PNJ généré pour l'instant.<br>Choisis tes options et lance le tirage.</div>`;
-        }
-        return;
-      }
-      const editBtn = e.target.closest('.btn-edit');
-      if (editBtn) {
-        const pnj = PNJ_REGISTRY.get(editBtn.dataset.id);
-        if (pnj) refreshCard(pnj, editBtn.closest('.card'), { mode: 'edit' });
-        return;
-      }
-      const copyBtn = e.target.closest('.btn-copy-prompt');
-      if (copyBtn) {
-        const pnj = PNJ_REGISTRY.get(copyBtn.dataset.id);
-        if (!pnj) return;
-        const text = buildPortraitPrompt(pnj);
-        // Le prompt est aussi affiché sous le bouton : on voit ce qui a été copié, et on peut le
-        // sélectionner à la main si le presse-papiers n'est pas accessible.
-        let area = copyBtn.nextElementSibling;
-        if (!area || !area.classList.contains('portrait-prompt-out')) {
-          area = document.createElement('textarea');
-          area.className = 'portrait-prompt-out';
-          area.readOnly = true;
-          area.rows = 8;
-          area.style.cssText = "display:block;width:100%;margin-top:8px;background:var(--ink);color:var(--parchment-dim);border:1px solid var(--line);border-radius:8px;padding:8px;font-family:'Inter',sans-serif;font-size:12px;line-height:1.4;resize:vertical;";
-          copyBtn.after(area);
-        }
-        area.value = text;
-        const label = copyBtn.textContent;
-        const done = () => { copyBtn.textContent = '✓ Prompt copié'; setTimeout(() => { copyBtn.textContent = label; }, 1800); };
-        const fallback = () => {
-          area.focus(); area.select();
-          let ok = false;
-          try { ok = document.execCommand('copy'); } catch (err) { /* ignoré */ }
-          if (ok) done();
-          else { copyBtn.textContent = 'Texte sélectionné : copie-le à la main'; setTimeout(() => { copyBtn.textContent = label; }, 2500); }
-        };
-        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
-        else fallback();
-        return;
-      }
-      const cancelBtn = e.target.closest('.btn-cancel');
-      if (cancelBtn) {
-        // Défausse les modifications non enregistrées : on recharge la version stockée.
-        const current = PNJ_REGISTRY.get(cancelBtn.dataset.id);
-        const stored = PNJStore.load(cancelBtn.dataset.id);
+    // La couleur des scores de Trait (vert >=0 / rouge <0) doit suivre la valeur en direct.
+    if (field.startsWith('traits.') && el.classList.contains('v-input')) {
+      el.classList.toggle('pos', value >= 0);
+      el.classList.toggle('neg', value < 0);
+    }
+  }
+
+  // Cases à cocher et Notes modifiées en mode Lecture.
+  function onCardChange(e) {
+    const el = e.target;
+    // Notes modifiées en mode Lecture sur une fiche enregistrée : enregistrées tout de suite
+    // (il n'y a pas de bouton Enregistrer dans ce mode).
+    if (el.tagName === 'TEXTAREA' && el.dataset.field === 'notes') {
+      const card = el.closest('.card');
+      if (card && card.dataset.mode === 'read' && card.dataset.saved === '1') {
+        const stored = PNJStore.load(el.dataset.id);
         if (stored) {
-          // Les compteurs PS/PM actuels ne font pas partie des modifications à défausser.
-          if (current) { stored.psActuel = current.psActuel; stored.pmActuel = current.pmActuel; }
-          refreshCard(stored, cancelBtn.closest('.card'), { saved: true, mode: 'read' });
+          stored.notes = el.value;
+          if (!PNJStore.save(stored)) alert("Notes non enregistrées : le stockage du navigateur est plein ou indisponible.");
         }
-        return;
       }
-      const rowDelBtn = e.target.closest('.btn-row-del');
-      if (rowDelBtn) {
-        const pnj = PNJ_REGISTRY.get(rowDelBtn.dataset.id);
-        if (!pnj) return;
-        const idx = parseInt(rowDelBtn.dataset.idx, 10);
-        const kind = rowDelBtn.dataset.kind;
-        if (kind === 'comp') {
-          pnj.competences.splice(idx, 1);
-        } else if (kind === 'equip') {
-          (pnj.equipement || []).splice(idx, 1);
-        }
-        refreshCard(pnj, rowDelBtn.closest('.card'));
-        return;
-      }
-      const rowAddBtn = e.target.closest('.btn-row-add');
-      if (rowAddBtn) {
-        const pnj = PNJ_REGISTRY.get(rowAddBtn.dataset.id);
-        if (!pnj) return;
-        const kind = rowAddBtn.dataset.kind;
-        if (kind === 'comp') {
-          const newComp = pickNewCompetence(pnj);
-          if (newComp) pnj.competences.push(newComp);
-        } else if (kind === 'equip') {
-          if (!pnj.equipement) pnj.equipement = [];
-          const forcedRarete = pickRareteForLevel(pnj.level.name);
-          const obj = generateObjet({ categorie: 'alea', metier: pnj.metier, forcedRarete }, pnj.equipement.length + 1);
-          pnj.equipement.push(summarizeObjet(obj));
-        }
-        refreshCard(pnj, rowAddBtn.closest('.card'));
-        return;
-      }
-      const saveBtn = e.target.closest('.btn-save');
-      if (saveBtn) {
-        const pnj = PNJ_REGISTRY.get(saveBtn.dataset.id);
-        if (!pnj) return;
-        const card = saveBtn.closest('.card');
-        recalcPsPmIfNeeded(pnj);
-        // PS/PM "actuels" ne sont jamais persistés : ce sont des compteurs de combat éphémères,
-        // qui doivent repartir de la valeur maximale à chaque rechargement depuis le stockage.
-        const toSave = { ...pnj, psActuel: pnj.ps, pmActuel: pnj.pm };
-        const ok = PNJStore.save(toSave);
-        if (!ok) {
-          const prev = saveBtn.textContent;
-          saveBtn.textContent = 'Échec (stockage indisponible)';
-          setTimeout(() => { saveBtn.textContent = prev; }, 1500);
-          alert("Enregistrement impossible : le stockage du navigateur est plein ou indisponible. La fiche n'a PAS été enregistrée. Retire des portraits ou supprime des fiches inutiles (pense à exporter une sauvegarde d'abord), puis réessaie.");
-          return;
-        }
-        // Après enregistrement, la fiche repasse en Lecture.
-        refreshCard(pnj, card, { saved: true, mode: 'read' });
-        return;
-      }
-      const delBtn = e.target.closest('.btn-delete');
-      if (delBtn) {
-        PNJStore.remove(delBtn.dataset.id);
-        PNJ_REGISTRY.delete(delBtn.dataset.id);
-        delBtn.closest('.card').remove();
+      return;
+    }
+    if (el.type === 'checkbox' && el.dataset.field) {
+      const pnj = PNJ_REGISTRY.get(el.dataset.id);
+      if (pnj) setDeep(pnj, el.dataset.field, el.checked);
+    }
+  }
+
+  // --- Actions des boutons d'une fiche (une fonction par bouton) ---
+  // Ouvre / ferme la zone de Notes.
+  function cardToggleNotes(notesBtn, container) {
+    const card = notesBtn.closest('.card');
+    const zone = card.querySelector('.notes-zone');
+    const open = zone.classList.toggle('open');
+    card.dataset.notes = open ? '1' : '0';
+    notesBtn.classList.toggle('active', open);
+    if (open) { const ta = zone.querySelector('textarea'); if (ta) ta.focus(); }
+    return;
+  }
+
+  // Clic sur la miniature : portrait en plein écran.
+  function cardOpenPortrait(thumb, container) {
+    const pnj = PNJ_REGISTRY.get(thumb.dataset.id);
+    if (pnj && pnj.portrait) openPortraitViewer(pnj);
+    return;
+  }
+
+  // Ajoute ou change le portrait.
+  function cardChangePortrait(pChange, container) {
+    const pnj = PNJ_REGISTRY.get(pChange.dataset.id);
+    const cardEl = pChange.closest('.card');
+    if (pnj) pickPortraitFile(pnj, cardEl);
+    return;
+  }
+
+  // Retire le portrait.
+  function cardRemovePortrait(pRemove, container) {
+    const pnj = PNJ_REGISTRY.get(pRemove.dataset.id);
+    if (pnj) {
+      delete pnj.portrait; delete pnj.portraitPrompt;
+      refreshCard(pnj, pRemove.closest('.card'));
+    }
+    return;
+  }
+
+  // Duplique la fiche (voir duplicatePnj).
+  function cardDuplicate(dupBtn, container) {
+    const src = PNJ_REGISTRY.get(dupBtn.dataset.id);
+    if (!src) return;
+    const card = dupBtn.closest('.card');
+    const copy = duplicatePnj(src);
+    card.insertAdjacentHTML('afterend', renderCard(copy, { saved: false, mode: 'edit' }));
+    const created = card.nextElementSibling;
+    if (created && created.scrollIntoView) created.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    return;
+  }
+
+  // Fiche générée mais pas enregistrée : on la retire simplement de l'écran (rien n'est stocké).
+  function cardDiscard(discardBtn, container) {
+    PNJ_REGISTRY.delete(discardBtn.dataset.id);
+    discardBtn.closest('.card').remove();
+    if (!container.querySelector('.card')) {
+      container.innerHTML = `<div class="empty-state">Aucun PNJ généré pour l'instant.<br>Choisis tes options et lance le tirage.</div>`;
+    }
+    return;
+  }
+
+  // Passe la fiche en mode Édition.
+  function cardEdit(editBtn, container) {
+    const pnj = PNJ_REGISTRY.get(editBtn.dataset.id);
+    if (pnj) refreshCard(pnj, editBtn.closest('.card'), { mode: 'edit' });
+    return;
+  }
+
+  // Copie le prompt du portrait (et l'affiche sous le bouton).
+  function cardCopyPrompt(copyBtn, container) {
+    const pnj = PNJ_REGISTRY.get(copyBtn.dataset.id);
+    if (!pnj) return;
+    const text = buildPortraitPrompt(pnj);
+    // Le prompt est aussi affiché sous le bouton : on voit ce qui a été copié, et on peut le
+    // sélectionner à la main si le presse-papiers n'est pas accessible.
+    let area = copyBtn.nextElementSibling;
+    if (!area || !area.classList.contains('portrait-prompt-out')) {
+      area = document.createElement('textarea');
+      area.className = 'portrait-prompt-out';
+      area.readOnly = true;
+      area.rows = 8;
+      copyBtn.after(area);
+    }
+    area.value = text;
+    const label = copyBtn.textContent;
+    const done = () => { copyBtn.textContent = '✓ Prompt copié'; setTimeout(() => { copyBtn.textContent = label; }, 1800); };
+    const fallback = () => {
+      area.focus(); area.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch (err) { /* ignoré */ }
+      if (ok) done();
+      else { copyBtn.textContent = 'Texte sélectionné : copie-le à la main'; setTimeout(() => { copyBtn.textContent = label; }, 2500); }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+    else fallback();
+    return;
+  }
+
+  // 
+  function cardCancelEdit(cancelBtn, container) {
+    // Défausse les modifications non enregistrées : on recharge la version stockée.
+    const current = PNJ_REGISTRY.get(cancelBtn.dataset.id);
+    const stored = PNJStore.load(cancelBtn.dataset.id);
+    if (stored) {
+      // Les compteurs PS/PM actuels ne font pas partie des modifications à défausser.
+      if (current) { stored.psActuel = current.psActuel; stored.pmActuel = current.pmActuel; }
+      refreshCard(stored, cancelBtn.closest('.card'), { saved: true, mode: 'read' });
+    }
+    return;
+  }
+
+  // Supprime une Compétence ou un objet d'Équipement.
+  function cardDeleteRow(rowDelBtn, container) {
+    const pnj = PNJ_REGISTRY.get(rowDelBtn.dataset.id);
+    if (!pnj) return;
+    const idx = parseInt(rowDelBtn.dataset.idx, 10);
+    const kind = rowDelBtn.dataset.kind;
+    if (kind === 'comp') {
+      pnj.competences.splice(idx, 1);
+    } else if (kind === 'equip') {
+      (pnj.equipement || []).splice(idx, 1);
+    }
+    refreshCard(pnj, rowDelBtn.closest('.card'));
+    return;
+  }
+
+  // Ajoute une Compétence ou un objet d'Équipement.
+  function cardAddRow(rowAddBtn, container) {
+    const pnj = PNJ_REGISTRY.get(rowAddBtn.dataset.id);
+    if (!pnj) return;
+    const kind = rowAddBtn.dataset.kind;
+    if (kind === 'comp') {
+      const newComp = pickNewCompetence(pnj);
+      if (newComp) pnj.competences.push(newComp);
+    } else if (kind === 'equip') {
+      if (!pnj.equipement) pnj.equipement = [];
+      const forcedRarete = pickRareteForLevel(pnj.level.name);
+      const obj = generateObjet({ categorie: 'alea', metier: pnj.metier, forcedRarete }, pnj.equipement.length + 1);
+      pnj.equipement.push(summarizeObjet(obj));
+    }
+    refreshCard(pnj, rowAddBtn.closest('.card'));
+    return;
+  }
+
+  // Enregistre la fiche (Enregistrer / Mettre à jour).
+  function cardSave(saveBtn, container) {
+    const pnj = PNJ_REGISTRY.get(saveBtn.dataset.id);
+    if (!pnj) return;
+    const card = saveBtn.closest('.card');
+    recalcPsPmIfNeeded(pnj);
+    // PS/PM "actuels" ne sont jamais persistés : ce sont des compteurs de combat éphémères,
+    // qui doivent repartir de la valeur maximale à chaque rechargement depuis le stockage.
+    const toSave = { ...pnj, psActuel: pnj.ps, pmActuel: pnj.pm };
+    const ok = PNJStore.save(toSave);
+    if (!ok) {
+      const prev = saveBtn.textContent;
+      saveBtn.textContent = 'Échec (stockage indisponible)';
+      setTimeout(() => { saveBtn.textContent = prev; }, 1500);
+      alert("Enregistrement impossible : le stockage du navigateur est plein ou indisponible. La fiche n'a PAS été enregistrée. Retire des portraits ou supprime des fiches inutiles (pense à exporter une sauvegarde d'abord), puis réessaie.");
+      return;
+    }
+    // Après enregistrement, la fiche repasse en Lecture.
+    refreshCard(pnj, card, { saved: true, mode: 'read' });
+    return;
+  }
+
+  // Supprime la fiche enregistrée.
+  function cardDelete(delBtn, container) {
+    PNJStore.remove(delBtn.dataset.id);
+    PNJ_REGISTRY.delete(delBtn.dataset.id);
+    delBtn.closest('.card').remove();
+  }
+
+  // Correspondance bouton -> action. L'ordre compte : le premier sélecteur qui correspond l'emporte
+  // (ex. « .btn-save » et les boutons « .btn-delete … » doivent être testés avant le « .btn-delete » général).
+  const CARD_CLICK_ACTIONS = [
+    ['.btn-notes', cardToggleNotes],
+    ['.portrait-thumb', cardOpenPortrait],
+    ['.portrait-change', cardChangePortrait],
+    ['.portrait-remove', cardRemovePortrait],
+    ['.btn-dup', cardDuplicate],
+    ['.btn-discard', cardDiscard],
+    ['.btn-edit', cardEdit],
+    ['.btn-copy-prompt', cardCopyPrompt],
+    ['.btn-cancel', cardCancelEdit],
+    ['.btn-row-del', cardDeleteRow],
+    ['.btn-row-add', cardAddRow],
+    ['.btn-save', cardSave],
+    ['.btn-delete', cardDelete],
+  ];
+
+  function bindCardEvents(container) {
+    container.addEventListener('input', onCardInput);
+    container.addEventListener('change', onCardChange);
+    container.addEventListener('click', (e) => {
+      for (const [selector, action] of CARD_CLICK_ACTIONS) {
+        const el = e.target.closest(selector);
+        if (el) { action(el, container); return; }
       }
     });
   }
@@ -3126,6 +3251,8 @@ window.addEventListener('error', function (e) {
     "Assassin": ["Arme", "Vêtement", "Bijou"],
     // --- ajouts depuis src/metiers-extra.json ---
     "Apprenti": ["Utilitaire", "Vêtement"],
+    "Sous-officier religieux": ["Arme", "Armure", "Vêtement", "Bijou"],
+    "Soldat religieux": ["Arme", "Armure", "Vêtement", "Bijou"],
     "Cuisinier": ["Utilitaire", "Vêtement", "Bijou"]
   };
 
@@ -3212,6 +3339,9 @@ window.addEventListener('error', function (e) {
 
   const MATERIALS = ["or", "argent", "mythril", "bronze"];
   const GEMS = ["rubis", "saphir", "émeraude", "diamant", "aigue-marine", "lapis lazuli", "pierre de lune", "cornaline", "aventurine", "améthyste", "topaze",  "opale", "jade", "citrine", "onyx", "quartz fumé", "perles", "nacre", "ambre"];
+  // ==========================================================
+  // GÉNÉRATION DES OBJETS MAGIQUES (effets, Rareté, matériaux)
+  // ==========================================================
   // Remplit le budget de niveaux d'un objet avec 1 à 3 enchantements (chiffrés ou spéciaux),
   // compatibles avec sa catégorie, jusqu'à épuiser le budget (ou ne plus pouvoir le faire).
   // excludeSkillNames : compétences déjà attribuées (ex. le bonus principal lié au Métier),
@@ -3499,6 +3629,9 @@ window.addEventListener('error', function (e) {
     return equipement;
   }
 
+  // ===============================================================================================
+  // OBJETS : fiches (affichage, édition), enregistrement local, écrans « Objets » et « Mes Objets »
+  // ===============================================================================================
   // opts.saved : fiche déjà enregistrée ; opts.mode : 'read' (Lecture) ou 'edit' (Édition).
   function renderObjCard(obj, opts = {}) {
     OBJ_REGISTRY.set(obj.id, obj);
@@ -3526,14 +3659,14 @@ window.addEventListener('error', function (e) {
     const actionsHtml = ro
       ? `<button class="btn-save btn-edit" data-id="${id}">Modifier</button>`
       : (saved
-        ? `<button class="btn-save" data-id="${id}" style="flex:1 1 45%;">Mettre à jour</button>
-          <button class="btn-delete btn-cancel" data-id="${id}" style="flex:1 1 45%;">Annuler</button>
-          <button class="btn-delete" data-id="${id}" style="flex:1 1 100%;">Supprimer</button>`
-        : `<button class="btn-save" data-id="${id}" style="flex:1 1 60%;">Enregistrer</button>
-          <button class="btn-delete btn-discard" data-id="${id}" style="flex:1 1 35%;">Défausser</button>`);
+        ? `<button class="btn-save act-45" data-id="${id}">Mettre à jour</button>
+          <button class="btn-delete btn-cancel act-45" data-id="${id}">Annuler</button>
+          <button class="btn-delete act-100" data-id="${id}">Supprimer</button>`
+        : `<button class="btn-save act-60" data-id="${id}">Enregistrer</button>
+          <button class="btn-delete btn-discard act-35" data-id="${id}">Défausser</button>`);
 
     return `
-      <div class="card${ro ? ' mode-read' : ''}" data-card-id="${id}" data-saved="${saved ? 1 : 0}" data-mode="${mode}"${opts.instant ? ' style="animation:none"' : ''}>
+      <div class="card${ro ? ' mode-read' : ''}${opts.instant ? ' no-anim' : ''}" data-card-id="${id}" data-saved="${saved ? 1 : 0}" data-mode="${mode}">
         <div class="card-top">
           <div class="card-top-info">
             ${fText('name-input', obj.nom, 'nom')}
@@ -3549,7 +3682,7 @@ window.addEventListener('error', function (e) {
           ${fNum('mini-number current', obj.cout, 'cout')}
         </div>
         ${groupeHtml}
-        <div class="card-actions" style="flex-wrap:wrap;">
+        <div class="card-actions">
           ${actionsHtml}
         </div>
       </div>
@@ -3741,6 +3874,9 @@ window.addEventListener('error', function (e) {
 
 
 
+  // ==============================================================
+  // SAUVEGARDE : export / import (PNJ + Objets) et export sélectif
+  // ==============================================================
   // --- Écran Sauvegarde : export / import (PNJ + Objets combinés dans un seul fichier) ---
   function updateExportCount() {
     const nPnj = PNJStore.loadAll().length;
@@ -4129,6 +4265,9 @@ window.addEventListener('error', function (e) {
   document.getElementById('btnSyncPull').addEventListener('click', () => runSync(false));
   refreshSyncFields();
 
+  // =================================
+  // BOUTON « GÉNÉRER » DE L'ÉCRAN PNJ
+  // =================================
   let counter = 0;
 
   document.getElementById('btnGenerate').addEventListener('click', () => {
@@ -4193,10 +4332,11 @@ window.addEventListener('error', function (e) {
       { metier: "Marin", niveau: "Pro", qty: [1, 2] },
       { metier: "Marin", niveau: "Novice", qty: [3, 4] }
     ],
-    "Temple": [
-      { metier: "Prêtre", niveau: "Expert", qty: 1 },
-      { metier: "Prêtre", niveau: "Novice", qty: [1, 3] },
-      { metier: "Médecin", niveau: "Novice", qty: 1 }
+    "Section de Xaom": [
+      { metier: "Sous-Officier religieux", niveau: "Expert", qty: 1 },
+      { metier: "Soldat religieux", niveau: "Pro", qty: [1, 2] },
+      { metier: "Soldat religieux", niveau: "Novice", qty: [0, 1] },
+	  { metier: "Prêtre", niveau: "Novice", qty: [0, 1] }
     ],
     "Laboratoire de Haut Mage": [
       { metier: "Haut Mage", niveau: "Maître", qty: 1 },
