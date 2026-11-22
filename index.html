@@ -1052,7 +1052,7 @@ window.addEventListener('error', function (e) {
 <body>
 <div class="app">
   <header>
-    <div class="eyebrow">Outil de maître du jeu (v1.20)</div>
+    <div class="eyebrow">Outil de maître du jeu</div>
     <h1 id="screenTitle">Création de PNJ</h1>
   </header>
   <div class="sync-banner hidden" id="syncBanner">
@@ -2139,7 +2139,7 @@ window.addEventListener('error', function (e) {
     // Points de Santé et de Mana : voir computePsPm (selon le marquage PS / PM des compétences).
     const { ps, pm } = computePsPm({ traits: totals, competences });
 
-    const equipement = generateEquipementForPNJ({ metier, level });
+    const equipement = generateEquipementForPNJ({ metier, level, competences });
 
     const pnj = {
       id: newId('pnj'), groupe: '', index, prenom, race, metier, trait, disposition, level, physique,
@@ -3359,7 +3359,9 @@ window.addEventListener('error', function (e) {
     return !allowed || allowed.includes(category);
   }
 
-  function fillEnchantments(category, budget, forcedSkillName, excludeSkillNames, typeName) {
+  // allowedNames (facultatif) : si fourni, les bonus ne peuvent porter que sur ces compétences
+  // (utilisé pour l'équipement des PNJ : bonus liés aux compétences du personnage).
+  function fillEnchantments(category, budget, forcedSkillName, excludeSkillNames, typeName, allowedNames) {
     const baseType = String(typeName || '').replace(/\s*\(.*\)\s*$/, '').trim();
     const enchantements = [];
     let remaining = budget;
@@ -3374,7 +3376,7 @@ window.addEventListener('error', function (e) {
       const skillPool = forcedSkillName
         ? ALL_SKILLS.filter(s => s.name === forcedSkillName)
         : ALL_SKILLS.filter(s => s.trait && compatibleTraits.includes(s.trait) && isSkillAllowedForCategory(s.name, category));
-      const compatibleSkills = skillPool.filter(s => !usedSkillNames.has(s.name));
+      const compatibleSkills = skillPool.filter(s => !usedSkillNames.has(s.name) && (!allowedNames || allowedNames.includes(s.name)));
       const specialOptions = SPECIAL_ENCHANTMENTS.filter(s => s.categories.includes(category) && (!s.types || s.types.includes(baseType)) && s.niveau <= remaining && !usedSpecialNames.has(s.name));
       const canBonus = remaining >= 2 && compatibleSkills.length > 0;
       const canSpecial = specialOptions.length > 0;
@@ -3414,7 +3416,7 @@ window.addEventListener('error', function (e) {
   // qu'un bonus seul ne peut pas consommer. Plutôt que d'ajouter un effet de complément séparé,
   // on augmente en priorité la magnitude d'un bonus déjà présent : ça absorbe le point manquant
   // ET atterrit pile sur le max (pair) de la fourchette, gardant l'objet "bonus pur".
-  function ensureWithinRarete(enchantements, category, requiredSkill, rarete) {
+  function ensureWithinRarete(enchantements, category, requiredSkill, rarete, allowedNames) {
     const total = () => enchantements.reduce((s, e) => s + e.niveau, 0);
     if (total() >= rarete.min) return enchantements;
     const shortfall = rarete.min - total();
@@ -3431,9 +3433,10 @@ window.addEventListener('error', function (e) {
     // emplacement est disponible et qu'une compétence compatible existe.
     const compatibleTraits = CATEGORY_TRAITS[category] || ["FOR", "AGI", "INT", "PER", "MAI", "CHA"];
     const usedSkillNames = new Set(enchantements.map(e => e.name));
-    const skillPool = requiredSkill
+    const skillPool = (requiredSkill
       ? ALL_SKILLS.filter(s => s.name === requiredSkill)
-      : ALL_SKILLS.filter(s => s.trait && compatibleTraits.includes(s.trait) && !usedSkillNames.has(s.name) && isSkillAllowedForCategory(s.name, category));
+      : ALL_SKILLS.filter(s => s.trait && compatibleTraits.includes(s.trait) && !usedSkillNames.has(s.name) && isSkillAllowedForCategory(s.name, category)))
+      .filter(s => !allowedNames || allowedNames.includes(s.name));
 
     if (enchantements.length < 3) {
       if (skillPool.length > 0) {
@@ -3498,8 +3501,10 @@ window.addEventListener('error', function (e) {
     // imposée (une arme reste toujours liée à sa compétence de maniement, même si son type a
     // été choisi en cohérence avec le Métier ci-dessus).
     const metier = requiredSkill ? null : preliminaryMetier;
+    // options.skillFilter (équipement des PNJ) : liste des seules compétences pouvant recevoir un bonus.
+    const allowed = options.skillFilter || null;
     const metierCandidats = metier
-      ? (METIER_SKILLS[metier] || []).filter(name => ALL_SKILLS.some(s => s.name === name) && isSkillAllowedForCategory(name, category))
+      ? (METIER_SKILLS[metier] || []).filter(name => ALL_SKILLS.some(s => s.name === name) && isSkillAllowedForCategory(name, category) && (!allowed || allowed.includes(name)))
       : [];
 
     let enchantements;
@@ -3521,14 +3526,14 @@ window.addEventListener('error', function (e) {
         const niveau = magnitude * 2;
         const primary = { type: "bonus", name: primarySkillName, trait: skillObj.trait, magnitude, niveau };
         const remaining = Math.max(0, budget - niveau);
-        const extra = remaining > 0 ? fillEnchantments(category, remaining, requiredSkill, [primarySkillName], type.name) : [];
+        const extra = remaining > 0 ? fillEnchantments(category, remaining, requiredSkill, [primarySkillName], type.name, allowed) : [];
         enchantements = [primary, ...extra];
       }
     } else {
-      enchantements = fillEnchantments(category, budget, requiredSkill, undefined, type.name);
+      enchantements = fillEnchantments(category, budget, requiredSkill, undefined, type.name, allowed);
     }
 
-    enchantements = ensureWithinRarete(enchantements, category, requiredSkill, rarete);
+    enchantements = ensureWithinRarete(enchantements, category, requiredSkill, rarete, allowed);
 
     const niveauTotal = enchantements.reduce((s, e) => s + e.niveau, 0);
     const cout = costForNiveau(niveauTotal);
@@ -3611,24 +3616,78 @@ window.addEventListener('error', function (e) {
     return { ligne1, ligne2 };
   }
 
+  // Règles de composition de l'équipement d'un PNJ (objets classés du plus précieux au plus commun) :
+  //  - 1er objet : bonus éventuels uniquement sur des Compétences MAÎTRISÉES du PNJ (effets spéciaux libres) ;
+  //  - 2e objet : soit au moins un bonus sur une Compétence du PNJ, soit au moins un effet spécial
+  //    (50/50) ; ses bonus portent sur des Compétences du PNJ et évitent, si possible, celles du 1er objet ;
+  //  - 3e objet et suivants : tirage libre (comme avant).
+  // Le coût et la Rareté restent calculés par generateObjet.
+  const EQUIP_PROB_BONUS_2E = 0.5;
+  const EQUIP_MAX_TENTATIVES = 40;
+
+  function objetRespecte(obj, rule) {
+    if (!obj.enchantements.length) return false;
+    const rar = RARETES.find(r => r.name === obj.rarete);
+    if (rar && (obj.niveauTotal < rar.min || obj.niveauTotal > rar.max)) return false;
+    const bonus = obj.enchantements.filter(e => e.type === "bonus");
+    if (bonus.some(e => !rule.allowed.includes(e.name))) return false;
+    if (rule.avoid && bonus.some(e => rule.avoid.includes(e.name))) return false;
+    if (rule.need === "bonus" && !bonus.length) return false;
+    if (rule.need === "special" && !obj.enchantements.some(e => e.type === "special")) return false;
+    // Une arme exige sa compétence de maniement : on ne la propose que si elle est autorisée.
+    const t = OBJECT_TYPES.find(x => x.name === obj.type);
+    if (t && t.requiredSkill && !rule.allowed.includes(t.requiredSkill)) return false;
+    return true;
+  }
+
+  // Génère un objet respectant `rule` ; assouplit progressivement (sans éviter les compétences du
+  // 1er objet, puis sans exigence) pour ne jamais rester sans objet.
+  function generateObjetContraint(options, index, rule) {
+    const phases = [rule, { ...rule, avoid: null }, { ...rule, avoid: null, need: null }];
+    for (const r of phases) {
+      for (let i = 0; i < EQUIP_MAX_TENTATIVES; i++) {
+        const obj = generateObjet({ ...options, skillFilter: r.allowed }, index);
+        if (objetRespecte(obj, r)) return obj;
+      }
+    }
+    return generateObjet({ ...options, skillFilter: rule.allowed }, index);
+  }
+
   // Génère l'équipement de départ d'un PNJ selon son Niveau, en suivant EQUIPMENT_TABLE.
   function generateEquipementForPNJ(pnj) {
     const slots = EQUIPMENT_TABLE[pnj.level.name] || [];
-    const equipement = [];
-    slots.forEach(slot => {
+    // 1) Tirage des emplacements et de leur Rareté ; 2) classement du plus précieux au plus commun
+    // (à Rareté égale, l'objet lié au Métier passe devant).
+    const tires = [];
+    slots.forEach((slot, ordre) => {
       if (Math.random() >= slot.prob) return;
-      const forcedRarete = pickRareteInRange(slot.rareteRange);
-      const options = {
-        categorie: "alea",
-        metier: slot.metier ? pnj.metier : null,
-        forcedRarete
-      };
-      const obj = generateObjet(options, equipement.length + 1);
+      const rarete = pickRareteInRange(slot.rareteRange);
+      tires.push({ slot, rarete, ordre, rang: RARETES.findIndex(r => r.name === rarete) });
+    });
+    tires.sort((a, b) => (b.rang - a.rang) || ((b.slot.metier ? 1 : 0) - (a.slot.metier ? 1 : 0)) || (a.ordre - b.ordre));
+
+    const comps = pnj.competences || [];
+    const maitrisees = comps.filter(c => c.mastered).map(c => c.name);
+    const toutes = comps.map(c => c.name);
+    const allowed1 = maitrisees.length ? maitrisees : toutes;
+    const used = [];
+    const equipement = [];
+    tires.forEach((t, i) => {
+      const options = { categorie: "alea", metier: t.slot.metier ? pnj.metier : null, forcedRarete: t.rarete };
+      let obj;
+      if (i === 0 && allowed1.length) {
+        obj = generateObjetContraint(options, i + 1, { allowed: allowed1, avoid: null, need: null });
+      } else if (i === 1 && toutes.length) {
+        const need = Math.random() < EQUIP_PROB_BONUS_2E ? "bonus" : "special";
+        obj = generateObjetContraint(options, i + 1, { allowed: toutes, avoid: used.slice(), need });
+      } else {
+        obj = generateObjet(options, i + 1);
+      }
+      obj.enchantements.forEach(e => { if (e.type === "bonus" && i < 2) used.push(e.name); });
       equipement.push(summarizeObjet(obj));
     });
     return equipement;
   }
-
   // ===============================================================================================
   // OBJETS : fiches (affichage, édition), enregistrement local, écrans « Objets » et « Mes Objets »
   // ===============================================================================================
